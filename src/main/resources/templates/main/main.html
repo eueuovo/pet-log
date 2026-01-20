@@ -5,9 +5,29 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fcba3e006a75a5ca358a3e500b551116&autoload=false"></script>
+
+    <script src="/main/assets/scripts/main.js"></script>
+    <script src="/main/assets/scripts/map.js"></script>
+    <link rel="stylesheet" href="/assets/styles/common.css">
+    <link rel="stylesheet" href="/main/assets/styles/main.css">
     <title>Document</title>
 </head>
 <body>
+<th:block th:replace="~{/fragments/common.html :: topNavigator}"></th:block>
+<main id="main">
+    <div class="content-wrapper">
+        <div class="map" id="map">
 
+
+
+        </div>
+        <div class="list">
+
+        </div>
+
+    </div>
+
+</main>
 </body>
 </html>

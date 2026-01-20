@@ -1,0 +1,24 @@
+@import "../../../assets/styles/def";
+#main {
+  padding: 2.5rem 4rem;
+  > .content-wrapper {
+    /*background-color: #5F6466;*/
+    width: 100%;
+    // 헤더 높이를 제외한 전체 화면 사용
+    height: calc(100vh - 11rem);
+    @include flex(row,flex-start,center,1rem);
+
+    >.map{
+      background-color: #5F6466;
+      border-radius: 0.3rem;
+      width: 75%;
+      height: 100%;
+    }
+    >.list{
+      background-color: #FFFFFF;
+      width: 20%;
+      height: 100%;
+    }
+
+  }
+}

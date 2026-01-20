@@ -1,3 +1,34 @@
-
+#main {
+  padding: 2.5rem 4rem;
+}
+#main > .content-wrapper {
+  /*background-color: #5F6466;*/
+  width: 100%;
+  height: calc(100vh - 11rem);
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+}
+#main > .content-wrapper > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+#main > .content-wrapper > .-flex-stretch {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+#main > .content-wrapper > .map {
+  background-color: #5F6466;
+  border-radius: 0.3rem;
+  width: 75%;
+  height: 100%;
+}
+#main > .content-wrapper > .list {
+  background-color: #FFFFFF;
+  width: 20%;
+  height: 100%;
+}
 
 /*# sourceMappingURL=main.css.map */
