@@ -5,10 +5,11 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fcba3e006a75a5ca358a3e500b551116&autoload=false"></script>
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fcba3e006a75a5ca358a3e500b551116&libraries=services&autoload=false"></script>
 
     <script src="/main/assets/scripts/main.js"></script>
     <script src="/main/assets/scripts/map.js"></script>
+    <script src="/assets/scripts/fragment.js"></script>
     <link rel="stylesheet" href="/assets/styles/common.css">
     <link rel="stylesheet" href="/main/assets/styles/main.css">
     <title>Document</title>
@@ -18,14 +19,145 @@
 <main id="main">
     <div class="content-wrapper">
         <div class="map" id="map">
-
-
-
+            <div class="search-box" id="search">
+                <input class="search-input" type="text" id="placeInput" placeholder="장소 검색">
+                <button type="button" class="search-btn" aria-label="검색">
+                    <img src="/main/assets/images/search.png" alt="" class="search-icon">
+                </button>
+            </div>
         </div>
-        <div class="list">
-
+        <div class="tab-list-container">
+            <div class="tabs">
+                <button id="friendTab" class="tab friend-tab active">친구</button>
+                <button id="storeTab" class="tab store-tab">장소</button>
+            </div>
+            <div class="list">
+                <ul class="friend list">
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">먀먀</span>
+                                <span class="caption">골든 리트리버</span>
+                            </div>
+                            <button class="button follow">팔로우</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">몽몽</span>
+                                <span class="caption">푸들</span>
+                            </div>
+                            <button class="button following">팔로잉</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">몽몽</span>
+                                <span class="caption">푸들</span>
+                            </div>
+                            <button class="button following">팔로잉</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">몽몽</span>
+                                <span class="caption">푸들</span>
+                            </div>
+                            <button class="button following">팔로잉</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">먀먀</span>
+                                <span class="caption">골든 리트리버</span>
+                            </div>
+                            <button class="button follow">팔로우</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">먀먀</span>
+                                <span class="caption">골든 리트리버</span>
+                            </div>
+                            <button class="button follow">팔로우</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">몽몽</span>
+                                <span class="caption">푸들</span>
+                            </div>
+                            <button class="button following">팔로잉</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">먀먀</span>
+                                <span class="caption">골든 리트리버</span>
+                            </div>
+                            <button class="button follow">팔로우</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">몽몽</span>
+                                <span class="caption">푸들</span>
+                            </div>
+                            <button class="button following">팔로잉</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">몽몽</span>
+                                <span class="caption">푸들</span>
+                            </div>
+                            <button class="button following">팔로잉</button>
+                        </div>
+                    </li>
+                </ul>
+              <!--  <ul class="store-list hidden">
+                    <li class="item">
+                        <div class="text-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">카페 스타</span>
+                                <span class="caption">서울 강남</span>
+                            </div>
+                            <button class="button">팔로우</button>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <div class="item-wrapper">
+                            <div class="image"></div>
+                            <div class="text-wrapper">
+                                <span class="nickname">도그파크</span>
+                                <span class="caption">서울 송파</span>
+                            </div>
+                            <button class="button following">팔로잉</button>
+                        </div>
+                    </li>
+                </ul>-->
+            </div>
         </div>
-
     </div>
 
 </main>
