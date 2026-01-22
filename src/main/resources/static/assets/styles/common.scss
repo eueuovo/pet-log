@@ -9,7 +9,7 @@ body {
   @include flex(column, stretch, flex-start, 1rem);
   min-height: 100%;
   background-color: $global-background-color;
-  color: $global-main-text-color;
+  color: $global-black-text-color;
   cursor: default;
   font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-size: 0.95rem;
@@ -55,7 +55,7 @@ ol, ul {
 
 #topNavigator{
   @include flex(row, center, flex-start, 1rem);
-  background-color: $global-nav-background-color;
+  background-color: $global-green-background-color;
   overflow: hidden;
   width: 100%;
   height: 5rem;
@@ -67,7 +67,7 @@ ol, ul {
 
     > .logo{
       @include flex(row, center, flex-start, 1rem);
-      color: $global-nav-text-color;
+      color: $global-white-text-color;
       font-size: 1.5rem;
       font-weight: 600;
     }
@@ -77,13 +77,13 @@ ol, ul {
 
       > .item{
         font-size: 1.3rem;
-        color: $global-nav-text-color;
+        color: $global-white-text-color;
         font-weight: 600;
         padding: 0.5rem;
 
         &:hover,
         &:active{
-          color: $global-nav-action-color;
+          color: $global-yellow-text-color;
           cursor: pointer;
         }
       }
@@ -95,16 +95,15 @@ ol, ul {
 
       > .item{
         font-size: 1.3rem;
-        color: $global-nav-text-color;
+        color: $global-white-text-color;
         font-weight: 600;
         padding: 0.5rem;
 
         &:hover,
         &:active{
-          color: $global-nav-action-color;
+          color: $global-yellow-text-color;
           cursor: pointer;
         }
-
       }
     }
   }
