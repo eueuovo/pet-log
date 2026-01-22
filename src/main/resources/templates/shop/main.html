@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PetLog-반려동물 용품샵</title>
+    <link rel="stylesheet" href="/assets/styles/common.css">
+    <link rel="stylesheet" href="/shop/assets/styles/main.css">
+</head>
+<body>
+<th:block th:replace="~{/fragments/common.html :: topNavigator}"></th:block>
+<div id="main">
+    <div class="category">
+        <ul class="list">
+            <li class="item">전체</li>
+            <li class="item">강아지</li>
+            <li class="item">고양이</li>
+            <li class="item">기타</li>
+            <li class="item">이벤트</li>
+        </ul>
+        <form class="search">
+            <label class="search-wrapper">
+                <input class="search-box" placeholder="어떤 상품을 찾으시나요?" type="text">
+            </label>
+            <button class="submit" type="submit">
+                <img class="image" src="/shop/assets/images/shop-search.png" alt="돋보기">
+            </button>
+        </form>
+    </div>
+    <div class="banner-wrapper">
+
+    </div>
+    <div class="new-product">
+
+    </div>
+    <div class="best-product">
+
+    </div>
+</div>
+</body>
+</html>

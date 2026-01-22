@@ -1,0 +1,59 @@
+@import "../../../assets/styles/def";
+
+#main{
+  @include flex(column, center, flex-start, 1rem);
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem 14rem;
+
+  > .category{
+    @include flex(row, center, space-between, 1rem);
+    width: 100%;
+
+    > .list{
+      @include flex(row, flex-start, flex-start, 1rem);
+
+      > .item{
+        font-size: 1.2rem;
+        color: $global-main-text-color;
+      }
+    }
+
+    > .search{
+      @include flex(row, stretch, flex-start);
+      border: 0.0625rem solid #5F646620;
+      border-radius: 0.25rem;
+      height: 2.7rem;
+      width: 30rem;
+      overflow: hidden;
+
+
+      > .search-wrapper{
+        @include flex(row, flex-start, stretch);
+        flex: 1;
+        background-color: #ffffff;
+        height: 100%;
+
+        > .search-box{
+          border-radius: 0.25rem;
+          height: 100%;
+          width: 100%;
+          box-sizing: border-box;
+          margin: 0 1rem;
+        }
+      }
+
+      > .submit{
+        @include flex(row, center, center);
+        width: 3rem;
+        height: 100%;
+        background-color: #89CC96;
+        padding: 0 0.7rem;
+
+        > .image{
+          width: 1.5rem;
+        }
+      }
+    }
+  }
+}
