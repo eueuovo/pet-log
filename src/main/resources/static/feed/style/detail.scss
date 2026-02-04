@@ -1,0 +1,341 @@
+@import "../../assets/styles/def";
+
+// 전체 페이지
+.page {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    margin: 0 7.5% 0 6%;
+}
+
+// 좌측 핀 그리드 영역
+.grid-area {
+    grid-column: 1 / 7;
+    padding: 1.5rem 2.5rem 1.5rem 1.5rem;
+}
+
+.grid-header {
+    @include flex(row, center, flex-start, 0.8rem);
+    margin-bottom: 1.2rem;
+
+    .back-link {
+        background-color: #fff;
+        border: 1px solid $global-border-color;
+        border-radius: 999rem;
+        padding: 0.55rem 0.9rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .grid-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: $global-gray-text-color;
+    }
+}
+
+#feed-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: 0.9rem;
+}
+
+// 우측 상세 게시물 영역
+.detail-area {
+    position: sticky;
+    top: 0;
+    height: calc(100vh);
+    overflow: hidden;
+    align-self: start;
+    grid-column: 7 / 11;
+    border: 0.0625rem solid $global-border-green-color;
+    background-color: $global-gray-background-color;
+}
+
+.detail-shell {
+    height: 100%;
+    padding: 1rem 2.5rem;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+// 유저 정보 (헤더)
+.detail-header {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 0.0625rem solid $global-border-color;
+}
+
+.detail-user {
+    @include flex(row, center, flex-start, 0.8rem);
+
+    .avatar {
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid $global-border-color;
+    }
+
+    .user-meta {
+        @include flex(column, flex-start, center, 0.2rem);
+
+        .nickname {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .place {
+            font-size: 0.75rem;
+            color: $global-gray-text-color;
+        }
+    }
+}
+
+// 콘텐츠 영역
+.detail-content {
+    @include flex(column, stretch, flex-start, 1.2rem);
+}
+
+.detail-image {
+    @include flex(column, center, center);
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 1.2rem;
+    border: 0.0625rem solid $global-border-color;
+
+    > .slide-viewport {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+
+        > .slide-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.35s ease;
+
+
+            > img,
+            > video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                flex-shrink: 0;
+            }
+        }
+    }
+
+    > .slide-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 1.4rem;
+        cursor: pointer;
+        &.prev {
+            left: 0.5rem;
+        }
+        &.next {
+            right: 0.5rem;
+        }
+        &.hidden {
+            display: none;
+        }
+    }
+
+    > .slide-indicators {
+        position: absolute;
+        bottom: 0.6rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.4rem;
+        z-index: 5;
+
+        > span {
+            width: 0.45rem;
+            height: 0.45rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.25s ease;
+
+            &.active {
+                background: white;
+                transform: scale(1.3);
+            }
+        }
+    }
+}
+
+.detail-info {
+    @include flex(column, stretch, flex-start, 0.6rem);
+
+    > .detail-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    > .detail-caption {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin: 0;
+        color: $global-gray-text-color;
+    }
+}
+
+
+
+// 좋아요 / 댓글
+.detail-stats {
+    @include flex(row, center, flex-start, 0.8rem);
+
+    .detail-heart-btn,
+    .detail-comment-btn{
+        @include flex(row, center, center, 0.3rem);
+        padding: 0.35rem 0.6rem;
+        border-radius: 999rem;
+        border: 1px solid $global-border-color;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+
+        > .heart {
+            width: 1.75rem;
+            height: 1.75rem;
+        }
+
+        > .comment {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        &:hover {
+            background-color: #fff;
+
+            > .heart {
+                color: red;
+            }
+        }
+    }
+}
+
+// 절취선
+.divider {
+    border: none;
+    border-top: 1px dashed $global-border-color;
+    margin: 0.4rem 0;
+}
+
+// 댓글 영역
+.comments {
+    @include flex(column, stretch, flex-start, 0.9rem);
+}
+
+.comments-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.comment {
+    @include flex(row, flex-start, flex-start, 0.6rem);
+
+    .avatar.sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .comment-body {
+        @include flex(column, stretch, flex-start, 0.3rem);
+        font-size: 0.8rem;
+
+        .comment-top {
+            @include flex(row, center, flex-start, 0.5rem);
+
+            .comment-user {
+                font-weight: 700;
+            }
+
+            .comment-time {
+                font-size: 0.7rem;
+                color: $global-gray-text-color;
+            }
+        }
+
+        .comment-text {
+            line-height: 1.35;
+        }
+    }
+}
+
+// 댓글 입력
+.comment-form {
+    @include flex(row, center, flex-start, 0.6rem);
+    margin-top: 0.5rem;
+
+    .comment-input {
+        flex: 1;
+        min-width: 0;
+        padding: 0.6rem 0.8rem;
+        border-radius: 0.8rem;
+        border: 1px solid $global-border-color;
+        background-color: #fff;
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1rem;
+        border-radius: 0.8rem;
+        background-color: $global-color-concept;
+        font-weight: 700;
+        cursor: pointer;
+    }
+}
+
+
+@media (max-width: 890px) {
+
+    .page {
+        grid-template-columns: 1fr;   // 한 줄 레이아웃
+    }
+
+    .detail-area {
+        grid-column: 1 / -1;  // 전체 폭 사용
+        position: relative;   // sticky 해제
+        height: auto;
+        order: -1;            // detail-area가 위로 오도록 설정
+
+        > .detail-shell {
+            overflow: visible;
+            height: auto;
+
+            > .detail-content > .detail-image > img {
+                width: 100%;
+                aspect-ratio: 1 / 1.25;
+            }
+        }
+    }
+
+    .grid-area {
+        grid-column: 1 / -1;  // 전체 폭
+    }
+
+}
+
+@media (max-width: 534px) {
+    .pin-content {
+        bottom: 6rem;
+    }
+}
