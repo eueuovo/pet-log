@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>메인피드</title>
+    <link rel="stylesheet" href="/assets/styles/common.css">
+    <link rel="stylesheet" href="/feed/style/common.css">
+    <link rel="stylesheet" href="/feed/style/explore.css">
+    <link rel="stylesheet" href="/assets/styles/header.css">
+    <script defer src="/assets/scripts/header.js"></script>
+    <script defer src="/feed/script/common.js"></script>
+    <script defer src="/feed/script/explore.js"></script>
+</head>
+<body>
+
+<div th:replace="fragments/common :: topNavigator"></div>
+
+<main id="main">
+    <button class="create-feed" id="createFeedBtn">
+        <span class="plus">+</span>
+        <span class="label">글쓰기</span>
+    </button>
+
+    <div class="options">
+        <div id="search-bar">
+            <label for="search" data-object="label">
+                <input id="search" class="search-input" type="search" autocomplete="off" spellcheck="false"
+                       placeholder="ID, 내용 검색" data-object="input">
+                <button name="search" type="submit" data-object="button" data-color="green">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="search">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                </button>
+            </label>
+        </div>
+
+        <div class="-flex-stretch"></div>
+
+        <a href="/feed/profile" class="my-profile">
+            <img src="/feed/images/explore/user.png" alt="개인 프로필">
+            <span>sehun_pet</span>
+        </a>
+
+        <div class="sort-dropdown" data-open="false">
+            <button type="button" data-object="button" data-color="concept">
+                <span class="value">최신순</span>
+                <img src="/feed/images/explore/down.png" alt="열기">
+            </button>
+            <ul class="sort-options">
+                <li data-value="new" class="select">최신순</li>
+                <li data-value="popular">인기순</li>
+            </ul>
+        </div>
+    </div>
+
+    <section id="feed-container">
+<!--        <article class="feed-card">-->
+<!--            <header class="feed-user">-->
+<!--                <img class="profile" src="/feed/images/explore/user.png" alt="프로필">-->
+<!--                <div class="meta">-->
+<!--                    <span class="nickname">sehun_pet</span>-->
+<!--                    <span class="place">서울</span>-->
+<!--                </div>-->
+<!--            </header>-->
+<!--            <div class="feed-image">-->
+<!--                <img src="/feed/images/explore/dog1.jpg" alt="게시물 이미지">-->
+<!--            </div>-->
+<!--            <div class="feed-content">-->
+<!--                <span class="caption">햇살 좋은 날, 강아지랑 산책 🌿🐕</span>-->
+<!--            </div>-->
+<!--            <footer class="feed-action">-->
+<!--                <button class="action like" data-like="false">-->
+<!--                    <svg class="icon heart">-->
+<!--                        <use href="#icon-heart"></use>-->
+<!--                    </svg>-->
+<!--                </button>-->
+<!--                <span class="like count">24</span>-->
+
+<!--                <button class="action comment">-->
+<!--                    <svg class="icon comment">-->
+<!--                        <use href="#icon-comment"></use>-->
+<!--                    </svg>-->
+<!--                </button>-->
+<!--                <span class="comment count">6</span>-->
+<!--            </footer>-->
+<!--        </article>-->
+        <div id="scroll-sentinel"></div>
+    </section>
+</main>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+    <symbol id="icon-down" viewBox="0 0 320 200">
+        <path d="M20 40 L160 180 L300 40" fill="none" stroke="currentColor" stroke-width="40" stroke-linecap="round"
+              stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-comment" viewBox="20 10 460 460">
+        <path transform="translate(0 480) scale(1 -1)" fill="currentColor"
+              d="M180 451 c-98 -32 -160 -107 -160 -193 0 -41 35 -112 68 -138 25 -20 25 -21 9 -56 -9 -19 -17 -37 -17 -41 0 -10 63 7 89 24 16 10 42 16 67 14 161 -10 284 134 229 267 -20 48 -50 79 -100 104 -43 22 -144 33 -185 19 z m175 -37 c21 -11 53 -37 69 -58 27 -33 31 -46 31 -96 0 -50 -4 -63 -31 -96 -45 -56 -96 -79 -177 -80 -44 -1 -73 -6 -85 -16 -9 -8 -24 -18 -33 -21 -14 -5 -15 -1 -7 26 9 29 7 35 -31 74 -44 47 -57 90 -46 151 8 44 74 112 126 130 49 16 138 9 184 -14 z"/>
+    </symbol>
+    <symbol id="icon-heart-fill" viewBox="0 0 50 50">
+        <g transform="translate(0,50) scale(0.1,-0.1)"
+           fill="currentColor" stroke="none">
+            <path d="M104 391 c-62 -38 -69 -121 -16 -196 15 -21 58 -61 95 -88 l67 -49 67 49 c79 57 122 114 130 170 13 97 -85 165 -168 116 -27 -16 -31 -16 -58 0 -38 22 -78 22 -117 -2z m131 -111 c-5 -8 -11 -8 -17 -2 -6 6 -7 16 -3 22 5 8 11 8 17 2 6 -6 7 -16 3 -22z m50 0 c-5 -8 -11 -8 -17 -2 -6 6 -7 16 -3 22 5 8 11 8 17 2 6 -6 7 -16 3 -22z m-80 -40 c-5 -8 -11 -8 -17 -2 -6 6 -7 16 -3 22 5 8 11 8 17 2 6 -6 7 -16 3 -22z m110 0 c-5 -8 -11 -8 -17 -2 -6 6 -7 16 -3 22 5 8 11 8 17 2 6 -6 7 -16 3 -22z m-42 -11 c25 -28 15 -49 -23 -49 -38 0 -48 21 -23 49 22 26 24 26 46 0z"/>
+        </g>
+    </symbol>
+    <symbol id="icon-heart" viewBox="0 0 50 50">
+        <g transform="translate(0,50) scale(0.1,-0.1)"
+           fill="currentColor" stroke="none">
+            <path d="M108 395 c-54 -30 -71 -95 -43 -163 20 -47 45 -74 122 -129 l63 -45 62 45 c78 55 103 82 123 129 19 47 19 81 0 118 -30 59 -119 77 -166 34 -18 -16 -20 -16 -38 0 -27 24 -90 30 -123 11z m102 -20 c15 -8 31 -20 34 -27 5 -11 7 -11 12 0 8 18 59 42 89 42 16 0 39 -12 57 -30 27 -28 30 -36 25 -75 -3 -27 -15 -59 -31 -80 -31 -40 -126 -115 -146 -115 -20 0 -115 75 -146 115 -16 21 -28 53 -31 80 -5 39 -2 47 25 75 34 34 67 38 112 15z"/>
+            <path d="M215 300 c-4 -6 -3 -16 3 -22 6 -6 12 -6 17 2 4 6 3 16 -3 22 -6 6 -12 6 -17 -2z"/>
+            <path d="M265 300 c-4 -6 -3 -16 3 -22 6 -6 12 -6 17 2 4 6 3 16 -3 22 -6 6 -12 6 -17 -2z"/>
+            <path d="M185 260 c-4 -6 -3 -16 3 -22 6 -6 12 -6 17 2 4 6 3 16 -3 22 -6 6 -12 6 -17 -2z"/>
+            <path d="M295 260 c-4 -6 -3 -16 3 -22 6 -6 12 -6 17 2 4 6 3 16 -3 22 -6 6 -12 6 -17 -2z"/>
+            <path d="M227 229 c-25 -28 -15 -49 23 -49 38 0 48 21 23 49 -22 26 -24 26 -46 0z"/>
+        </g>
+    </symbol>
+</svg>
+</body>
+</html>
