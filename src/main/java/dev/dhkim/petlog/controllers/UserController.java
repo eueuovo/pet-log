@@ -1,4 +1,4 @@
-package dev.dhkim.petlog.main.controllers;
+package dev.dhkim.petlog.controllers;
 
 import ch.qos.logback.core.model.Model;
 import lombok.RequiredArgsConstructor;

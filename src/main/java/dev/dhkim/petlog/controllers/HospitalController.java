@@ -1,6 +1,6 @@
-package dev.dhkim.petlog.main.controllers;
+package dev.dhkim.petlog.controllers;
 
-import dev.dhkim.petlog.main.services.HospitalService;
+import dev.dhkim.petlog.services.HospitalService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

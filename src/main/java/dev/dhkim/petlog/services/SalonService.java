@@ -1,4 +1,4 @@
-package dev.dhkim.petlog.main.services;
+package dev.dhkim.petlog.services;
 
 import org.springframework.stereotype.Service;
 

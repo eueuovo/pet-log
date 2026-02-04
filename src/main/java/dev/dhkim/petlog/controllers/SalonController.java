@@ -1,6 +1,6 @@
-package dev.dhkim.petlog.main.controllers;
+package dev.dhkim.petlog.controllers;
 
-import dev.dhkim.petlog.main.services.SalonService;
+import dev.dhkim.petlog.services.SalonService;
 import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

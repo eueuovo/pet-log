@@ -1,9 +1,9 @@
-package dev.dhkim.petlog.main.services;
+package dev.dhkim.petlog.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.dhkim.petlog.main.entities.HospitalEntity;
-import dev.dhkim.petlog.main.repository.HospitalRepository;
+import dev.dhkim.petlog.entities.HospitalEntity;
+import dev.dhkim.petlog.repository.HospitalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

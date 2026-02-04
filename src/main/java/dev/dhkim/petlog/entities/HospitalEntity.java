@@ -1,4 +1,4 @@
-package dev.dhkim.petlog.main.entities;
+package dev.dhkim.petlog.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

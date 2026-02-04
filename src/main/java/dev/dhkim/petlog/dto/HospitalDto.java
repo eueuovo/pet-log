@@ -1,4 +1,4 @@
-package dev.dhkim.petlog.main.dto;
+package dev.dhkim.petlog.dto;
 
 import lombok.Getter;
 //프론트랑 서버랑 연결해주는 역할

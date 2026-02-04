@@ -1,4 +1,4 @@
-package dev.dhkim.petlog.main.repository;
+package dev.dhkim.petlog.repository;
 
 public interface JpaRepository<T, T1> {
 }
