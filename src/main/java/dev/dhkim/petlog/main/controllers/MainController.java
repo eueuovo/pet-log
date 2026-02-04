@@ -1,5 +1,6 @@
 package dev.dhkim.petlog.main.controllers;
 
+import ch.qos.logback.core.model.Model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,12 @@ public class MainController {
     @RequestMapping(value="/main",method = RequestMethod.GET,produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getMain(ModelAndView modelAndView) {
         modelAndView.setViewName("main/main");
+        return modelAndView;
+    }
+
+    @RequestMapping(value="/register",method = RequestMethod.GET,produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getRegister(ModelAndView modelAndView, Model model){
+        modelAndView.setViewName("user/register");
         return modelAndView;
     }
 }
