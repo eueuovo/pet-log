@@ -1,0 +1,199 @@
+@use "sass:color";
+@import "../../assets/styles/def";
+
+#main {
+    background-color: $global-background-color;
+    @include flex(column, center, center, 1rem);
+    width: min(75rem, 92%);
+    height: 100%;
+    margin: 0 auto;
+}
+
+.options {
+    @include flex(row, center, flex-start, 1.25rem);
+    width: 100%;
+    padding: 0.5rem 0 0 0;
+    margin-top: 0.65rem;
+    //border-bottom: 0.175rem solid darken($global-border-green-color, 20%);
+    background-color: inherit;
+    flex-wrap: wrap;
+}
+
+// 검색
+#search-bar {
+    width: 34%;
+    @include flex(row, center, flex-start, 1rem);
+
+    [data-object="label"] {
+        width: 100%;
+        @include flex(row, center, flex-start);
+
+        > [data-object="input"] {
+            border-top-right-radius: unset;
+            border-bottom-right-radius: unset;
+            border-right: none;
+        }
+
+        > [data-object="button"] {
+            border-top-left-radius: unset;
+            border-bottom-left-radius: unset;
+
+            > .search {
+                margin-right: 0.1rem;
+                color: white;
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+        }
+    }
+}
+
+// 본인 프로필 이동
+.my-profile {
+    @include flex(row, center, center, 0.3rem);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $global-black-text-color;
+
+    > img {
+        border-radius: 999rem;
+        background-color: #FDC756;
+        width: 2rem;
+        height: 2rem;
+        color: inherit;
+    }
+}
+
+
+// 정렬 기준 선택
+.sort-dropdown {
+    @include flex(row, center, center);
+    position: relative;
+    align-self: flex-end;
+
+    // 정렬 기준 버튼
+    [data-object=button] {
+        border-radius: 999rem;
+        gap: unset;
+        span {
+            color: $global-black-text-color;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        img {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+
+    // 정렬 기준
+    .sort-options {
+        position: absolute;
+        top: calc(100% + 0.6rem);
+        transform: translate(-15%, -0.6rem);
+        min-width: 9rem;
+        background-color: #ffffff;
+        border-radius: 1.2rem;
+        padding: 0.4rem 0;
+        box-shadow: 0 0.75rem 2.5rem rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        transform-origin: top center;
+        transition-property: background-color, transform, opacity;
+        transition-duration: 180ms;
+        z-index: 5;
+        pointer-events: none;
+        cursor: unset;
+
+        li {
+            padding: 0.7rem 1rem;
+            text-align: center;
+
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: $global-gray-text-color;
+
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+
+            &:hover {
+                background-color: #f4fbf6;
+                border-radius: 0.8rem;
+            }
+
+            &.select {
+                background-color: $global-color-concept;
+                color: $global-black-text-color;
+                border-radius: 0.8rem;
+                cursor: pointer;
+            }
+        }
+    }
+
+    // open되면 보이게 하기
+    &[data-open="true"] {
+        .sort-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-15%) translateY(0);
+            pointer-events: auto;
+        }
+    }
+}
+
+// 피드
+#feed-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+// 스크롤 감지 기준
+#scroll-sentinel {
+    height: 1px;
+}
+@media (max-width: 1023px) {
+    #feed-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    #search-bar {
+        width: 60%;
+    }
+}
+
+@media (max-width: 800px) {
+    #feed-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.25rem;
+    }
+
+    #search-bar {
+        width: 100%;
+        padding-right: 3.5rem;
+        > [data-object="label"] {
+            padding: 0;
+        }
+    }
+
+    .feed-content {
+        bottom: 4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #feed-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    #search-bar {
+        width: 100%;
+    }
+
+    .feed-content {
+        bottom: 2rem;
+    }
+}
