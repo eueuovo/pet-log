@@ -2,7 +2,9 @@
 @import "objects/button";
 @import "objects/input";
 @import "objects/label";
+@import "header";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Chewy&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 * {
   box-sizing: border-box;
@@ -49,68 +51,338 @@ html {
 img {
   -webkit-user-drag: none;
 }
+
 a {
   color: inherit;
   text-decoration: none;
   cursor: pointer;
 }
+
 ol, ul {
   list-style-type: none;
   margin-block: 0;
   padding-inline: 0;
 }
 
-#topNavigator{
-  @include flex(row, center, flex-start, 1rem);
+#topNavigator {
+  @include flex(row, center, flex-start, 2rem);
   background-color: $global-green-background-color;
-  overflow: visible;
+  box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.15);
+  font-family: "Chewy", system-ui;
+  overflow: hidden;
   width: 100%;
   height: 5rem;
-  padding: 0 2rem;
+  padding: 0 14rem;
 
-  > .nav-wrapper{
+
+  > .nav-wrapper {
     @include flex(row, center, flex-start, 1rem);
     width: 100%;
 
-    > .logo{
+    > .logo {
       @include flex(row, center, flex-start, 1rem);
-      color: $global-white-text-color;
-      font-size: 1.5rem;
+      /*color: $global-nav-text-color;*/
+      font-size: 2.5rem;
       font-weight: 600;
+      cursor: pointer;
+      color: $global-white-text-color;
+
+      transition: transform 0.2s ease, opacity 0.2s ease;
+
+      &:hover {
+        transform: translateY(-0.1rem);
+        opacity: 0.9;
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
     }
 
-    > .category{
+    > .category {
       @include flex(row, center, flex-start, 1rem);
 
-      > .item{
+      > .item {
         font-size: 1.3rem;
         color: $global-white-text-color;
+        cursor: pointer;
         font-weight: 600;
         padding: 0.5rem;
+        letter-spacing: -0.02rem;
+        position: relative;
+        transition:
+                color 0.2s ease,
+                transform 0.2s ease;
+        text-decoration: none;
 
-        &:hover,
-        &:active{
+        &.is-active {
           color: $global-yellow-text-color;
-          cursor: pointer;
+          transform: translateY(-0.125rem);
         }
       }
     }
 
-    > .user{
+    > .user {
       @include flex(row, center, flex-start, 1rem);
       margin-left: auto;
 
-      > .item{
+      > .item {
         font-size: 1.3rem;
-        color: $global-white-text-color;
+        color:  $global-white-text-color;
+        cursor: pointer;
         font-weight: 600;
         padding: 0.5rem;
+        position: relative;
+        transition:
+                color 0.2s ease,
+                transform 0.2s ease;
+        text-decoration: none;
 
-        &:hover,
-        &:active{
+
+        &.is-active {
           color: $global-yellow-text-color;
-          cursor: pointer;
+          transform: translateY(-0.125rem);
         }
+
+      }
+    }
+  }
+}
+
+#category {
+  @include flex(row, flex-end, space-between, clamp(0.5rem, 2vw, 1rem));
+  width: 100%;
+
+  > .menu {
+    position: relative;
+    flex-shrink: 0;
+
+    > .main{
+      > .list {
+        @include flex(row, flex-start, flex-start, 1rem);
+
+        > .item {
+          font-size: 1.2rem;
+          color: $global-gray-right-text-color;
+          font-weight: 600;
+          position: relative;
+          padding: 0 1rem 0.5rem 1rem;
+          cursor: pointer;
+
+          &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 0.15rem;
+            background-color: #38A34C;
+            transition: width 0.2s ease;
+          }
+
+          > input[type="radio"]{
+            display: none;
+          }
+
+          &:hover{
+            font-weight: 700;
+            color: $global-gray-text-color;
+
+            &::after {
+              width: 100%;
+            }
+          }
+
+          &:has(input[type="radio"]:checked) {
+            font-weight: 700;
+            color: $global-gray-text-color;
+
+            &::after {
+              width: 100%;
+            }
+          }
+        }
+
+        > .menu-item-wrapper {
+          position: relative;
+
+          > .item {
+            font-size: 1.2rem;
+            color: $global-gray-right-text-color;
+            font-weight: 600;
+            position: relative;
+            padding: 0 1rem 0.5rem 1rem;
+            cursor: pointer;
+
+            &::after {
+              content: "";
+              position: absolute;
+              left: 0;
+              bottom: 0;
+              width: 0;
+              height: 0.15rem;
+              background-color: #38A34C;
+              transition: width 0.2s ease;
+            }
+
+            > input[type="radio"]{
+              display: none;
+            }
+
+            &:hover{
+              font-weight: 700;
+              color: $global-gray-text-color;
+
+              &::after {
+                width: 100%;
+              }
+            }
+
+            &:has(input[type="radio"]:checked) {
+              font-weight: 700;
+              color: $global-gray-text-color;
+
+              &::after {
+                width: 100%;
+              }
+            }
+          }
+
+          > .submenu {
+            @include flex(row, center, center, 1rem);
+            display: none;
+            position: absolute;
+            z-index: 999;
+            width: 24rem;
+            height: 3rem;
+            background-color: $global-white-text-color;
+            top: calc(100% + 0.6rem);
+            left: 0;
+
+            > .list{
+              @include flex(row, center, center, 1rem);
+              padding: 1rem 3rem;
+              width: 100%;
+
+              > .item{
+                font-size: 1rem;
+                color: $global-gray-right-text-color;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 0 1rem;
+                position: relative;
+
+                > input[type="radio"]{
+                  display: none;
+                }
+
+                &:hover,
+                &:has(input[type="radio"]:checked){
+                  color: $global-gray-text-color;
+                }
+
+                &::after{
+                  content: "";
+                  position: absolute;
+                  right: -1.5rem;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  width: 0.0625rem;
+                  height: 1rem;
+                  background-color: #00000020;
+                }
+
+                &:last-child::after{
+                  display: none;
+                }
+              }
+            }
+          }
+
+          &:has(.item[data-target="dog"]:hover),
+          &:has(.submenu.dog:hover){
+            .submenu.dog {
+              display: flex;
+            }
+
+            > .item[data-target="dog"]{
+              font-weight: 700;
+              color: $global-gray-text-color;
+
+              &::after{
+                width: 100%;
+              }
+            }
+          }
+
+          &:has(.item[data-target="cat"]:hover),
+          &:has(.submenu.cat:hover){
+            .submenu.cat {
+              display: flex;
+            }
+
+            > .item[data-target="cat"]{
+              font-weight: 700;
+              color: $global-gray-text-color;
+
+              &::after{
+                width: 100%;
+              }
+            }
+          }
+
+          &:has(.item[data-target="etc"]:hover),
+          &:has(.submenu.etc:hover){
+            .submenu.etc {
+              display: flex;
+            }
+
+            > .item[data-target="etc"]{
+              font-weight: 700;
+              color: $global-gray-text-color;
+
+              &::after{
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  > .search{
+    @include flex(row, stretch, flex-start);
+    border: 0.0625rem solid #5F646620;
+    border-radius: 999rem;
+    height: 2.7rem;
+    width: clamp(15rem, 35vw, 30rem);
+    overflow: hidden;
+
+    > .search-wrapper{
+      @include flex(row, flex-start, stretch);
+      flex: 1;
+      background-color: #ffffff;
+      height: 100%;
+      padding: 0 2rem;
+
+      > .search-box{
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+    > .submit{
+      @include flex(row, center, center);
+      width: 3rem;
+      height: 100%;
+      background-color: #89CC96;
+      padding: 0 0.7rem;
+      cursor: pointer;
+
+      > .image{
+        width: 1.5rem;
       }
     }
   }

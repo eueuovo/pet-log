@@ -11,6 +11,7 @@ $viewBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     $view.classList.toggle('active');
 });
+
 // 바깥 클릭하면 닫기
 document.addEventListener('click', (e) => {
     if(!$friendWrapper.contains(e.target)) {

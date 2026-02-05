@@ -11,10 +11,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping(value="/user")
-public class HomeController {
+public class UserController {
     @RequestMapping(value="/login",method = RequestMethod.GET,produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getLogin(ModelAndView modelAndView, Model model){
-      modelAndView.setViewName("user/login");
+        modelAndView.setViewName("user/login");
+        return modelAndView;
+    }
+
+    @RequestMapping(value="/register",method = RequestMethod.GET,produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getRegister(ModelAndView modelAndView, Model model){
+        modelAndView.setViewName("user/register");
         return modelAndView;
     }
 }

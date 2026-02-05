@@ -2,11 +2,11 @@
 @import "def";
 
 #topNavigator > .nav-wrapper > .user > .friend-wrapper {
-    position: relative;
+  position: relative;
 
-    > .view-btn {
-        cursor: pointer;
-    }
+  > .view-btn {
+    cursor: pointer;
+  }
 
     > .view {
         @include flex(column, center, center);
@@ -155,23 +155,20 @@
             width: 100%;
             padding: 1.2rem 1.2rem;
 
-            > button {
-                flex: 1;
-                background-color: #e7e5e4;
-                color: black;
-                padding: 0.3rem;
-                border-radius: 0.5rem;
-                cursor: pointer;
-                &:hover {
-                    background-color: darken(#e7e5e4, 5%);
-                }
-                &.active {
-                    background-color: $global-yellow-text-color;
-                    //&:hover {
-                    //  background-color: darken($global-yellow-text-color, 5%);
-                    //}
-                }
-            }
+      > button {
+        flex: 1;
+        background-color: #e7e5e4;
+        color: black;
+        padding: 0.3rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        &:hover {
+          background-color: darken(#e7e5e4, 5%);
         }
+        &.active {
+          background-color: $global-yellow-text-color;
+        }
+      }
     }
+  }
 }
