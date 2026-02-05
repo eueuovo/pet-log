@@ -1,15 +1,18 @@
 package dev.dhkim.petlog.main.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-//프론트랑 서버랑 연결해주는 역할
+//프론트랑 서버랑 연결해주는 역할(화면에 표시할거임)
 @Getter
-//api에서 값을 꺼내서 db 에 저장하기 위한 dto
+@AllArgsConstructor
+//api에서 값을 꺼내서 db 에 저장하기 위한 (화면에 표시할 내용이 꼭 담겨있어야 함)
 public class HospitalDto {
-    private String BIZPLC_NM;
-    private String ROAD_NM_ADDR;
-    private String CRD_INFO_X;
-    private String CRD_INFO_Y;
-    private String TELNO;
-    private String SALS_STTS_NM;
-    private String ROAD_NM_ZIP;
+    private String BIZPLC_NM; //병원 이름
+    private String ROAD_NM_ADDR; // 도로명 주소
+    private String ROAD_NM_ZIP; // 우편번호
+    private String TELNO; // 전화번호
+    private String SALS_STTS_NM; //영업상태
+    private Double Lat;
+    private Double Lng;
+
 }

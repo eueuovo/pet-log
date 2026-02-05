@@ -31,8 +31,8 @@ public class HospitalEntity {
 
     // 공공데이터 CRD_INFO_X/Y
     @Column(name = "crd_x")
-    private double crdX;
+    private Double crdX;
 
     @Column(name = "crd_y")
-    private double crdY;
+    private Double crdY;
 }
