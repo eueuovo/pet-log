@@ -1,7 +1,8 @@
 package dev.dhkim.petlog.entities.user;
 
 import lombok.*;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,10 +14,10 @@ public class PetEntity {
     private int userId;
     private String name;
     private String species;
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
     private String gender;
-    private Float weight;
+    private double weight;
     private String bodyType;
     private String imageUrl;
-    private Boolean isPrimary;
+    private boolean isPrimary;
 }
