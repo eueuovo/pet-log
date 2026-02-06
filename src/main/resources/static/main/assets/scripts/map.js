@@ -39,7 +39,7 @@ function initMap() {
 
     const options = {
         /*지도 최초 중심 좌표 (서울 시청)*/
-        center: new kakao.maps.LatLng(37.5665, 126.9780),
+        center: new kakao.maps.LatLng(35.866082, 128.593806),
         level: 4 // 숫자가 낮아질수록 가까움
     };
 

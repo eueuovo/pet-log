@@ -82,7 +82,7 @@ function goToStep(stepNumber) {
     }
 }
 
-// 회원가입 필수 입력부분 미입력시 알림창
+// 회원가입 필수 입력부분 미입력시 알림창 (로그인이랑 중복이긴한데 common.js안만들거라 그냥 중복시키기)
 const registerMessage = document.getElementById('register-message');
 const $title = document.createElement('span');
 const $text = document.createElement('span');
@@ -302,6 +302,39 @@ ThirdPersonalNextButton.addEventListener('click', () => {
     goToStep(4);
 });
 
+/*============회원가입 세번째 단계(사업자)================*/
+const ThirdBusinessNextButton = $registerThirdBusinessStep.querySelector(':scope > .button-wrapper > .next');
+const ThirdBusinessInputs = $registerThirdBusinessStep.querySelectorAll('.input');
+const ThirdBusinessPasswordInput = $registerThirdBusinessStep.querySelector(':scope > .passwordLabel > .password');
+const ThirdBusinessPasswordCheckInput = $registerThirdBusinessStep.querySelector(':scope > .passwordCheckLabel > .passwordCheck');
+ThirdBusinessNextButton.addEventListener('click', () => {
+    const findEmptyInput = [...ThirdBusinessInputs].find(input => {
+        return !input.disabled && !input.classList.contains('detailAddress') && input.value.trim() === '';
+    });
+
+    if (findEmptyInput) {
+        showMessage('정보를 모두 입력 후 다음 단계로 넘어갈 수 있습니다.');
+        findEmptyInput.focus();
+        findEmptyInput.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+        return;
+    }
+    if (!isEmailVerified) {
+        showMessage('이메일 인증을 완료해주세요.');
+        return;
+    }
+    if (ThirdBusinessPasswordInput.value !== ThirdBusinessPasswordCheckInput.value) {
+        showMessage('비밀번호가 서로 일치하지 않습니다. 다시 확인해주세요.');
+        return;
+    }
+    goToStep(4);
+});
+
+
+
+
 
 
 
@@ -358,7 +391,7 @@ $registerForthSteps.forEach(step => {
 
 
 
-
+// region 회원가입 네번쨰 단계(개인+애완동물 로직)
 
 /*============회원가입 네번째 단계(개인)================*/
 
@@ -377,6 +410,16 @@ function closeAllPetDialogs() {
     $petDialogs.forEach(dialog => {
         dialog.classList.remove('visible');
     });
+    closeWrapper()
+}
+
+// dialog 내 모든 wrapper 닫기
+function closeWrapper() {
+    $petDialogFirst.querySelector(':scope > .anotherType-wrapper').classList.remove('visible');
+    $petDialogSecondPetTypeWrapper.classList.remove('visible');
+    yearWrapper.classList.remove('visible');
+    monthWrapper.classList.remove('visible');
+    dateWrapper.classList.remove('visible');
 }
 
 // dialog 하나만 열게하기
@@ -429,9 +472,11 @@ function resetDialogFirst() {
         radio.checked = false;
     });
     $petDialogFirst.querySelector(':scope > .petName-wrapper > .petName').value = '';
+    $petDialogFirst.querySelector(':scope > .anotherType-wrapper').classList.remove('visible');
     selectType = null;
     $petDialogFirstNextButton.setAttribute('disabled', '');
 }
+
 
 function resetDialogSecond() {
     $petDialogSecond.querySelectorAll('input').forEach(input => {
@@ -444,6 +489,7 @@ function resetDialogSecond() {
         wrapper.classList.remove('visible');
     });
     $petDialogSecondNextButton.setAttribute('disabled', '');
+    dialogSecondNextButton();
 }
 
 function resetDialogThird() {
@@ -465,8 +511,11 @@ function resetAllDialog() {
     resetDialogThird()
 }
 
+let editMod = null;
+
 // 회원가입 네번째 단계에서 애완동물 등록버튼을 눌렀을 때
 $petRegistrationButton.addEventListener('click', () => {
+    editMod = null;
     resetAllDialog();
     openDialog(1);
 });
@@ -475,11 +524,15 @@ $petRegistrationButton.addEventListener('click', () => {
 $petDialogs.forEach(step => {
     const dialogCancelButton = step.querySelector(':scope > .cancel');
 
-    dialogCancelButton.addEventListener('click', () => {
+    dialogCancelButton.onclick = () => {
         closeAllPetDialogs()
-        resetAllDialog()
+        // 등록 모드일 때만 초기화
+        if (!editMod) {
+            resetAllDialog();
+        }
         currentStep = 1;
-    });
+        editMod = null; // 취소하면 editMod 초기화
+    };
 });
 
 
@@ -490,37 +543,71 @@ const anotherSelect = $petDialogFirst.querySelector(':scope > .select-wrapper > 
 dogSelect.addEventListener('click', () => {
     selectType = 'dog';
     dialogFirstNextButton()
-    resetDialogSecond()
-    resetDialogThird()
+    if (!editMod) {
+        resetDialogSecond();
+        resetDialogThird();
+    }
+    $petDialogFirst.querySelector(':scope > .anotherType-wrapper').classList.remove('visible');
+    $petDialogFirst.querySelector(':scope > .anotherType-wrapper > .typeSelect').value = '';
+    $petDialogSecond.querySelector(':scope > .selectedPetType > .petType').value = '';
+    dialogSecondNextButton();
 });
 catSelect.addEventListener('click', () => {
     selectType = 'cat';
     dialogFirstNextButton()
-    resetDialogSecond()
-    resetDialogThird()
+    if (!editMod) {
+        resetDialogSecond();
+        resetDialogThird();
+    }
+    $petDialogFirst.querySelector(':scope > .anotherType-wrapper').classList.remove('visible');
+    $petDialogFirst.querySelector(':scope > .anotherType-wrapper > .typeSelect').value = '';
+    $petDialogSecond.querySelector(':scope > .selectedPetType > .petType').value = '';
+    dialogSecondNextButton();
 });
 anotherSelect.addEventListener('click', () => {
     selectType = 'another';
     dialogFirstNextButton()
-    resetDialogSecond()
-    resetDialogThird()
+
+    $petDialogFirst.querySelector(':scope > .anotherType-wrapper').classList.add('visible');
+    $petDialogSecond.querySelector(':scope > .selectedPetType > .petType').value = '';
+    $petDialogSecondPetTypeWrapper.classList.remove('visible');
+    if (!editMod) {
+        resetDialogSecond();
+        resetDialogThird();
+    }
+    dialogSecondNextButton();
 });
 
+
 function dialogFirstNextButton() {
-    if (selectType != null) {
-        if (petNameInput.value.trim() !== '') {
-            $petDialogFirstNextButton.removeAttribute('disabled');
-        } else {
-            $petDialogFirstNextButton.setAttribute('disabled', '');
-        }
-    } else {
+    // 공통: 이름은 필수
+    if (!selectType || petNameInput.value.trim() === '') {
         $petDialogFirstNextButton.setAttribute('disabled', '');
+        return;
     }
+    // another일 경우: 종류 선택도 필수
+    if (selectType === 'another') {
+        const anotherSelect = $petDialogFirst
+            .querySelector(':scope > .anotherType-wrapper > .typeSelect');
+        if (!anotherSelect.value) {
+            $petDialogFirstNextButton.setAttribute('disabled', '');
+            return;
+        }
+    }
+    // 조건 다 만족하면 활성화
+    $petDialogFirstNextButton.removeAttribute('disabled');
 }
+
 
 const petNameInput = $petDialogFirst.querySelector(':scope > .petName-wrapper > .petName');
 petNameInput.addEventListener('input', () => {
     dialogFirstNextButton()
+});
+
+
+const anotherTypeSelect = $petDialogFirst.querySelector(':scope > .anotherType-wrapper > .typeSelect');
+anotherTypeSelect.addEventListener('change', () => {
+    dialogFirstNextButton();
 });
 
 // 애완동물 DialogFirst에서 다음버튼을 눌렀을 때
@@ -860,17 +947,19 @@ function getTypeList(types) {
 
 const dialogSecondPetTypeInput = $petDialogSecondSelectType.querySelector(':scope > .petType');
 function dialogSecondNextButton() {
-    if (selectType !== 'another') {
-        if (dialogSecondPetTypeInput.value.trim() !== '') {
-            $petDialogSecondNextButton.removeAttribute('disabled');
-        } else {
-            $petDialogSecondNextButton.setAttribute('disabled', '');
-        }
-    }
     if (selectType === 'another') {
         $petDialogSecondNextButton.removeAttribute('disabled');
+        return;
+    }
+
+    // selectType이 dog/cat인 경우
+    if (dialogSecondPetTypeInput.value.trim() !== '') {
+        $petDialogSecondNextButton.removeAttribute('disabled');
+    } else {
+        $petDialogSecondNextButton.setAttribute('disabled', '');
     }
 }
+
 
 // 애완동물 종 검색기능
 const typeSearch = $petDialogSecondPetTypeWrapper.querySelector(':scope > .typeSearch');
@@ -1026,58 +1115,128 @@ $petDialogThirdPreviousButton.addEventListener('click', () => {
 const pets = [];
 const petList = $registerForthPersonalStep.querySelector(':scope > .pet-list');
 
+// 새 petId 계산 함수
+function getNextPetId() {
+    const usedIds = pets.map(p => p.petId);
+    let id = 1;
+    while (usedIds.includes(id)) {
+        id++;
+    }
+    return id;
+}
+
 // 애완동물 DialogThird에서 작성완료 버튼을 눌렀을 때
-let petId = 1;
 $petDialogThirdCompleteButton.addEventListener('click', () => {
     const petNameInput = $petDialogFirst.querySelector(':scope > .petName-wrapper > .petName');
-    const genderInput = $petDialogThird.querySelector(':scope input[name="gender"]:checked');
+    const genderInput = $petDialogThird.querySelector('input[name="gender"]:checked');
     const year = petYear.value || petYear.placeholder;
     const weight = $petDialogThird.querySelector(':scope > .petWeightLabel > .weight-wrapper > .weight');
+    const weightTypeInput = $petDialogThird.querySelector('input[name="weightType"]:checked');
     const introduction = $petDialogSecond.querySelector(':scope > .introduction > .introduce');
-    const pet = {
-        petId: petId++,
-        petImage: fileInput.files.length > 0 ? preview.src : '/user/assets/images/defaultPetImage.png',
-        name: petNameInput.value,
-        species: $petDialogSecondSelectType.querySelector(':scope > .petType').value,
-        gender: genderInput ? genderInput.classList.contains('male') ? '남아' : '여아' : null,
-        birth: `${year}생`,
-        weight: weight.value,
-        introduction: introduction.value
+    const age = currentYear - parseInt(year);
+
+    let species = null;
+    if (selectType === 'another') {
+        species = $petDialogFirst
+            .querySelector(':scope > .anotherType-wrapper > .typeSelect')
+            .value;
+    } else {
+        species = $petDialogSecondSelectType
+            .querySelector(':scope > .petType')
+            .value;
     }
-    pets.push(pet);
-    addPetToList(pet);
-    closeAllPetDialogs();
-    resetAllDialog();
-    currentStep = 1;
+
+    const petData = {
+        petId: editMod ? editMod.petId : getNextPetId(),
+        selectType: selectType,
+        name: petNameInput.value,
+        petImage: fileInput.files.length > 0
+            ? preview.src
+            : editMod
+                ? editMod.petImage
+                : '/user/assets/images/defaultPetImage.png',
+        species: species,
+        birthYear: petYear.value || petYear.placeholder,
+        birthMonth: petMonth.value || petMonth.placeholder,
+        birthDate: petDate.value || petDate.placeholder,
+        age: `${age}살`,
+        introduction: introduction.value,
+        gender: genderInput ? genderInput.classList.contains('male') ? '남아' : '여아' : null,
+        weight: weight.value,
+        weightType: weightTypeInput
+            ? weightTypeInput.classList.contains('slim') ? 'slim'
+            : weightTypeInput.classList.contains('normal') ? 'normal'
+            : 'chubby'
+            : null
+    }
+
+    if (editMod) {
+        // 수정모드
+        const index = pets.findIndex(p => p.petId === editMod.petId);
+        pets[index] = petData;
+
+        const li = petList.querySelector(`li[data-pet-id="${editMod.petId}"]`);
+        if (li) {
+            li.querySelector('.petName').firstChild.textContent = petData.name;
+            li.querySelector('.petName .gender').src = petData.gender === '남아'
+                ? '/user/assets/images/male.png'
+                : '/user/assets/images/female.png';
+            li.querySelector('.species').textContent = `품종 : ${petData.species}`;
+            li.querySelector('.birth').textContent = `나이 : ${petData.age}`;
+            li.querySelector('.weight').textContent = `몸무게 : ${petData.weight}kg`;
+            li.querySelector('.introduction').textContent = `소개 : ${petData.introduction}`;
+            li.querySelector('.petImage').src = petData.petImage;
+        }
+
+        // 화면 닫고 초기화
+        editMod = null;
+        closeAllPetDialogs();
+        // 수정모드는 resetAllDialog 호출 안함
+        currentStep = 1;
+    } else {
+        // 등록모드
+        pets.push(petData);
+        addPetToList(petData);
+
+        // 화면 닫고 초기화
+        closeAllPetDialogs();
+        resetAllDialog();
+        currentStep = 1;
+    }
 });
 
-
-function addPetToList(pet) {
+function addPetToList(petData) {
     const li = document.createElement('li');
     li.classList.add('pet');
-    const genderIcon = pet.gender === '남아' ? '/user/assets/images/male.png' : '/user/assets/images/female.png';
-    const petImage = pet.petImage;
+    li.dataset.petId = petData.petId;
+    const genderIcon = petData.gender === '남아' ? '/user/assets/images/male.png' : '/user/assets/images/female.png';
+    const petImage = petData.petImage;
     li.innerHTML = `
     <div class="petInformation">
         <div class="side-wrapper">
             <div class="image-wrapper">
                 <img class="petImage" src="${petImage}" alt="">
             </div>
-            <label class="remember">
-                <input hidden class="checkbox" type="radio" name="primary" value="${pet.petId}">
-                <span class="text"></span>
-            </label>
         </div>
         <div class="detail">
             <span class="petName">
-                ${pet.name}
+                ${petData.name}
                 <img class="gender" src="${genderIcon}" alt="">
             </span>
-            <span class="species">품종 : ${pet.species}</span>
-            <span class="birth">생일 : ${pet.birth}</span>
-            <span class="weight">몸무게 : ${pet.weight}kg</span>
-            <span class="introduction">소개 : ${pet.introduction}</span>
+            <span class="species">종류 : ${petData.species}</span>
+            <span class="birth">나이 : ${petData.age}</span>
+            <span class="weight">몸무게 : ${petData.weight}kg</span>
+            <span class="introduction">한 줄 소개 : ${petData.introduction}</span>
         </div>
+    </div>
+    <div class="bottom-wrapper">
+        <label class="remember">
+            <input hidden class="checkbox" type="radio" name="primary" value="${petData.petId}">
+            <span class="text"></span>
+        </label>
+        <span class="-flex-stretch"></span>
+        <button class="modify" type="button">수정</button>
+        <button class="delete" type="button">삭제</button>
     </div>`;
     if (pets.length === 1) {
         li.querySelector('input[name="primary"]').checked = true;
@@ -1087,12 +1246,199 @@ function addPetToList(pet) {
 
 
 
+// region ============회원가입 네번째 단계(개인) 애완동물 수정 ================
+
+// 수정버튼 눌렀을 때 모달 띄우면서 정보 불러오기
+petList.addEventListener('click', (e) => {
+    const modifyButton = e.target.classList.contains('modify');
+    if (!modifyButton) {
+        return;
+    }
+    const petItems = petList.querySelectorAll(':scope > .pet');
+
+    let findLi = null;
+    petItems.forEach(item => {
+        if (item.contains(e.target)) {
+            findLi = item;
+        }
+    });
+    if (!findLi) {
+        return;
+    }
+    const petId = parseInt(findLi.dataset.petId);
+    const petData = pets.find(p => p.petId === petId);
+    if (!petData) {
+        return;
+    }
+    editMod = petData; // 수정모드 Yes
+    loadPetDialog(petData);
+    openDialog(1);
+});
+
+// 삭제눌렀을 때 띄울 모달
+const petDeleteMessage = document.getElementById('petDeleteMessage');
+const deleteMessageTitle = document.createElement('span');
+const deleteMessageText = document.createElement('span');
+const deleteButton = petDeleteMessage.querySelector(':scope > .button-wrapper > .delete');
+const cancelButton = petDeleteMessage.querySelector(':scope > .button-wrapper > .cancel');
+deleteMessageTitle.classList.add('title');
+deleteMessageText.classList.add('text');
+petDeleteMessage.prepend(deleteMessageTitle, deleteMessageText);
+
+
+// 삭제버튼 눌렀을 때 모달 띄우면서 정보 삭제하기
+petList.addEventListener('click', (e) => {
+    const deleteButton = e.target.classList.contains('delete');
+    if (!deleteButton) {
+        return;
+    }
+    const petItems = petList.querySelectorAll(':scope > .pet');
+
+    let findLi = null;
+    petItems.forEach(item => {
+        if (item.contains(e.target)) {
+            findLi = item;
+        }
+    });
+    if (!findLi) {
+        return;
+    }
+    showDeleteMessage('경고', '정말로 삭제하시겠습니까?', findLi);
+
+});
+
+let deleteLi = null;
+function showDeleteMessage(title, text, findLi) {
+    deleteLi = findLi;
+    petDeleteMessage.classList.add('visible');
+    deleteMessageTitle.innerText = title;
+    deleteMessageText.innerText = text;
+}
+
+deleteButton.addEventListener('click', () => {
+    if (!deleteLi) return;
+
+    // 삭제할 petId
+    const removeId = Number(deleteLi.dataset.petId);
+
+    // pets 배열에서 제거
+    const removeIndex = pets.findIndex(p => p.petId === removeId);
+    if (removeIndex !== -1) {
+        pets.splice(removeIndex, 1);
+    }
+
+    //  화면에서 제거
+    deleteLi.remove();
+    deleteLi = null;
+    petDeleteMessage.classList.remove('visible');
+
+    // 남아있는 li 기준으로 다시 번호 매기기
+    const petItems = petList.querySelectorAll(':scope > li.pet');
+    petItems.forEach((li, index) => {
+        const newId = index + 1;
+
+        // li의 data-pet-id 재설정
+        li.dataset.petId = newId;
+        // radio value 재설정
+        const radio = li.querySelector('input[name="primary"]');
+        if (radio) {
+            radio.value = newId;
+        }
+        // pets 배열도 같은 순서로 petId 재설정
+        if (pets[index]) {
+            pets[index].petId = newId;
+        }
+    });
+    // 대표동물 처리
+    const checked = petList.querySelector('input[name="primary"]:checked');
+    if (!checked && petItems.length > 0) {
+        petItems[0]
+            .querySelector('input[name="primary"]')
+            .checked = true;
+    }
+});
+
+cancelButton.addEventListener('click', () => {
+    deleteLi = null;
+    petDeleteMessage.classList.remove('visible');
+});
+
+function loadPetDialog(petData) {
+    // 첫번째 dialog
+    const dogInput = $petDialogFirst.querySelector('.dog input[type="radio"]');
+    const catInput = $petDialogFirst.querySelector('.cat input[type="radio"]');
+    const anotherInput = $petDialogFirst.querySelector('.another input[type="radio"]');
+
+    selectType = petData.selectType;
+    if (selectType === 'dog') {
+        dogInput.checked = true;
+    }
+    if (selectType === 'cat') {
+        catInput.checked = true;
+    }
+    if (selectType === 'another') {
+        anotherInput.checked = true;
+        $petDialogFirst.querySelector(':scope > .anotherType-wrapper').classList.add('visible');
+    }
+    petNameInput.value = petData.name;
+    dialogFirstNextButton(); // 버튼 상태 갱신
+
+    // 두번째 dialog
+    const petSpecies = $petDialogSecond.querySelector(':scope > .selectedPetType > .petType');
+    const introduce = $petDialogSecond.querySelector(':scope > .introduction > .introduce');
+    const isDefaultImage =
+        petData.petImage === '/user/assets/images/defaultPetImage.png';
+    preview.src = petData.petImage;
+    if (isDefaultImage) {
+        circle.classList.remove('visible'); // 기본이미지면 미리보기 숨김
+    } else {
+        circle.classList.add('visible');    // 실제 업로드 이미지면 보이기
+    }
+    petSpecies.value = petData.species;
+    petYear.value = petData.birthYear;
+    petMonth.value = petData.birthMonth;
+    petDate.value = petData.birthDate;
+    introduce.value = petData.introduction;
+
+    // 세번째 dialog
+    const maleInput = $petDialogThird.querySelector(':scope > .genderLabel > .gender-wrapper > .maleLabel > .male');
+    const femaleInput = $petDialogThird.querySelector(':scope > .genderLabel > .gender-wrapper > .femaleLabel > .female');
+    if (petData.gender === "남아") {
+        maleInput.checked = true;
+    }
+    if (petData.gender === '여아') {
+        femaleInput.checked = true;
+    }
+
+    weightInput.value = petData.weight;
+
+    const slimInput = $petDialogThird.querySelector(':scope > .weightTypeLabel > .weightType-wrapper > .slim > .slim');
+    const normalInput = $petDialogThird.querySelector(':scope > .weightTypeLabel > .weightType-wrapper > .normal > .normal');
+    const chubbyInput = $petDialogThird.querySelector(':scope > .weightTypeLabel > .weightType-wrapper > .chubby > .chubby');
+
+    if (petData.weightType === 'slim') {
+        slimInput.checked = true;
+    }
+    else if (petData.weightType === 'normal') {
+        normalInput.checked = true;
+    }
+    else if (petData.weightType === 'chubby') {
+        chubbyInput.checked = true;
+    }
+
+    // 버튼 상태 갱신
+    dialogSecondNextButton();
+    dialogThirdCompleteButton();
+}
+
+// endregion
+
+
+// endregion
 
 
 
-
-
-
+/*============회원가입 네번째 단계(사업자)================*/
 
 
 
