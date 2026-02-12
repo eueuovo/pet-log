@@ -308,8 +308,6 @@ textarea[data-object=input][data-resize=both] {
 }
 #topNavigator > .nav-wrapper > .user > .friend-wrapper > .view.active {
   transform: translateY(0);
-  cursor: default;
-  pointer-events: auto;
   opacity: 1;
 }
 #topNavigator > .nav-wrapper > .user > .friend-wrapper > .view > .friend-container {

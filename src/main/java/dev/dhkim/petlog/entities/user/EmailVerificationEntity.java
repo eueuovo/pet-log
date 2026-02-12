@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 public class EmailVerificationEntity {
     private int verificationId;
     private Integer userId;
+    private String type;
     private String email;
-    private String token;
+    private String code;
     private boolean isVerified;
     private LocalDateTime expiresAt;
-    private LocalDateTime verifiedAt;
     private LocalDateTime createdAt;
 }

@@ -19,4 +19,5 @@ public class UserEntity {
     private String userType;
     private int shopPoint;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

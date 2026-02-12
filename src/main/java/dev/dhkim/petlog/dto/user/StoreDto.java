@@ -1,23 +1,21 @@
-package dev.dhkim.petlog.entities.user;
+package dev.dhkim.petlog.dto.user;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "storeId")
-public class StoreEntity {
-    private int storeId;
-    private int userId;
+public class StoreDto {
     private String storeName;
     private String postalCode;
     private String addressPrimary;
     private String addressSecondary;
     private String category;
-    private String phone;
     private LocalDateTime createdAt;
 }

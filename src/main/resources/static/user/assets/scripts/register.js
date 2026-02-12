@@ -99,6 +99,22 @@ warningButton.addEventListener('click', () => {
     registerMessage.classList.remove('visible');
 });
 
+const checkMessage = document.getElementById('checkMessage');
+const checkTitle = document.createElement('span');
+const checkText = document.createElement('span');
+const yesButton = checkMessage.querySelector(':scope > .button-wrapper > .yes');
+const noButton = checkMessage.querySelector(':scope > .button-wrapper > .no');
+
+checkTitle.classList.add('title');
+checkText.classList.add('text');
+checkTitle.innerText = '알림';
+checkMessage.prepend(checkTitle, checkText);
+function showCheckMessage(text) {
+    checkMessage.classList.add('visible');
+    checkText.innerText = text;
+
+}
+
 
 
 
@@ -178,26 +194,6 @@ $registerThirdSteps.forEach(step => {
     const emailVerifyNumberInput = step.querySelector(':scope > .emailVerifyLabel > .emailVerifyNumber');
     const emailVerifyButton = step.querySelector(':scope > .emailVerifyLabel > .button');
 
-    emailSendButton.addEventListener('click', () => {
-        if (emailInput.value === '') {
-            showMessage('이메일을 입력해주세요.');
-            return;
-        }
-        emailInput.setAttribute('disabled', '');
-        emailSendButton.setAttribute('disabled', '');
-        emailVerifyNumberInput.removeAttribute('disabled');
-        emailVerifyButton.removeAttribute('disabled');
-    });
-    emailVerifyButton.addEventListener('click', () => {
-        if (emailVerifyNumberInput.value === '') {
-            showMessage('인증번호를 입력해주세요.');
-            return;
-        }
-        emailVerifyNumberInput.setAttribute('disabled', '');
-        emailVerifyButton.setAttribute('disabled', '');
-        showMessage('인증을 완료하였습니다.');
-        isEmailVerified = true;
-    })
 });
 
 
@@ -254,19 +250,6 @@ $registerThirdSteps.forEach(step => {
 });
 
 /*============회원가입 세번째 단계(개인)================*/
-const registerThirdPersonalNicknameInput = $registerThirdPersonalStep.querySelector(':scope > .nicknameLabel > .nickname');
-const registerThirdPersonalNicknameButton = $registerThirdPersonalStep.querySelector(':scope > .nicknameLabel > .button');
-let isNicknameChecked = false;
-registerThirdPersonalNicknameButton.addEventListener('click', () => {
-    if (registerThirdPersonalNicknameInput.value === '') {
-        showMessage('닉네임을 입력해주세요.');
-        return;
-    }
-    isNicknameChecked = true;
-    showMessage('사용할 수 있는 닉네임입니다.');
-    registerThirdPersonalNicknameInput.setAttribute('disabled', '');
-    registerThirdPersonalNicknameButton.setAttribute('disabled', '');
-});
 
 // 세번째 단계에서 다음버튼을 눌렀을 때 정보 미입력 시 경고모달 띄우기
 const ThirdPersonalNextButton = $registerThirdPersonalStep.querySelector(':scope > .button-wrapper > .next');
@@ -295,8 +278,9 @@ ThirdPersonalNextButton.addEventListener('click', () => {
         showMessage('비밀번호가 서로 일치하지 않습니다. 다시 확인해주세요.');
         return;
     }
-    if (!isNicknameChecked) {
-        showMessage('닉네임 중복 확인을 완료해주세요.');
+    const checkVisible = $registerThirdPersonalStep.querySelector('.text.visible');
+    if (checkVisible) {
+        showMessage('정보를 다시 확인해 주세요.');
         return;
     }
     goToStep(4);
@@ -327,6 +311,11 @@ ThirdBusinessNextButton.addEventListener('click', () => {
     }
     if (ThirdBusinessPasswordInput.value !== ThirdBusinessPasswordCheckInput.value) {
         showMessage('비밀번호가 서로 일치하지 않습니다. 다시 확인해주세요.');
+        return;
+    }
+    const checkVisible = $registerThirdBusinessStep.querySelector('.text.visible');
+    if (checkVisible) {
+        showMessage('정보를 다시 확인해 주세요.');
         return;
     }
     goToStep(4);
@@ -382,10 +371,6 @@ $registerForthSteps.forEach(step => {
 
 $registerForthSteps.forEach(step => {
     const completeButton = step.querySelector(':scope > .button-wrapper > .complete');
-
-    completeButton.addEventListener('click', () => {
-        location.href = '/user/login';
-    });
 });
 
 
@@ -1445,11 +1430,401 @@ function loadPetDialog(petData) {
 
 
 
-/*
-* 현재 해결해야할거
-* 아직 정보들 초기화 하는걸 안만들어놔서 나중에 회원가입 완료할떄 개인,사업자 회원 둘다 시도한다면
-* 둘의정보가 동시에 저장될 우려가 있음
-* 또 공용으로 쓴 함수들이 많기 때문에 헷갈릴 우려가 있다*/
+
+
+
+
+
+
+
+/* 회원가입 완료 전송 */
+$registerContainer.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    let phone;
+    let store;
+    if (selectedMemberType === 'personal') {
+        phone = $registerThirdPersonalStep.querySelector('.firstNumber').value + '-' + $registerThirdPersonalStep.querySelector('.contactNumber.first').value + '-' + $registerThirdPersonalStep.querySelector('.contactNumber.second').value;
+    }
+    if (selectedMemberType === 'business') {
+        phone = $registerThirdBusinessStep.querySelector('.firstNumber').value + '-' + $registerThirdBusinessStep.querySelector('.contactNumber.first').value + '-' + $registerThirdBusinessStep.querySelector('.contactNumber.second').value;
+
+        store = {
+            storeName: $registerForthBusinessStep.querySelector('.storeName.input').value,
+            category: $registerForthBusinessStep.querySelector('.category').value,
+            postalCode: $registerForthBusinessStep.querySelector('.postalNumber').value,
+            addressPrimary: $registerForthBusinessStep.querySelector('.primaryAddress').value,
+            addressSecondary: $registerForthBusinessStep.querySelector('.detailAddress').value
+        }
+    }
+
+    const petsDtoArray = pets.map(pet => {
+        // 문자열에 '년', '월', '일'이 붙어있다면 제거
+        const year = Number(pet.birthYear.toString().replace(/\D/g,''));
+        const month = Number(pet.birthMonth.toString().replace(/\D/g,''));
+        const day = Number(pet.birthDate.toString().replace(/\D/g,''));
+
+        // 숫자가 제대로 파싱되지 않으면 에러
+        if (!year || !month || !day) {
+            console.error('잘못된 생년월일', pet.birthYear, pet.birthMonth, pet.birthDate);
+        }
+
+        const birthDate = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+        return {
+            name: pet.name,
+            species: pet.species,
+            birthDate: birthDate,  // yyyy-MM-dd
+            gender: pet.gender,
+            weight: pet.weight,
+            bodyType: pet.weightType,
+            imageUrl: pet.petImage
+        };
+    });
+
+
+    const form = selectedMemberType === 'personal' ? $registerThirdPersonalStep : $registerThirdBusinessStep;
+
+
+    const payload = {
+        email: form.querySelector('.email').value,
+        loginId: form.querySelector('.id').value,
+        password: form.querySelector('.password').value,
+        phone: phone,
+        userType: selectedMemberType,
+        name: selectedMemberType === 'personal' ? form.querySelector('.name').value : null,
+        nickname: selectedMemberType === 'personal' ? form.querySelector('.nickname').value : null,
+        companyName: selectedMemberType === 'business' ? form.querySelector('.companyName').value : null,
+        representativeName: selectedMemberType === 'business' ? form.querySelector('.representativeName').value : null,
+        businessNumber: selectedMemberType === 'business' ? form.querySelector('.businessNumber').value : null,
+        address: {
+            receiverName: null,
+            phone: phone,
+            postalCode: form.querySelector('.postalNumber').value,
+            addressPrimary: form.querySelector('.primaryAddress').value,
+            addressSecondary: form.querySelector('.detailAddress').value
+        },
+        store: store,
+        termsIds: Array.from(document.querySelectorAll('.agreement-check > .checkbox'))
+            .filter(cb => cb.checked)
+            .map(cb => parseInt(cb.dataset.termsId)),
+        pets: selectedMemberType === 'personal' ? petsDtoArray : null
+    };
+
+    try {
+        const res = await fetch('/user/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.result === 'SUCCESS') {
+            location.href = '/user/login';
+        } else {
+            console.error('회원가입 실패', data);
+        }
+    } catch (err) {
+        console.error('서버 통신 실패', err);
+    }
+});
+
+const loading = document.getElementById('loading');
+
+
+$registerThirdSteps.forEach(step => {
+    // region 이메일 검증
+    const sendButton = step.querySelector(':scope > .emailSendLabel > .button');
+        const emailInput = step.querySelector(':scope > .emailSendLabel > .email');
+
+    sendButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        if (emailInput.value === '') {
+            showMessage('이메일을 입력해주세요.');
+            emailInput.focus();
+            return;
+        }
+        loading.classList.add('visible');
+
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        formData.append('email', emailInput.value);
+        formData.append('type', 'REGISTER');
+        xhr.onreadystatechange = () => {
+            if(xhr.readyState !== XMLHttpRequest.DONE){
+                return;
+            }
+            loading.classList.remove('visible');
+            if(xhr.status < 200 || xhr.status >= 400){
+                
+                return;
+            }
+            const response = JSON.parse(xhr.responseText);
+            switch (response.result) {
+                case 'FAILURE':
+                    showMessage('전송 실패! 다시 확인해주세요.');
+                    break;
+                case 'FAILURE_DUPLICATE':
+                    showMessage('이미 사용중인 이메일입니다. 다시 입력해주세요.');
+                    emailInput.focus();
+                    emailInput.select();
+                    break;
+                case 'FAILURE_EXPIRED':
+                    showMessage('인증번호 유효기간이 지났습니다. 다시 시도해 주세요.');
+                    break;
+                case 'SUCCESS':
+                    showMessage('작성하신 이메일로 인증번호를 발송하였습니다. \n 인증번호는 5분간만 유효하니 유의해주세요.');
+                    emailInput.setAttribute('disabled', '');
+                    sendButton.setAttribute('disabled', '');
+                    emailCodeInput.removeAttribute('disabled');
+                    verifyButton.removeAttribute('disabled');
+                    break;
+                default:
+                    showMessage('알 수 없는 이유로 실패하였습니다. 다시 시도해주세요.');
+
+            }
+            
+        };
+        xhr.open('POST', '/user/email');
+        xhr.send(formData);
+    });
+
+
+    const verifyButton = step.querySelector(':scope > .emailVerifyLabel > .button');
+    const emailCodeInput = step.querySelector(':scope > .emailVerifyLabel > .emailVerifyNumber');
+
+    verifyButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        if (emailCodeInput.value === '') {
+            showMessage('인증번호를 입력해주세요.');
+            return;
+        }
+
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        formData.append('email', emailInput.value);
+        formData.append('code', emailCodeInput.value);
+        formData.append('type', 'REGISTER');
+        xhr.onreadystatechange = () => {
+            if(xhr.readyState !== XMLHttpRequest.DONE){
+                return;
+            }
+            if(xhr.status < 200 || xhr.status >= 400){
+
+                return;
+            }
+            const response = JSON.parse(xhr.responseText);
+            switch (response.result) {
+                case 'FAILURE':
+                    showMessage('인증번호가 일치하지 않습니다.');
+                    break;
+                case 'FAILURE_EXPIRED':
+                    showMessage('인증번호가 만료되었습니다. 다시 시도해 주세요.');
+                    emailInput.removeAttribute('disabled');
+                    sendButton.removeAttribute('disabled');
+                    emailCodeInput.setAttribute('disabled', '');
+                    verifyButton.setAttribute('disabled', '');
+                    break;
+                case 'SUCCESS':
+                    emailCodeInput.setAttribute('disabled', '');
+                    verifyButton.setAttribute('disabled', '');
+                    isEmailVerified = true;
+                    showMessage('인증을 완료하였습니다.');
+                    break;
+                default:
+
+            }
+
+        };
+        xhr.open('PATCH', '/user/email/verify');
+        xhr.send(formData);
+    });
+    // endregion
+
+    // region 아이디 검증
+    const loginIdInput = step.querySelector(':scope > .IdLabel > .id-wrapper > .id');
+
+    let loginIdTimeout;
+    const message = step.querySelector(':scope > .IdLabel > .id-wrapper > .text');
+    loginIdInput.addEventListener('input', () => {
+        clearTimeout(loginIdTimeout);
+        if (loginIdInput.value === '') {
+            message.classList.remove('visible');
+            return;
+        }
+        loginIdTimeout = setTimeout(() => {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState !== XMLHttpRequest.DONE){
+                    return;
+                }
+                if(xhr.status < 200 || xhr.status >= 400){
+
+                    return;
+                }
+                const response = JSON.parse(xhr.responseText);
+                switch (response.result) {
+                    case 'FAILURE':
+                        message.classList.add('visible');
+                        break;
+                    case 'SUCCESS':
+                        message.classList.remove('visible');
+                        break;
+                    default:
+                }
+            };
+            const url = new URL(origin);
+            url.pathname = '/user/loginId';
+            url.searchParams.set('loginId', loginIdInput.value);
+            xhr.open('GET', url);
+            xhr.send();
+        }, 500);
+    });
+    // endregion
+
+    // region 전화번호 검증
+    const firstNumber = step.querySelector('.firstNumber');
+    const middleNumber = step.querySelector('.contactNumber.first');
+    const lastNumber = step.querySelector('.contactNumber.second');
+    const phoneMessage = step.querySelector(':scope > .contactNumberLabel > .phone-wrapper > .text');
+
+    let phoneTimeout;
+    const checkPhone = () => {
+        clearTimeout(phoneTimeout);
+        if (middleNumber.value.length !== 4 || lastNumber.value.length !== 4) {
+            phoneMessage.classList.remove('visible');
+            return;
+        }
+
+        const phone = `${firstNumber.value}-${middleNumber.value}-${lastNumber.value}`;
+
+        phoneTimeout = setTimeout(() => {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState !== XMLHttpRequest.DONE){
+                    return;
+                }
+                if(xhr.status < 200 || xhr.status >= 400){
+
+                    return;
+                }
+                const response = JSON.parse(xhr.responseText);
+                switch (response.result) {
+                    case 'FAILURE':
+                        phoneMessage.classList.add('visible');
+                        break;
+                    case 'SUCCESS':
+                        phoneMessage.classList.remove('visible');
+                        break;
+                    default:
+                }
+            };
+            const url = new URL(origin);
+            url.pathname = '/user/phone';
+            url.searchParams.set('phone', phone);
+            xhr.open('GET', url);
+            xhr.send();
+        }, 500);
+    }
+    middleNumber.addEventListener('input', checkPhone);
+    lastNumber.addEventListener('input', checkPhone);
+
+    // endregion
+});
+
+
+
+
+// region 닉네임 검증
+const nicknameInput = $registerThirdPersonalStep.querySelector(':scope > .nicknameLabel > .nickname-wrapper > .nickname');
+const nicknameMessage = $registerThirdPersonalStep.querySelector(':scope > .nicknameLabel > .nickname-wrapper > .text');
+
+let nicknameTimeout;
+nicknameInput.addEventListener('input', () => {
+    clearTimeout(nicknameTimeout);
+    if (nicknameInput.value === '') {
+        nicknameMessage.classList.remove('visible');
+        return;
+    }
+    nicknameTimeout = setTimeout(() => {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+            if(xhr.readyState !== XMLHttpRequest.DONE){
+                return;
+            }
+            if(xhr.status < 200 || xhr.status >= 400){
+
+                return;
+            }
+            const response = JSON.parse(xhr.responseText);
+            switch (response.result) {
+                case 'FAILURE':
+                    nicknameMessage.classList.add('visible');
+                    break;
+                case 'SUCCESS':
+                    nicknameMessage.classList.remove('visible');
+                    break;
+                default:
+            }
+        };
+        const url = new URL(origin);
+        url.pathname = '/user/nickname';
+        url.searchParams.set('nickname', nicknameInput.value);
+        xhr.open('GET', url);
+        xhr.send();
+    }, 500);
+});
+// endregion
+
+
+const businessIdInput = $registerThirdBusinessStep.querySelector(':scope > .businessId > .businessId-wrapper > .businessId');
+const businessIdMessage = $registerThirdBusinessStep.querySelector(':scope > .businessId > .businessId-wrapper > .text');
+
+let businessIdTimeout;
+businessIdInput.addEventListener('input', () => {
+    clearTimeout(businessIdTimeout);
+    if (businessIdInput.value === '') {
+        businessIdMessage.classList.remove('visible');
+        return;
+    }
+    businessIdTimeout = setTimeout(() => {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+            if(xhr.readyState !== XMLHttpRequest.DONE){
+                return;
+            }
+            if(xhr.status < 200 || xhr.status >= 400){
+
+                return;
+            }
+            const response = JSON.parse(xhr.responseText);
+            switch (response.result) {
+                case 'FAILURE':
+                    businessIdMessage.classList.add('visible');
+                    break;
+                case 'SUCCESS':
+                    businessIdMessage.classList.remove('visible');
+                    break;
+                default:
+            }
+        };
+        const url = new URL(origin);
+        url.pathname = '/user/businessId';
+        url.searchParams.set('businessId', businessIdInput.value);
+        xhr.open('GET', url);
+        xhr.send();
+    }, 500);
+})
+
+
+
+
+
+
 
 
 

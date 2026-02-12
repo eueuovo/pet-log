@@ -28,8 +28,6 @@
 
     &.active {
       transform: translateY(0);
-      cursor: default;
-      pointer-events: auto;
       opacity: 1;
     }
 
