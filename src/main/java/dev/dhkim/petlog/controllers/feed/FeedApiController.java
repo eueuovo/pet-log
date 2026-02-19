@@ -1,13 +1,11 @@
 package dev.dhkim.petlog.controllers.feed;
 
+import dev.dhkim.petlog.dto.feed.FeedCommentDto;
 import dev.dhkim.petlog.dto.feed.FeedDto;
 import dev.dhkim.petlog.dto.feed.FeedScrollDto;
 import dev.dhkim.petlog.dto.feed.FeedThumbnailDto;
 import dev.dhkim.petlog.results.Result;
-import dev.dhkim.petlog.services.feed.FeedCommandService;
-import dev.dhkim.petlog.services.feed.FeedFollowService;
-import dev.dhkim.petlog.services.feed.FeedLikeService;
-import dev.dhkim.petlog.services.feed.FeedQueryService;
+import dev.dhkim.petlog.services.feed.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -26,6 +24,7 @@ public class FeedApiController {
     private final FeedCommandService feedCommandService;
     private final FeedLikeService feedLikeService;
     private final FeedFollowService feedFollowService;
+    private final FeedCommentService feedCommentService;
 
     // 무한 스크롤 요청 (/feed/explore)
     // 피드 조회
@@ -121,4 +120,53 @@ public class FeedApiController {
         );
     }
 
+    // 댓글 작성
+    @RequestMapping(value = "/{feedId}/comments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> createComment(@PathVariable int feedId,
+                                             @RequestBody Map<String, String> request,
+                                             @SessionAttribute Integer userId
+    ) {
+        if (userId == null) {
+            return Map.of("result", "LOGIN_REQUIRED");
+        }
+        String content = request.get("content");
+        FeedCommentDto comment = feedCommentService.createComment(feedId, userId, content);
+        return Map.of(
+                "result", "SUCCESS",
+                "comment", comment
+        );
+    }
+
+    // 대댓글 작성
+    @RequestMapping(value = "{feedId}/comments/{commentId}/replies", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> createReply(
+            @PathVariable int feedId,
+            @PathVariable int commentId,
+            @RequestBody Map<String, String> request,
+            @SessionAttribute(value="userId", required = false) Integer userId
+    ) {
+        if (userId == null) {
+            return Map.of("result", "LOGIN_REQUIRED");
+        }
+        String content = request.get("content");
+        FeedCommentDto reply = feedCommentService.createReply(feedId, commentId, userId, content);
+        return Map.of(
+                "result", "SUCCESS",
+                "reply", reply
+        );
+    }
+
+    // 댓글 삭제
+    @RequestMapping(value = "/{feedId}/comments/{commentId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> deleteComment(
+            @PathVariable int feedId,
+            @PathVariable int commentId,
+            @SessionAttribute(value="userId", required = false) Integer userId
+    ) {
+        if (userId == null) {
+            return Map.of("result", "LOGIN_REQUIRED");
+        }
+        feedCommentService.deleteComment(feedId, commentId, userId);
+        return Map.of("result", "SUCCESS");
+    }
 }

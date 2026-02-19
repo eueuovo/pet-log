@@ -54,7 +54,7 @@
   position: sticky;
   top: 6rem;
   height: calc(100vh - 5rem - 2rem);
-  overflow: hidden;
+  overflow-y: auto;
   border-radius: 1rem;
   border: 0.0625rem solid #CAE2CF;
   background-color: #F9F9F9;
@@ -264,6 +264,18 @@
   flex-grow: 1;
   flex-shrink: 1;
 }
+.comments {
+  max-height: 20rem;
+  overflow-y: auto;
+  padding-right: 0.3rem;
+}
+.comments::-webkit-scrollbar {
+  width: 0.3rem;
+}
+.comments::-webkit-scrollbar-thumb {
+  background: #e7e5e4;
+  border-radius: 0.3rem;
+}
 
 .comments-title {
   font-size: 0.9rem;
@@ -309,6 +321,19 @@
 .comment .comment-body {
   font-size: 0.8rem;
 }
+.comment .comment-body .reply-btn {
+  margin-top: 0.2rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.7rem;
+  color: #565656;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.comment .comment-body .reply-btn:hover {
+  text-decoration: underline;
+}
 .comment .comment-body .comment-top {
   align-items: center;
   display: flex;
@@ -332,7 +357,85 @@
   color: #565656;
 }
 .comment .comment-body .comment-text {
-  line-height: 1.35;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.reply-form {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
+  justify-content: flex-start;
+}
+.reply-form > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.reply-form > .-flex-stretch {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.reply-form {
+  margin-top: 0.3rem;
+}
+.reply-form.hidden {
+  display: none;
+}
+.reply-form .reply-input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid #e7e5e4;
+  font-size: 0.75rem;
+  background-color: #fff;
+}
+.reply-form .reply-submit {
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.6rem;
+  background-color: #FDD072;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reply-list {
+  display: none;
+}
+
+.reply-list.active {
+  display: block;
+}
+
+.comment.reply {
+  margin-left: 2.6rem;
+  padding-top: 1.2rem;
+  padding-left: 0.6rem;
+  border-left: 0.0625rem solid #e7e5e4;
+}
+.comment.reply .avatar.sm {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+.comment.reply .comment-body {
+  font-size: 0.75rem;
+}
+
+.comment-time {
+  font-size: 0.65rem;
+  color: rgb(111.5, 111.5, 111.5);
+}
+
+.comment-delete-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 0.7rem;
+  color: #565656;
+  cursor: pointer;
+}
+.comment-delete-btn:hover {
+  color: red;
 }
 
 .comment-form {

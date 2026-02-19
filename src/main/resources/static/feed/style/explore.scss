@@ -47,6 +47,15 @@
     }
 }
 
+.go-login {
+    background-color: #DBF0DF;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+
+    &:hover {
+        background-color: #CFE9D6;
+    }
+}
 // 본인 프로필 이동
 .my-profile {
     @include flex(row, center, center, 0.3rem);

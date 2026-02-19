@@ -43,4 +43,14 @@ public interface FeedMapper {
 
     // 현재 좋아요 수 조회
     int selectLikeCount(int feedId);
+
+    // 피드 유무 조회
+    boolean existsById(int feedId);
+
+    // 댓글 갯수 증가
+    int increaseCommentCount(@Param("feedId") int feedId,
+                             @Param("count") int count);
+    // 댓글 갯수 감소
+    int decreaseCommentCount(@Param("feedId") int feedId,
+                             @Param("count") int count);
 }

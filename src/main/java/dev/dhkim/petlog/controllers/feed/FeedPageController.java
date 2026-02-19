@@ -23,7 +23,9 @@ public class FeedPageController {
 
     // 전체 피드
     @RequestMapping(value="/explore", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String getExplore(@SessionAttribute(value="userId", required = false) Integer userId, Model model) {
+    public String getExplore(@SessionAttribute(value="userId", required = false) Integer userId,
+                             Model model
+    ) {
         if (userId != null) {
             ProfileDto profile = feedProfileService.getProfile(userId);
             model.addAttribute("profile", profile);
@@ -35,7 +37,9 @@ public class FeedPageController {
     // 상세 피드
     @RequestMapping(value="/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getDetail(@PathVariable(value="id") int feedId,
-                            @SessionAttribute(value="userId", required = false) Integer userId, Model model) {
+                            @SessionAttribute(value="userId", required = false) Integer userId,
+                            Model model
+    ) {
         FeedDetailDto feed = feedQueryService.getFeedDetail(feedId, userId);
         if(feed == null) {
             return "redirect:/feed/explore";

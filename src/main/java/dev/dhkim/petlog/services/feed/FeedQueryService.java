@@ -7,6 +7,7 @@ import dev.dhkim.petlog.mappers.feed.FeedLikeMapper;
 import dev.dhkim.petlog.mappers.feed.FeedMapper;
 import dev.dhkim.petlog.mappers.feed.FeedMediaMapper;
 import dev.dhkim.petlog.utils.feed.AddressUtil;
+import dev.dhkim.petlog.utils.feed.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -163,7 +164,18 @@ public class FeedQueryService {
         // 4. 피드id를 통해서 피드의 댓글들을 찾음
         // 4-1. 댓글에서 유저의 닉네임, 대표 펫의 사진을 가져옴
         List<FeedCommentDto> commentList = feedCommentMapper.selectCommentById(feedId);
+        // 트리구조 구성
         List<FeedCommentDto> commentTree = feedCommentService.buildCommentTree(commentList);
+        // 시간 ~전으로 설정
+        for (FeedCommentDto parent : commentTree) {
+            parent.setTimeAgo(TimeUtil.getTimeAgo(parent.getCreatedAt()));
+
+            for (FeedCommentDto reply : parent.getReplies()) {
+                reply.setTimeAgo(TimeUtil.getTimeAgo(reply.getCreatedAt()));
+            }
+        }
+
+
 
         // 4. 이 모든걸 FeedDetailDto로 묶어서 controller로 보내주기
         return FeedDetailDto.builder()

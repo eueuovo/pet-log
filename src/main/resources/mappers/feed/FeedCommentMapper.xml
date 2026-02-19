@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="dev.dhkim.petlog.mappers.feed.FeedCommentMapper">
+    <insert id="insertComment" parameterType="dev.dhkim.petlog.entities.feed.FeedCommentEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `petlog`.`feed_comment`
+        (feed_id, user_id, content, parent_comment_id, created_at, updated_at)
+        VALUES (#{feedId}, #{userId}, #{content}, #{parentCommentId}, NOW(), null)
+    </insert>
+    <delete id="deleteById">
+        DELETE FROM `petlog`.`feed_comment`
+        WHERE `id` = #{commentId}
+    </delete>
     <select id="selectCommentById" resultType="dev.dhkim.petlog.dto.feed.FeedCommentDto">
-        SELECT `t1`.`id`                AS commentId,
-               `t1`.`feed_id`           AS feedId,
-               `t1`.`user_id`           AS userId,
-               `t1`.`parent_comment_id` AS parentCommentId,
-               `t1`.`content`           AS content,
-               `t1`.`created_at`        AS createdAt,
-               `t1`.`updated_at`        AS updatedAt,
-               `t2`.`nickname`          AS nickname,
-               `t3`.image_url           AS profileImageUrl
+        SELECT DISTINCT `t1`.`id`                AS commentId,
+                        `t1`.`feed_id`           AS feedId,
+                        `t1`.`user_id`           AS userId,
+                        `t1`.`parent_comment_id` AS parentCommentId,
+                        `t1`.`content`           AS content,
+                        `t1`.`created_at`        AS createdAt,
+                        `t1`.`updated_at`        AS updatedAt,
+                        `t2`.`nickname`          AS nickname,
+                        `t3`.image_url           AS profileImageUrl
         FROM `petlog`.`feed_comment` AS `t1`
                  JOIN petlog.personal_user AS `t2`
                       ON `t1`.user_id = `t2`.`user_id`
@@ -18,10 +27,41 @@
                            ON `t1`.user_id = `t3`.`user_id`
                                AND `t3`.`is_primary` = 1
         WHERE `t1`.feed_id = #{feedId}
-        ORDER BY COALESCE(`t1`.parent_comment_id, `t1`.id),
-                 `t1`.parent_comment_id IS NOT NULL,
-                 `t1`.created_at
+        ORDER BY COALESCE(t1.parent_comment_id, t1.id),
+                 t1.parent_comment_id IS NOT NULL,
+                 t1.created_at
     </select>
-<!--    COALESCE : 앞에 값이 null이면 뒤에 값이 들어감, 그 값을 기준으로 정렬
-        IS NOT NULL : NULL이면 false(0) 아니면 true(1) 그 상태로 정렬-->
+    <select id="selectById" resultType="dev.dhkim.petlog.dto.feed.FeedCommentDto">
+        SELECT `t1`.`id`                AS `commentId`,
+               `t1`.`feed_id`           AS `feedId`,
+               `t1`.`user_id`           AS `userId`,
+               `t1`.`parent_comment_id` AS `parentCommentId`,
+               `t1`.`content`           AS `content`,
+               `t1`.`created_at`        AS `createdAt`,
+               `t1`.`updated_at`        AS `updatedAt`,
+               `t2`.`nickname`          AS nickname
+        FROM `petlog`.`feed_comment` AS `t1`
+                 JOIN `petlog`.`personal_user` `t2`
+                      ON `t1`.`user_id` = `t2`.`user_id`
+        WHERE `t1`.`id` = #{commentId}
+    </select>
+    <select id="selectEntityById" resultType="dev.dhkim.petlog.entities.feed.FeedCommentEntity">
+        SELECT `id`                AS `commentId`,
+               `feed_id`           AS `feedId`,
+               `user_id`           AS `userId`,
+               `parent_comment_id` AS `parentCommentId`,
+               `content`           AS `content`,
+               `created_at`        AS `createdAt`,
+               `updated_at`        AS `updatedAt`
+        FROM `petlog`.`feed_comment`
+        WHERE `id` = #{commentId}
+    </select>
+    <select id="countWithChildren" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM `petlog`.`feed_comment`
+        WHERE `id` = #{commentId}
+           OR `parent_comment_id` = #{commentId}
+    </select>
+    <!--    COALESCE : 앞에 값이 null이면 뒤에 값이 들어감, 그 값을 기준으로 정렬
+            IS NOT NULL : NULL이면 false(0) 아니면 true(1) 그 상태로 정렬-->
 </mapper>

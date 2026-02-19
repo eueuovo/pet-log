@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>상세 피드</title>
     <link rel="stylesheet" href="/assets/styles/common.css">
     <link rel="stylesheet" href="/assets/styles/header.css">
@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<div th:replace="fragments/common :: topNavigator"></div>
+<div th:replace="~{fragments/common :: topNavigator}"></div>
 
 <div class="page">
     <button class="create-feed" id="createFeedBtn">
@@ -29,7 +29,7 @@
         </section>
 
         <section id="feed-container">
-<!--            피드들 자리-->
+            <!--            피드들 자리-->
         </section>
     </main>
     <!-- 우측: 상세 패널 -->
@@ -97,39 +97,56 @@
                     <section class="comments">
                         <h2 class="comments-title">댓글</h2>
 
-                        <article class="comment" th:each="comment : ${feed.comments}">
+                        <article class="comment"
+                                 th:each="comment : ${feed.comments}"
+                                 th:data-id="${comment.commentId}">
                             <img class="avatar sm"
-                                 th:src="${comment.profileImageUrl}"
-                                 src="/feed/images/explore/user.png" alt="">
+                                 th:src="${comment.profileImageUrl != null
+                                 ? comment.profileImageUrl : '/feed/images/explore/user.png'}"
+                                 alt="댓글 프로필">
                             <div class="comment-body -flex-stretch">
                                 <div class="comment-top">
                                     <span class="comment-user" th:text="${comment.nickname}">nana</span>
                                     <span class="comment-time"
-                                          th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">
+                                          th:text="${comment.timeAgo}">
                                     </span>
+                                    <button class="comment-delete-btn"
+                                            th:if="${comment.userId == session.userId}">삭제</button>
                                 </div>
                                 <p class="comment-text" th:text="${comment.content}">너무 귀여워요 ㅠㅠ</p>
+                                <button class="reply-btn"
+                                        th:if="${#lists.size(comment.replies) > 0}">
+                                    댓글 더보기
+                                </button>
                                 <!--대댓글-->
-                                <div class="reply-list"
-                                     th:if="${comment.replies != null and #lists.size(comment.replies) > 0}">
-                                <article class="comment reply" th:each="reply : ${comment.replies}">
+                                <div class="reply-list">
+                                    <article class="comment reply"
+                                             th:each="reply : ${comment.replies}"
+                                             th:data-id="${reply.commentId}">
                                         <img class="avatar sm"
-                                             th:src="${reply.profileImageUrl}"
-                                             src="/feed/images/explore/user.png"
-                                             alt="">
+                                             th:src="${reply.profileImageUrl != null
+                                             ? reply.profileImageUrl : '/feed/images/explore/user.png'}"
+                                             alt="리플 프로필">
+
                                         <div class="comment-body">
                                             <div class="comment-top">
                                                 <span class="comment-user" th:text="${reply.nickname}">닉네임</span>
                                                 <span class="comment-time"
-                                                      th:text="${#temporals.format(reply.createdAt, 'yyyy.MM.dd HH:mm')}"></span>
+                                                      th:text="${reply.timeAgo}"></span>
+                                                <button class="comment-delete-btn"
+                                                        th:if="${comment.userId == session.userId}">삭제</button>
                                             </div>
                                             <p class="comment-text" th:text="${reply.content}">대댓글 내용</p>
                                         </div>
                                     </article>
                                 </div>
+                                <div class="reply-form hidden">
+                                    <input type="text" class="reply-input" placeholder="답글을 입력하세요">
+                                    <button class="reply-submit">등록</button>
+                                </div>
                             </div>
                         </article>
-                     </section>
+                    </section>
 
                     <form class="comment-form">
                         <input class="comment-input" type="text" placeholder="댓글을 입력하세요">

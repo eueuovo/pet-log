@@ -16,7 +16,7 @@
     const $feedContainer = document.getElementById("feed-container");
 // 좋아요 버튼 클릭 이벤트
     if ($feedContainer) {
-        $feedContainer.addEventListener('click', (e) => {
+        $feedContainer.addEventListener('click', async (e) => {
             const $likeBtn = e.target.closest('.like');
             if (!$likeBtn) return;
 
@@ -26,30 +26,35 @@
             const $likeCount = $card.querySelector('.like.count');
 
             // 좋아요 누르면 DB 설정 및 좋아요 갯수 +1
-            fetch(`/api/feed/${feedId}/like`, {
-                method: 'POST',
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.result === 'LOGIN_REQUIRED') {
-                        alert('로그인이 필요합니다.');
-                        return;
-                    }
-
-                    if (data.result !== 'SUCCESS') {
-                        alert('좋아요 처리 실패');
-                        return;
-                    }
-
-                    if (data.liked) {
-                        $likeBtn.dataset.like = 'true';
-                        $iconUse.setAttribute('href', '#icon-heart-fill');
-                    } else {
-                        $likeBtn.dataset.like = 'false';
-                        $iconUse.setAttribute('href', '#icon-heart');
-                    }
-                    $likeCount.textContent = data.likeCount;
+            try {
+                const res = await fetch(`/api/feed/${feedId}/like`, {
+                    method: 'POST'
                 });
+
+                const data = await res.json();
+
+                if (data.result === 'LOGIN_REQUIRED') {
+                    alert('로그인이 필요합니다.');
+                    return;
+                }
+
+                if (data.result !== 'SUCCESS') {
+                    alert('좋아요 처리 실패');
+                    return;
+                }
+
+                if (data.liked) {
+                    $likeBtn.dataset.like = 'true';
+                    $iconUse.setAttribute('href', '#icon-heart-fill');
+                } else {
+                    $likeBtn.dataset.like = 'false';
+                    $iconUse.setAttribute('href', '#icon-heart');
+                }
+                $likeCount.textContent = data.likeCount;
+            } catch (error) {
+                console.log(`좋아요 요청 중 오류 발생`, error);
+                alert('서버 오류가 발생함');
+            }
         });
     }
 })();

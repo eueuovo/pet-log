@@ -39,13 +39,19 @@
 
         <div class="-flex-stretch"></div>
 
-        <a th:href="@{/feed/profile/{id}(id=${profile.userId})}" class="my-profile">
-            <img th:src="${profile.profileImageUrl != null
-                  ? profile.profileImageUrl
-                  : '/feed/images/explore/user.png'}"
-                 alt="개인 프로필">
-            <span th:text="${profile.nickname}">sehun_pet</span>
-        </a>
+        <div th:if="${profile != null}">
+            <a th:href="@{/feed/profile/{id}(id=${profile.userId})}"
+               class="my-profile">
+                <img th:src="${profile.profileImageUrl != null
+                      ? profile.profileImageUrl
+                      : '/feed/images/explore/user.png'}"
+                     alt="개인 프로필">
+                <span th:text="${profile.nickname}">sehun_pet</span>
+            </a>
+        </div>
+        <div th:if="${profile == null}">
+            <a href="/user/login" class="go-login">로그인</a>
+        </div>
 
 
         <div class="sort-dropdown" data-open="false">
