@@ -1,3 +1,4 @@
+@use "sass:color";
 #topNavigator > .nav-wrapper > .user > .friend-wrapper {
   position: relative;
 }
@@ -32,12 +33,12 @@
   pointer-events: none;
   z-index: 8;
   opacity: 0;
-  transition-property: transform, opacity;
+  transition-property: translate, opacity;
   transition-duration: 150ms;
-  transform: translateY(0);
+  transform: translateY(-20%);
 }
 #topNavigator > .nav-wrapper > .user > .friend-wrapper > .view.active {
-  transform: translateY(1.5rem);
+  transform: translateY(0);
   cursor: default;
   pointer-events: auto;
   opacity: 1;
@@ -287,6 +288,7 @@
 #topNavigator > .nav-wrapper > .user > .friend-wrapper > .view > .buttons {
   width: 100%;
   padding: 1.2rem 1.2rem;
+  pointer-events: auto;
 }
 #topNavigator > .nav-wrapper > .user > .friend-wrapper > .view > .buttons > button {
   flex: 1;
