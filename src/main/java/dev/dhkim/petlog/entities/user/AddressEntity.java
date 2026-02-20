@@ -21,4 +21,5 @@ public class AddressEntity {
     private Double lng;
     private boolean isDefault;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

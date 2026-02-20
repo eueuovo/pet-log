@@ -1,12 +1,11 @@
 package dev.dhkim.petlog.mappers.feed;
 
 import dev.dhkim.petlog.dto.feed.ProfileDto;
-import dev.dhkim.petlog.entities.user.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface UserMapper {
+public interface FeedUserMapper {
     // ID로 현재 유저 정보 가져오기
     ProfileDto selectProfileById(int userId);
 

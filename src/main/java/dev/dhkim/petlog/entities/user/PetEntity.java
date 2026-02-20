@@ -21,6 +21,7 @@ public class PetEntity {
     private double weight;
     private String bodyType;
     private String imageUrl;
-    private boolean isPrimary;
+    private Boolean isPrimary;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

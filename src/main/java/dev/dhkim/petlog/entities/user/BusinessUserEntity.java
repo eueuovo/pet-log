@@ -2,6 +2,8 @@ package dev.dhkim.petlog.entities.user;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,4 +14,6 @@ public class BusinessUserEntity {
     private String companyName;
     private String representativeName;
     private String businessNumber;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

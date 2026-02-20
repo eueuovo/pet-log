@@ -144,7 +144,6 @@ ol, ul {
           color: $global-yellow-text-color;
           transform: translateY(-0.125rem);
         }
-
       }
     }
   }
@@ -178,7 +177,7 @@ ol, ul {
             width: 0;
             height: 0.15rem;
             background-color: #38A34C;
-            transition: width 0.2s ease;
+            transition: none;
           }
 
           > input[type="radio"]{
@@ -191,6 +190,7 @@ ol, ul {
 
             &::after {
               width: 100%;
+              transition: width 0.2s ease;
             }
           }
 
@@ -200,6 +200,7 @@ ol, ul {
 
             &::after {
               width: 100%;
+              transition: none;
             }
           }
         }
@@ -223,7 +224,7 @@ ol, ul {
               width: 0;
               height: 0.15rem;
               background-color: #38A34C;
-              transition: width 0.2s ease;
+              transition: none;
             }
 
             > input[type="radio"]{
@@ -236,6 +237,7 @@ ol, ul {
 
               &::after {
                 width: 100%;
+                transition: width 0.2s ease;
               }
             }
 
@@ -245,6 +247,7 @@ ol, ul {
 
               &::after {
                 width: 100%;
+                transition: none;
               }
             }
           }
@@ -253,17 +256,17 @@ ol, ul {
             @include flex(row, center, center, 1rem);
             display: none;
             position: absolute;
+            width: max-content;
             z-index: 999;
-            width: 24rem;
-            height: 3rem;
-            background-color: $global-white-text-color;
             top: calc(100% + 0.6rem);
             left: 0;
 
             > .list{
-              @include flex(row, center, center, 1rem);
-              padding: 1rem 3rem;
+              @include flex(row, center, flex-start, 1rem);
+              padding: 1rem 0.5rem;
               width: 100%;
+              background-color: $global-white-text-color;
+              white-space: nowrap;
 
               > .item{
                 font-size: 1rem;

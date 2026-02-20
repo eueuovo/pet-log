@@ -64,11 +64,11 @@
     </div>
     <label class="petName-wrapper">
         <span class="text">이름을 입력해 주세요.</span>
-        <input class="petName" placeholder="반려동물의 이름을 입력해 주세요." type="text">
+        <input autocomplete="off" maxlength="30" minlength="1" spellcheck="false" class="petName" placeholder="반려동물의 이름을 입력해 주세요." type="text">
     </label>
     <label class="anotherType-wrapper -flex-stretch">
         <span class="text">어떤 동물인지 알려주세요.</span>
-        <select class="typeSelect" name="type" id="">
+        <select class="typeSelect" name="type">
             <option value="" disabled selected>종류를 선택해주세요</option>
             <option value="곤충">곤충</option>
             <option value="기타 포유류">기타 포유류</option>
@@ -100,7 +100,7 @@
     </div>
     <label class="selectedPetType">
         <span class="text">종류를 선택해 주세요.</span>
-        <input readonly class="petType" placeholder="종류를 선택해 주세요." type="text">
+        <input readonly maxlength="50" minlength="1" spellcheck="false" class="petType" placeholder="종류를 선택해 주세요." type="text">
     </label>
     <div class="birthPet">
         <span class="text">생일을 입력해 주세요.</span>
@@ -118,7 +118,7 @@
     </div>
     <div class="introduction -flex-stretch">
         <span class="title">아이를 설명해주세요.</span>
-        <input class="introduce" placeholder="아이에 대해 설명해주세요." type="text">
+        <input class="introduce" maxlength="50" minlength="0" placeholder="아이에 대해 설명해주세요." type="text">
     </div>
     <button disabled type="button" class="button">다음</button>
     <div class="selectPetType">
@@ -177,7 +177,7 @@
     <div class="petWeightLabel">
         <span class="text">몸무게를 알려주세요</span>
         <div class="weight-wrapper">
-            <input class="input weight -flex-stretch" name="weight" type="number" placeholder="몸무게를 입력해 주세요. (예: 2.4kg)" inputmode="decimal" min="0.1" step="0.1">
+            <input class="input weight -flex-stretch" name="weight" type="number" placeholder="몸무게를 입력해 주세요. (예: 2.4kg)" inputmode="decimal" min="0.1" max="100" step="0.1">
             <span class="unit">kg</span>
         </div>
     </div>
@@ -201,18 +201,18 @@
     <button disabled type="button" class="complete">작성완료</button>
 </div>
 <form class="register-container" id="registerContainer">
-    <div class="register-first ">
+    <div class="register-first">
         <h1 class="title">회원가입</h1>
         <span class="text">회원 유형</span>
         <div class="select-wrapper">
             <label class="personal-member">
-                <input hidden class="memberType" name="radio" type="radio">
+                <input hidden class="memberType" name="radio" type="radio" value="PERSONAL">
                 <span class="title">일반 회원</span>
                 <img class="image" src="/user/assets/images/personal-member.png" alt="">
                 <span class="description">PetLog의 서비스를 <br> 소비하며 이용할 목적으로 <br> 가입하기 위한 회원입니다.</span>
             </label>
             <label class="business-member">
-                <input hidden class="memberType" name="radio" type="radio">
+                <input hidden class="memberType" name="radio" type="radio" value="BUSINESS">
                 <span class="title">사업자 회원</span>
                 <img class="image" src="/user/assets/images/business-member.png" alt="">
                 <span class="description">PetLog의 소비자들에게 <br> 서비스를 제공할 목적으로 <br> 이용하는 회원입니다.</span>
@@ -504,69 +504,72 @@
         <span class="semiTitle">로그인 정보</span>
         <label class="emailSendLabel label">
             <span class="caption ">이메일</span>
-            <input class="email input" id="email" placeholder="이메일을 입력해 주세요." type="email">
+            <input autocomplete="email" class="email input" maxlength="255" minlength="5" spellcheck="false" placeholder="이메일을 입력해 주세요." type="email">
             <button type="button" class="button">인증번호 전송</button>
         </label>
         <label class="emailVerifyLabel label">
             <span class="caption ">이메일 인증번호</span>
-            <input disabled class="emailVerifyNumber input" placeholder="이메일 인증번호를 입력해 주세요." type="text">
+            <span class="verifyNumber-wrapper -flex-stretch">
+                <input disabled autocomplete="off" class="emailVerifyNumber input" maxlength="6" minlength="6" spellcheck="false" placeholder="이메일 인증번호를 입력해 주세요." type="text">
+                <span class="countTime">00:00</span>
+            </span>
             <button disabled type="button" class="button">인증번호 확인</button>
         </label>
         <label class="IdLabel label">
             <span class="caption ">아이디</span>
             <span class="id-wrapper">
-                <input class="id input" id="loginId" placeholder="사용하실 아이디를 입력해 주세요." type="text">
-                <span class="text">이미 존재하는 아이디 입니다.</span>
+                <input autocomplete="off" spellcheck="false" maxlength="20" minlength="4" class="id input" placeholder="사용하실 아이디를 입력해 주세요." type="text">
+                <span class="text">사용할 수 없는 아이디 입니다.</span>
             </span>
         </label>
         <label class="passwordLabel label">
             <span class="caption ">비밀번호</span>
-            <input class="password input" id="password" placeholder="사용하실 비밀번호를 입력해 주세요." type="password">
+            <input autocomplete="off" maxlength="50" minlength="6" spellcheck="false" class="password input" placeholder="사용하실 비밀번호를 입력해 주세요." type="password">
         </label>
         <label class="passwordCheckLabel label">
             <span class="caption ">비밀번호 확인</span>
-            <input class="passwordCheck input" placeholder="비밀번호를 다시 입력해 주세요." type="password">
+            <input autocomplete="off" maxlength="50" minlength="6" spellcheck="false" class="passwordCheck input" placeholder="비밀번호를 다시 입력해 주세요." type="password">
         </label>
         <span class="semiTitle">회원 정보</span>
         <label class="nameLabel label">
             <span class="caption">이름</span>
-            <input class="name input" id="name" placeholder="이름(실명)을 입력해 주세요." type="text">
+            <input autocomplete="off" maxlength="20" minlength="2" spellcheck="false" class="name input" placeholder="이름(실명)을 입력해 주세요." type="text">
         </label>
         <label class="contactNumberLabel label">
             <span class="caption">전화번호</span>
             <span class="phone-wrapper">
                 <span class="number-wrapper">
-                    <select class="firstNumber" name="" id="">
+                    <select class="firstNumber" name="firstNumber">
                         <option selected value="010">010</option>
                     </select>
                     <span>-</span>
-                    <input class="contactNumber first input" maxlength="4" minlength="4" placeholder="0000" type="text">
+                    <input autocomplete="off" spellcheck="false"  class="contactNumber first input" name="middle" maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
                     <span>-</span>
-                    <input class="contactNumber second input" maxlength="4" minlength="4" placeholder="0000" type="text">
+                    <input autocomplete="off" spellcheck="false" class="contactNumber second input" name="last" maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
                 </span>
-                <span class="text">이미 존재하는 전화번호 입니다.</span>
+                <span class="text">사용할 수 없는 전화번호 입니다.</span>
             </span>
         </label>
         <label class="nicknameLabel label">
             <span class="caption">닉네임</span>
             <span class="nickname-wrapper">
-                <input class="nickname input" id="nickname" placeholder="닉네임을 입력해 주세요." type="text">
-                <span class="text">이미 존재하는 닉네임 입니다.</span>
+                <input autocomplete="off" maxlength="20" minlength="2" spellcheck="false" class="nickname input" id="nickname" placeholder="닉네임을 입력해 주세요." type="text">
+                <span class="text">사용할 수 없는 닉네임 입니다.</span>
             </span>
 
         </label>
         <label class="addressLabel label">
             <span class="caption">주소</span>
-            <input readonly class="postalNumber input" id="postalCode" placeholder="우편번호" type="text">
+            <input readonly maxlength="5" minlength="5" spellcheck="false" class="postalNumber input" placeholder="우편번호" type="text">
             <button type="button" class="button">주소 검색</button>
         </label>
         <label class="primaryAddressLabel label">
             <span class="caption"></span>
-            <input readonly class="primaryAddress input" id="addressPrimary" placeholder="기본 주소('주소 검색' 버튼을 클릭해 주세요.)" type="text">
+            <input readonly maxlength="150" minlength="1" spellcheck="false" class="primaryAddress input" placeholder="기본 주소('주소 검색' 버튼을 클릭해 주세요.)" type="text">
         </label>
         <label class="detailAddressLabel label">
             <span class="caption"></span>
-            <input class="detailAddress input" id="addressSecondary" placeholder="상세 주소(건물명 동, 호 등)" type="text">
+            <input maxlength="100" minlength="0" spellcheck="false" class="detailAddress input" placeholder="상세 주소(건물명 동, 호 등)" type="text">
         </label>
         <div class="button-wrapper">
             <button type="button" class="cancel">취소</button>
@@ -580,72 +583,75 @@
         <span class="semiTitle">사업자 정보</span>
         <label class="companyNameLabel label">
             <span class="caption">기업명</span>
-            <input class="companyName input" id="companyName" placeholder="기업명을 입력해 주세요." type="text">
+            <input maxlength="150" minlength="1" spellcheck="false" class="companyName input" id="companyName" placeholder="기업명을 입력해 주세요." type="text">
         </label>
         <label class="representativeNameLabel label">
             <span class="caption">대표자명</span>
-            <input class="representativeName input" id="representativeName" placeholder="대표자명을 입력해 주세요." type="text">
+            <input maxlength="20" minlength="2" spellcheck="false" class="representativeName input" id="representativeName" placeholder="대표자명을 입력해 주세요." type="text">
         </label>
         <label class="contactNumberLabel label">
             <span class="caption">대표자 전화번호</span>
             <span class="phone-wrapper">
                 <span class="number-wrapper">
-                    <select class="firstNumber" name="" id="">
+                    <select class="firstNumber" name="firstNumber" id="">
                         <option selected value="010">010</option>
                     </select>
                     <span>-</span>
-                    <input class="contactNumber first input" maxlength="4" minlength="4" placeholder="0000" type="text">
+                    <input autocomplete="off" spellcheck="false" class="contactNumber first input" name="middle" maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
                     <span>-</span>
-                    <input class="contactNumber second input" maxlength="4" minlength="4" placeholder="0000" type="text">
+                    <input autocomplete="off" spellcheck="false" class="contactNumber second input" name="last" maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
                 </span>
-                <span class="text">이미 가입된 전화번호 입니다.</span>
+                <span class="text">사용할 수 없는 전화번호 입니다.</span>
             </span>
         </label>
         <label class="businessId label">
             <span class="caption">사업자 등록번호</span>
             <span class="businessId-wrapper">
-                <input class="businessId businessNumber input" id="businessNumber" placeholder="사업자 등록번호를 입력해 주세요." type="text">
+                <input maxlength="10" minlength="10" spellcheck="false" class="businessId businessNumber input" id="businessNumber" placeholder="사업자 등록번호('-' 제외)를 입력해 주세요." type="text">
                 <span class="text">사용할 수 없는 사업자 등록번호입니다.</span>
             </span>
         </label>
         <label class="addressLabel label">
             <span class="caption">사업자등록상 주소</span>
-            <input readonly class="postalNumber input" placeholder="우편번호" type="text">
+            <input readonly maxlength="5" minlength="5" spellcheck="false" class="postalNumber input" placeholder="우편번호" type="text">
             <button type="button" class="button">주소 검색</button>
         </label>
         <label class="primaryAddressLabel label">
             <span class="caption"></span>
-            <input readonly class="primaryAddress input" placeholder="기본 주소('주소 검색' 버튼을 클릭해 주세요.)" type="text">
+            <input readonly maxlength="150" minlength="1" spellcheck="false" class="primaryAddress input" placeholder="기본 주소('주소 검색' 버튼을 클릭해 주세요.)" type="text">
         </label>
         <label class="detailAddressLabel label">
             <span class="caption"></span>
-            <input class="detailAddress input" placeholder="상세 주소(건물명 동, 호 등)" type="text">
+            <input maxlength="100" minlength="0" spellcheck="false" class="detailAddress input" placeholder="상세 주소(건물명 동, 호 등)" type="text">
         </label>
         <span class="semiTitle">로그인 정보</span>
         <label class="emailSendLabel label">
             <span class="caption ">이메일</span>
-            <input class="email input" placeholder="이메일을 입력해 주세요." type="email">
+            <input autocomplete="email" class="email input" maxlength="255" minlength="5" spellcheck="false" placeholder="이메일을 입력해 주세요." type="email">
             <button type="button" class="button">인증번호 전송</button>
         </label>
         <label class="emailVerifyLabel label">
             <span class="caption ">이메일 인증번호</span>
-            <input disabled class="emailVerifyNumber input" placeholder="이메일 인증번호를 입력해 주세요." type="text">
+            <span class="verifyNumber-wrapper -flex-stretch">
+                <input disabled autocomplete="off" class="emailVerifyNumber input" maxlength="6" minlength="6" spellcheck="false" placeholder="이메일 인증번호를 입력해 주세요." type="text">
+                <span class="countTime">00:00</span>
+            </span>
             <button disabled type="button" class="button">인증번호 확인</button>
         </label>
         <label class="IdLabel label">
             <span class="caption ">아이디</span>
             <span class="id-wrapper">
-                <input class="id input" autocomplete="off" placeholder="사용하실 아이디를 입력해 주세요." type="text">
+                <input class="id input" autocomplete="off" spellcheck="false" maxlength="20" minlength="4" placeholder="사용하실 아이디를 입력해 주세요." type="text">
                 <span class="text">사용할 수 없는 아이디 입니다.</span>
             </span>
         </label>
         <label class="passwordLabel label">
             <span class="caption ">비밀번호</span>
-            <input class="password input" autocomplete="off" placeholder="비밀번호를 입력해 주세요." type="password">
+            <input class="password input" autocomplete="off" maxlength="50" minlength="6" spellcheck="false" placeholder="비밀번호를 입력해 주세요." type="password">
         </label>
         <label class="passwordCheckLabel label">
             <span class="caption ">비밀번호 확인</span>
-            <input class="passwordCheck input" placeholder="비밀번호를 다시 입력해 주세요." type="password">
+            <input autocomplete="off" maxlength="50" minlength="6" spellcheck="false" class="passwordCheck input" placeholder="비밀번호를 다시 입력해 주세요." type="password">
         </label>
         <div class="button-wrapper">
             <button type="button" class="cancel">취소</button>
@@ -673,20 +679,30 @@
         <span class="semiTitle">가게 정보</span>
         <label class="storeName label">
             <span class="caption">가게명</span>
-            <input class="storeName input" placeholder="가게명을 입력해 주세요." type="text">
+            <input autocomplete="off" maxlength="100" minlength="1" spellcheck="false" class="storeName input" placeholder="가게명을 입력해 주세요." type="text">
+        </label>
+        <label class="storeTelNumber label">
+            <span class="caption">가게 전화번호</span>
+            <span class="tel-wrapper">
+                <input autocomplete="off" maxlength="3" minlength="2" spellcheck="false" class="telFirst input" placeholder="02" type="text">
+                <span>-</span>
+                <input autocomplete="off" maxlength="4" minlength="3" spellcheck="false" class="telMiddle input" placeholder="0000" type="text">
+                <span>-</span>
+                <input autocomplete="off" maxlength="4" minlength="3" spellcheck="false" class="telLast input" placeholder="0000" type="text">
+            </span>
         </label>
         <label class="addressLabel label">
             <span class="caption">가게 주소</span>
-            <input disabled readonly class="postalNumber input" placeholder="우편번호" type="text">
+            <input disabled readonly maxlength="5" minlength="5" spellcheck="false" class="postalNumber input" placeholder="우편번호" type="text">
             <button type="button" class="button">주소 검색</button>
         </label>
         <label class="primaryAddressLabel label">
             <span class="caption"></span>
-            <input disabled class="primaryAddress input" placeholder="기본 주소('주소 검색' 버튼을 클릭해 주세요.)" type="text">
+            <input disabled class="primaryAddress input" maxlength="150" minlength="1" spellcheck="false" placeholder="기본 주소('주소 검색' 버튼을 클릭해 주세요.)" type="text">
         </label>
         <label class="detailAddressLabel label">
             <span class="caption"></span>
-            <input class="detailAddress input" placeholder="상세 주소(건물명 동, 호 등)" type="text">
+            <input class="detailAddress input" maxlength="100" minlength="0" spellcheck="false" placeholder="상세 주소(건물명 동, 호 등)" type="text">
         </label>
         <label class="storeCategory label">
             <span class="caption">업종 카테고리</span>
@@ -697,7 +713,6 @@
                 <option value="school">유치원</option>
                 <option value="park">공원</option>
                 <option value="camp">캠핑장</option>
-
             </select>
         </label>
         <div class="button-wrapper">

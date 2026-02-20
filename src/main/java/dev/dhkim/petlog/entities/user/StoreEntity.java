@@ -17,11 +17,10 @@ public class StoreEntity {
     private String postalCode;
     private String addressPrimary;
     private String addressSecondary;
-    private String category;
-    private String phone;
-    private LocalDateTime createdAt;
     private Double lat;
     private Double lng;
-
-
+    private String category;
+    private String storePhone;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

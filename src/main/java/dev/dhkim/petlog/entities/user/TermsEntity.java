@@ -12,5 +12,5 @@ public class TermsEntity {
     private String title;
     private String termsType;
     private String userTarget;
-    private boolean isRequired;
+    private Boolean isRequired;
 }

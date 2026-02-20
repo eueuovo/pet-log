@@ -96,12 +96,12 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         if (result == EmailVerificationResult.SUCCESS) {
             UserEntity dbUser = this.userMapper.selectByEmail(email);
-            if (dbUser.getUserType().equals("personal")) {
+            if (dbUser.getUserType().equals("PERSONAL")) {
                 PersonalUserEntity dbPersonalUser = this.userMapper.selectByPersonalUserId(dbUser.getId());
                 response.put("name", dbPersonalUser.getName());
                 response.put("loginId", dbUser.getLoginId());
             }
-            if (dbUser.getUserType().equals("business")) {
+            if (dbUser.getUserType().equals("BUSINESS")) {
                 BusinessUserEntity dbBusinessUser = this.userMapper.selectByBusinessUserId(dbUser.getId());
                 response.put("name", dbBusinessUser.getRepresentativeName());
                 response.put("loginId", dbUser.getLoginId());
