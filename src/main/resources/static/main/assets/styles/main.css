@@ -1,5 +1,6 @@
 @charset "UTF-8";
 #main {
+  margin-top: 5rem;
   padding: 2.5rem 4rem;
 }
 #main > .content-wrapper {

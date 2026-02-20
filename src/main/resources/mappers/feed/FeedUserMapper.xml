@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="dev.dhkim.petlog.mappers.feed.UserMapper">
+<mapper namespace="dev.dhkim.petlog.mappers.feed.FeedUserMapper">
     <select id="selectProfileById" resultType="dev.dhkim.petlog.dto.feed.ProfileDto">
         SELECT `t1`.user_id   AS `userId`,
                `t1`.nickname  AS `nickname`,
@@ -15,7 +15,7 @@
         SELECT `t1`.`user_id`                   AS `userId`,
                `t1`.`nickname`                  AS `nickname`,
                `t1`.following_count             AS `followingCount`,
-               `t1`.followers_count             AS `followedCount`,
+               `t1`.follower_count             AS `followedCount`,
                `t2`.`image_url`                 AS `profileImageUrl`,
                (SELECT COUNT(*)
                 FROM `petlog`.`feed` `f`
@@ -35,7 +35,7 @@
         )
     </select>
     <select id="selectFollowerCount" resultType="java.lang.Integer">
-        SELECT `followers_count`
+        SELECT `follower_count`
         FROM `petlog`.`personal_user`
         WHERE user_id = #{userId}
     </select>
@@ -66,12 +66,12 @@
     </update>
     <update id="increaseFollowers">
         UPDATE `petlog`.`personal_user`
-        SET `followers_count` = `followers_count` + 1
+        SET `follower_count` = `follower_count` + 1
         WHERE `user_id` = #{targetId}
     </update>
     <update id="decreaseFollowers">
         UPDATE `petlog`.`personal_user`
-        SET `followers_count` = `followers_count` - 1
+        SET `follower_count` = `follower_count` - 1
         WHERE `user_id` = #{targetId}
     </update>
 </mapper>

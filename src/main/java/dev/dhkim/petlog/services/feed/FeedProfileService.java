@@ -1,7 +1,7 @@
 package dev.dhkim.petlog.services.feed;
 
 import dev.dhkim.petlog.dto.feed.ProfileDto;
-import dev.dhkim.petlog.mappers.feed.UserMapper;
+import dev.dhkim.petlog.mappers.feed.FeedUserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FeedProfileService {
 
-    private final UserMapper userMapper;
+    private final FeedUserMapper feedUserMapper;
 
     // 프로필 가져오기
     public ProfileDto getProfile(Integer userId) {
-        return userMapper.selectProfileById(userId);
+        return feedUserMapper.selectProfileById(userId);
     }
 
     // 프로필 페이지 띄우기
     public ProfileDto getProfileView(String nickname, Integer userId) {
-        ProfileDto profile = userMapper.selectProfileByNickname(nickname);
+        ProfileDto profile = feedUserMapper.selectProfileByNickname(nickname);
         if (profile == null) {
             return null;
         }
@@ -29,7 +29,7 @@ public class FeedProfileService {
             isMine = profile.getUserId() == userId;
 
             if (!isMine) {
-                isFollowing = userMapper.selectIsFollowing(userId, profile.getUserId());
+                isFollowing = feedUserMapper.selectIsFollowing(userId, profile.getUserId());
             }
         }
 

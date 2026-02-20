@@ -10,6 +10,7 @@ import dev.dhkim.petlog.results.CommonResult;
 import dev.dhkim.petlog.results.Result;
 import dev.dhkim.petlog.services.common.FileStorageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FeedCommandService {
@@ -51,7 +53,6 @@ public class FeedCommandService {
         int feedInsertResult = feedMapper.insertFeed(feed);
         if (feedInsertResult != 1)
             throw new RuntimeException("피드 저장 실패");
-
         int feedId = feed.getId();
 
         List<String> createdPaths = new ArrayList<>(); // savePath + thumbnailPath(영상일 때)

@@ -84,19 +84,18 @@ public class FeedApiController {
 
     // 피드 생성 (게시하기)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> postFeeds(HttpSession session,
+    public Map<String, Object> postFeeds(@SessionAttribute(value = "userId", required = false) Integer userId,
                                          @RequestParam("files") List<MultipartFile> files,
                                          @RequestParam("types") List<String> types,
                                          @RequestParam("orders") List<Integer> orders,
                                          @RequestParam String title,
                                          @RequestParam String description
     ) {
-        Integer userId = (Integer) session.getAttribute("userId");
-
         if (userId == null) {
             return Map.of("result", "result", "message", "로그인이 필요합니다.");
         }
         Result result = feedCommandService.createFeed(userId, files, types, orders, title, description);
+        System.out.println("result :" + result);
         return Map.of("result", result);
     }
 
