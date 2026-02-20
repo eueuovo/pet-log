@@ -33,124 +33,127 @@
       opacity: 1;
     }
 
-    > .friend-container{
-      display: none;
+        // 친구 목록 창
+        > .friend-container{
+            display: none;
 
-      &.active {
-        @include flex(column, flex-start, center, 0.5rem);
-        width: 100%;
-        flex: 1;
-        padding: 1.2rem 1.2rem;
-      }
-
-      > .friend-option {
-        @include flex(row, center, flex-start, 0.5rem);
-        width: 100%;
-        line-height: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 0.0625rem solid $global-gray-text-color;
-
-        > .sort {
-          cursor: pointer;
-          font-size: 0.9rem;
-          font-weight: 300;
-          &.active {
-            font-weight: 500;
-          }
-        }
-      }
-
-      > .friend-list {
-        @include flex(column, flex-start, flex-start, 0.3rem);
-        width: 100%;
-        flex: 1;
-        > .item {
-          @include flex(row, center, flex-start, 2rem);
-          position: relative;
-          width: 100%;
-          padding: 0.8rem 0.375rem;
-          &:hover {
-            background-color: #e7e5e4;
-          }
-          > img {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 1.125rem;
-          }
-          > .user-name {
-            font-size: 1rem;
-            font-weight: 800;
-          }
-        }
-      }
-    }
-
-    > .chat-container{
-      display: none;
-
-      &.active {
-        @include flex(column, flex-start, center, 0.5rem);
-        width: 100%;
-        flex: 1;
-        padding: 1.2rem 1.2rem;
-      }
-
-      > .chat-option {
-        @include flex(row, center, flex-start, 0.5rem);
-        width: 100%;
-        padding-bottom: 1rem;
-        border-bottom: 0.0625rem solid $global-gray-text-color;
-
-        > svg {
-          width: 1.5rem;
-          height: 1.5rem;
-        }
-      }
-
-      > .chat-list {
-        @include flex(column, flex-start, flex-start, 0.3rem);
-        width: 100%;
-        flex: 1;
-        > .item {
-          @include flex(row, center, flex-start, 1rem);
-          position: relative;
-          width: 100%;
-          padding: 0.8rem 0.375rem;
-          &:hover {
-            background-color: #e7e5e4;
-          }
-          > img {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 1.125rem;
-          }
-          > .text {
-            @include flex(column, flex-start, flex-start, 0.3rem);
-            > .room-name {
-              font-size: 0.9rem;
-              font-weight: 800;
+            &.active {
+                @include flex(column, flex-start, center, 0.5rem);
+                width: 100%;
+                flex: 1;
+                padding: 1.2rem 1.2rem;
             }
-            > .room-content {
-              font-size: 0.8rem;
-              font-weight: 400;
-            }
-          }
-          > .date {
-            position: absolute;
-            font-size: 0.8rem;
-            font-weight: 400;
-            top: 0.9rem;
-            right: 0.3rem;
-          }
-        }
-      }
-    }
 
-    > .buttons{
-      @include flex(row, center, stretch, 0.5rem);
-      width: 100%;
-      padding: 1.2rem 1.2rem;
-      pointer-events: auto;
+            // 가나다순 or 팔로우 순
+            > .friend-option {
+                @include flex(row, center, flex-start, 0.5rem);
+                width: 100%;
+                line-height: 1.5rem;
+                padding-bottom: 1rem;
+                border-bottom: 0.0625rem solid $global-gray-text-color;
+
+                > .sort {
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                    font-weight: 300;
+                    &.active {
+                        font-weight: 500;
+                    }
+                }
+            }
+
+            > .friend-list {
+                @include flex(column, flex-start, flex-start, 0.3rem);
+                width: 100%;
+                flex: 1;
+                > .item {
+                    @include flex(row, center, flex-start, 2rem);
+                    position: relative;
+                    width: 100%;
+                    padding: 0.8rem 0.375rem;
+                    &:hover {
+                        background-color: #e7e5e4;
+                    }
+                    > img {
+                        width: 3rem;
+                        height: 3rem;
+                        border-radius: 1.125rem;
+                    }
+                    > .user-name {
+                        font-size: 1rem;
+                        font-weight: 800;
+                    }
+                }
+            }
+        }
+
+        // 채팅 창
+        > .chat-container{
+            display: none;
+
+            &.active {
+                @include flex(column, flex-start, center, 0.5rem);
+                width: 100%;
+                flex: 1;
+                padding: 1.2rem 1.2rem;
+            }
+
+            > .chat-option {
+                @include flex(row, center, flex-start, 0.5rem);
+                width: 100%;
+                padding-bottom: 1rem;
+                border-bottom: 0.0625rem solid $global-gray-text-color;
+
+                > svg {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+            }
+
+            > .chat-list {
+                @include flex(column, flex-start, flex-start, 0.3rem);
+                width: 100%;
+                flex: 1;
+                > .item {
+                    @include flex(row, center, flex-start, 1rem);
+                    position: relative;
+                    width: 100%;
+                    padding: 0.8rem 0.375rem;
+                    &:hover {
+                        background-color: #e7e5e4;
+                    }
+                    > img {
+                        width: 3rem;
+                        height: 3rem;
+                        border-radius: 1.125rem;
+                    }
+                    > .text {
+                        @include flex(column, flex-start, flex-start, 0.3rem);
+                        > .room-name {
+                            font-size: 0.9rem;
+                            font-weight: 800;
+                        }
+                        > .room-content {
+                            font-size: 0.8rem;
+                            font-weight: 400;
+                        }
+                    }
+                    > .date {
+                        position: absolute;
+                        font-size: 0.8rem;
+                        font-weight: 400;
+                        top: 0.9rem;
+                        right: 0.3rem;
+                    }
+                }
+            }
+        }
+
+        // 친구목록, 채팅 창 선택 버튼
+        > .buttons{
+            @include flex(row, center, stretch, 0.5rem);
+            width: 100%;
+            padding: 1.2rem 1.2rem;
 
       > button {
         flex: 1;
