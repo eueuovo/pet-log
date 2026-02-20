@@ -1,5 +1,6 @@
 package dev.dhkim.petlog.controllers.shop;
 
+import dev.dhkim.petlog.dto.user.SessionUser;
 import dev.dhkim.petlog.entities.shop.ProductEntity;
 import dev.dhkim.petlog.entities.shop.ProductDetailImageEntity;
 import dev.dhkim.petlog.entities.shop.OptionEntity;
@@ -10,10 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -64,8 +62,9 @@ public class ShopController {
     // 상품 상세 페이지
     @RequestMapping(value = "product/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     @SuppressWarnings("unchecked")
-    public ModelAndView getProduct(@PathVariable Integer id, HttpSession session, ModelAndView modelAndView) {
-        Integer userId = (Integer) session.getAttribute("userId");
+    public ModelAndView getProduct(@PathVariable Integer id,
+                                   @SessionAttribute(value ="sessionUser") SessionUser sessionUser, ModelAndView modelAndView) {
+        Integer userId = sessionUser.getUserId();
 
         ProductEntity product = productService.getProductDetail(id);
         int reviewCount = productMapper.countReviewByProductId(id);

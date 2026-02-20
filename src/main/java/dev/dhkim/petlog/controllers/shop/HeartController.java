@@ -1,5 +1,6 @@
 package dev.dhkim.petlog.controllers.shop;
 
+import dev.dhkim.petlog.dto.user.SessionUser;
 import dev.dhkim.petlog.mappers.shop.HeartMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,9 @@ public class HeartController {
     // 찜하기/취소 토글
     @PostMapping("/heart/{productId}")
     public Map<String, Object> toggleHeart(@PathVariable int productId,
-                                           HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
-
+                                           @SessionAttribute(value ="sessionUser")SessionUser sessionUser) {
+        Integer userId = sessionUser.getUserId();
+        System.out.println(sessionUser);
         if (userId == null) {
             return Map.of("success", false, "message", "로그인이 필요합니다");
         }
@@ -38,8 +39,9 @@ public class HeartController {
     // 찜 상태 확인
     @GetMapping("/heart/{productId}/status")
     public Map<String, Object> checkHeartStatus(@PathVariable int productId,
-                                                HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
+                                                @SessionAttribute(value ="sessionUser")SessionUser sessionUser) {
+        Integer userId = sessionUser.getUserId();
+
 
         if (userId == null) {
             return Map.of("isHearted", false);

@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface EmailVerificationMapper {
-    int insert(@Param("emailVerification") EmailVerificationEntity emailVerification);
+    int insert(EmailVerificationEntity emailVerification);
 
     EmailVerificationEntity select(@Param(value = "email") String email,
                                    @Param(value = "code") String code,

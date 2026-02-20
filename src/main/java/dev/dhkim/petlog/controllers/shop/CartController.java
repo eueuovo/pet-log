@@ -1,5 +1,6 @@
 package dev.dhkim.petlog.controllers.shop;
 
+import dev.dhkim.petlog.dto.user.SessionUser;
 import dev.dhkim.petlog.services.shop.CartService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class CartController {
     private final CartService cartService;
 
     @GetMapping
-    public String cartPage(Model model, HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
+    public String cartPage(Model model, @SessionAttribute(value ="sessionUser") SessionUser sessionUser) {
+        Integer userId = sessionUser.getUserId();
 
         if (userId != null) {
             List<Map<String, Object>> cartItems = cartService.getCartItems(userId);
@@ -39,8 +40,8 @@ public class CartController {
     @PostMapping("/add")
     @ResponseBody
     public Map<String, Object> addToCart(@RequestBody Map<String, Object> request,
-                                         HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
+                                         @SessionAttribute(value ="sessionUser") SessionUser sessionUser) {
+        Integer userId = sessionUser.getUserId();
 
         if (userId == null) {
             return Map.of("success", false, "message", "로그인이 필요합니다");
@@ -63,8 +64,8 @@ public class CartController {
     @DeleteMapping("/delete")
     @ResponseBody
     public Map<String, Object> deleteCartItems(@RequestBody Map<String, Object> request,
-                                               HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
+                                               @SessionAttribute(value ="sessionUser") SessionUser sessionUser) {
+        Integer userId = sessionUser.getUserId();
 
         if (userId == null) {
             return Map.of("success", false, "message", "로그인이 필요합니다");

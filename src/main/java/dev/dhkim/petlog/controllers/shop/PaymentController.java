@@ -1,5 +1,6 @@
 package dev.dhkim.petlog.controllers.shop;
 
+import dev.dhkim.petlog.dto.user.SessionUser;
 import dev.dhkim.petlog.services.shop.CartService;
 import dev.dhkim.petlog.services.shop.CouponService;
 import dev.dhkim.petlog.services.shop.PointService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,11 +33,11 @@ public class PaymentController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getPayment(
             @RequestParam("cartIds") String cartIds,
-            HttpSession session,
+            @SessionAttribute(value ="sessionUser") SessionUser sessionUser,
             ModelAndView modelAndView) {
 
         // 로그인한 사용자 ID 가져오기
-        Integer userId = (Integer) session.getAttribute("userId");
+        Integer userId = sessionUser.getUserId();
 
         // cartIds 파싱
         List<Integer> cartIdList = Arrays.stream(cartIds.split(","))
@@ -89,10 +91,10 @@ public class PaymentController {
             @RequestParam("productId") Integer productId,
             @RequestParam("optionId") String optionIdStr,
             @RequestParam("quantity") Integer quantity,
-            HttpSession session,
+            @SessionAttribute(value ="sessionUser") SessionUser sessionUser,
             ModelAndView modelAndView) {
 
-        Integer userId = (Integer) session.getAttribute("userId");
+        Integer userId = sessionUser.getUserId();
 
         if (userId == null) {
             modelAndView.setViewName("redirect:/login");
