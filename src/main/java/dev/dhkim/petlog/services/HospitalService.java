@@ -45,21 +45,16 @@ public class HospitalService {
         int totalCount = firstBody.path("totalCount").asInt();
         int totalPages = (totalCount + NUM_OF_ROWS - 1) / NUM_OF_ROWS;
 
-        System.out.println("총 데이터 수: " + totalCount);
-        System.out.println("총 페이지 수: " + totalPages);
-
         // 2페이지 반복
         for (int pageNo = 1; pageNo <= totalPages; pageNo++) {
 
             JsonNode body = getBodyNode(pageNo);
             JsonNode itemsNode = body.path("items").path("item");
 
-            // 🔥 item이 없거나 ""이면 중단 (API 버그 대응)
             if (itemsNode.isMissingNode() ||
                     itemsNode.isNull() ||
                     (itemsNode.isTextual() && itemsNode.asText().isEmpty())) {
 
-                System.out.println("페이지 " + pageNo + " 데이터 없음 → 중단");
                 break;
             }
 
@@ -75,11 +70,7 @@ public class HospitalService {
 
             hospitalRepository.saveAll(batch);
             totalSaved += batch.size();
-
-            System.out.println("페이지 " + pageNo + " 저장 완료 (" + batch.size() + "건)");
         }
-
-        System.out.println("전체 저장 완료: " + totalSaved + "건");
         return totalSaved;
     }
 

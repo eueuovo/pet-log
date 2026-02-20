@@ -12,11 +12,4 @@ import java.util.List;
 public class SubCategoryService {
     private final SubCategoryMapper subCategoryMapper;
 
-    public List<SubCategoryEntity> getAllSubCategories() {
-        return subCategoryMapper.selectAll();
-    }
-
-    public List<SubCategoryEntity> getSubCategoriesByCategoryId(Integer categoryId) {
-        return subCategoryMapper.selectByCategoryId(categoryId);
-    }
 }

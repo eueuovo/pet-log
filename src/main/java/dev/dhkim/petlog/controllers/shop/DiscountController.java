@@ -1,4 +1,4 @@
 package dev.dhkim.petlog.controllers.shop;
 
-public class CouponController {
+public class DiscountController {
 }

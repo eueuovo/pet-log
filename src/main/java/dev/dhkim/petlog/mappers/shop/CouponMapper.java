@@ -1,4 +1,12 @@
 package dev.dhkim.petlog.mappers.shop;
 
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
+
+@Mapper
 public interface CouponMapper {
+
+    List<Map<String, Object>> getAvailableCoupons(int userId);
 }
