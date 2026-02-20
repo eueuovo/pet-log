@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class StoreDto {
     private String storeName;
+    private String storePhone;
     private String postalCode;
     private String addressPrimary;
     private String addressSecondary;

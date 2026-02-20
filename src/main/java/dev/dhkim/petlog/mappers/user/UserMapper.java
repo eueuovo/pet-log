@@ -15,26 +15,25 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    void insertUser(RegisterDto dto);
+    int insertUser(RegisterDto dto);
 
-    void insertPersonalUser(@Param(value = "userId") int userId,
+    int insertPersonalUser(@Param(value = "userId") int userId,
                             @Param(value = "dto") RegisterDto dto);
 
-    void insertBusinessUser(@Param(value = "userId") int userId,
+    int insertBusinessUser(@Param(value = "userId") int userId,
                             @Param(value = "dto") RegisterDto dto);
 
-    void insertPet(@Param(value = "userId") int userId,
-                   @Param(value = "pet") PetDto pet,
-                   @Param(value = "isPrimary") boolean isPrimary);
+    int insertPet(@Param(value = "userId") int userId,
+                   @Param(value = "pet") PetDto pet);
 
-    void insertAddress(@Param(value = "userId") int userId,
+    int insertAddress(@Param(value = "userId") int userId,
                        @Param(value = "address") AddressDto address,
-                       @Param(value = "isDefault") boolean isDefault);
+                       @Param(value = "isDefault") Boolean isDefault);
 
-    void insertStore(@Param(value = "userId") int userId,
+    int insertStore(@Param(value = "userId") int userId,
                      @Param(value = "store") StoreDto store);
 
-    void insertTerm(@Param(value = "userId") int userId,
+    int insertTerm(@Param(value = "userId") int userId,
                     @Param(value = "termsId") int termsId);
 
 
@@ -65,5 +64,7 @@ public interface UserMapper {
 
     int updatePassword(@Param(value = "loginId") String loginId,
                        @Param(value = "email") String email, @Param(value = "password") String password);
+
+
 
 }

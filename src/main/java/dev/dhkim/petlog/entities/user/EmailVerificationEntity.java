@@ -17,6 +17,7 @@ public class EmailVerificationEntity {
     private String email;
     private String code;
     private boolean isVerified;
+    private boolean isUsed;
     private LocalDateTime expiresAt;
     private LocalDateTime createdAt;
 }

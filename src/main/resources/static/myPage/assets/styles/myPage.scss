@@ -1,0 +1,1862 @@
+@import "../../../assets/styles/def";
+
+.myPage-wrapper {
+  @include flex(row, stretch, center, 2rem);
+  padding: 4rem 10rem;
+  min-height: calc(100vh - 5rem);
+  box-sizing: border-box;
+}
+
+/* ================= 왼쪽 ================= */
+
+.sidebar {
+  @include flex(column, stretch, flex-start);
+  width: 16.25rem;
+  background-color: #ffffff;
+  border-radius: 1.2rem;
+  box-shadow: 0 0.3rem 1rem rgba(0,0,0,0.08);
+  overflow: hidden;
+
+  > .sidebar-header {
+    background-color: #4CAF50;
+    color: #ffffff;
+    padding: 2rem 1.5rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  > .menu-list {
+    padding: 1rem 0;
+    margin: 0;
+
+    > .menu {
+      position: relative;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      overflow: hidden;
+      z-index: 0;
+      transition-property: color, font-weight;
+      transition-duration: 350ms;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: #e8f5e9;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition-property: transform;
+        transition-duration: 350ms;
+        z-index: -1;
+      }
+
+      &.active {
+        color: #2e7d32;
+        font-weight: 600;
+        border-left: 0.25rem solid #4CAF50;
+
+        &::before {
+          transform: scaleX(1);
+        }
+      }
+    }
+  }
+}
+
+.dialog {
+  @include flex(column, stretch, flex-start);
+  top: 50%;
+  left: 50%;
+  width: 35rem;
+  height: 45rem;
+  max-height: 80vh;
+  background-color: #F9F9F9;
+  border: 0.0625rem solid #E7E5E4;
+  border-radius: 0.75rem;
+  padding: 4rem 2rem 2rem 2rem;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  > .dialogCover {
+    z-index: 31;
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #212121a0;
+    opacity: 0;
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
+
+    &.visible {
+      opacity: 1;
+      pointer-events: auto;
+      border-color: #212121a0;
+    }
+  }
+
+  > .cancel {
+    position: absolute;
+    top: 3%;
+    right: 3%;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+
+    > .cancelButton {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+
+  > .title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 3rem;
+
+    > .point {
+      color: #3BFF3B;
+    }
+  }
+
+  > .select-wrapper {
+    height: 12rem;
+    background-color: #ffffff;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    > .select {
+      @include flex(column, center, center);
+      border: 0.0625rem solid #D5D5D5;
+      border-radius: 0.75rem;
+      cursor: pointer;
+
+      &:has(> input:checked) {
+        background-color: #eaeaea;
+      }
+
+      > .image {
+        width: 9rem;
+        height: 9rem;
+        image-rendering: auto;
+      }
+
+      > .dog,
+      > .cat,
+      > .another {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  > .petName-wrapper {
+    @include flex(column, stretch, flex-start);
+    margin-top: 3rem;
+
+    > .text {
+      margin-bottom: 0.5rem;
+      color: #909090;
+      font-size: 0.85rem;
+
+      &::before {
+        content: "";
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 999rem;
+        background-color: #89CC96;
+        display: inline-block;
+        margin-right: 0.5rem;
+        margin-bottom: 0.1rem;
+      }
+    }
+
+    > .petName {
+      height: 3rem;
+      border: 0.0625rem solid #e7e5e4;
+      border-radius: 0.35rem;
+      padding-left: 0.75rem;
+      transition-duration: 250ms;
+      transition-property: border-color;
+
+      &:focus-within {
+        border-color: darken(#e7e5e4, 10%);
+      }
+    }
+  }
+
+  > .anotherType-wrapper {
+    @include flex(column, stretch, flex-start);
+    opacity: 0;
+    pointer-events: none;
+
+    > .text {
+      margin-bottom: 0.5rem;
+      margin-top: 1.5rem;
+
+      &::before {
+        content: "";
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 999rem;
+        background-color: #89CC96;
+        display: inline-block;
+        margin-right: 0.5rem;
+        margin-bottom: 0.1rem;
+      }
+    }
+
+    > .typeSelect {
+      height: 3rem;
+      border: 0.0625rem solid #e7e5e4;
+      border-radius: 0.35rem;
+      cursor: pointer;
+      padding-left: 0.75rem;
+      transition-duration: 250ms;
+      transition-property: border-color;
+
+      &:focus-within {
+        border-color: darken(#e7e5e4, 10%);
+      }
+    }
+  }
+
+  > .button {
+    height: 3rem;
+    background-color: #89CC96;
+    border-radius: 0.35rem;
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    transition-duration: 250ms;
+    transition-property: background-color;
+
+
+    &:disabled {
+      border-color: $global-border-color !important;
+      background-color: lighten($global-gray-text-color, 55%) !important;
+      color: lighten($global-gray-text-color, 20%);
+      cursor: revert;
+
+      &:hover {
+        cursor: revert;
+      }
+    }
+
+    &:hover {
+      background-color: darken(#89CC96, 5%);
+    }
+
+    &:active {
+      background-color: darken(#89CC96, 10%);
+    }
+  }
+
+  > .complete {
+    height: 3rem;
+    background-color: #38A34C;
+    border-radius: 0.35rem;
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    transition-duration: 250ms;
+    transition-property: background-color;
+
+    &:disabled {
+      border-color: $global-border-color !important;
+      background-color: lighten($global-gray-text-color, 55%) !important;
+      color: lighten($global-gray-text-color, 20%);
+      cursor: default;
+    }
+
+    &:hover {
+      background-color: #2F8F43;
+    }
+
+    &:active {
+      background-color: #287A39;
+    }
+  }
+}
+
+.dialog-first:has(> .select-wrapper > .another > input:checked) {
+  > .anotherType-wrapper {
+    &.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+.dialog-first {
+  @include flex(column, stretch, center);
+}
+
+.dialog-second {
+  @include flex(column, stretch, flex-start);
+
+  > .previous {
+    position: fixed;
+    top: 3%;
+    left: 3%;
+    cursor: pointer;
+
+    > .image {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  .image-wrapper {
+    @include flex(column, center, center);
+
+    .circle {
+      @include flex(column, center, center);
+      width: 8rem;
+      height: 8rem;
+      background-color: #eaeaea;
+      border: 0.0625rem solid $global-border-color;
+      border-radius: 999rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+
+      &.visible {
+        .add {
+          display: none;
+        }
+
+        .preview {
+          display: block;
+        }
+      }
+
+      > .preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+      }
+
+      &:hover {
+        background-color: darken(#eaeaea, 10%);
+
+        > .add {
+          filter: brightness(100%);
+        }
+      }
+
+      &:active {
+        border-color: darken(#e7e5e4, 10%);
+      }
+
+      > .image {
+        position: absolute;
+      }
+
+      > .add {
+        top: 50%;
+        left: 50%;
+        font-size: 4rem;
+        color: #ffffff;
+        position: absolute;
+        transform: translate(-50%, -56%);
+        filter: brightness(80%);
+
+      }
+    }
+  }
+
+  > .selectedPetType {
+    @include flex(column, stretch, flex-start, 0.35rem);
+    margin-top: 2.5rem;
+
+    &.hidden {
+      display: none;
+      pointer-events: none;
+    }
+
+    > .text {
+      color: #909090;
+      font-size: 0.85rem;
+    }
+
+    > .petType {
+      height: 3rem;
+      border: 0.0625rem solid #e7e5e4;
+      border-radius: 0.35rem;
+      padding-left: 0.75rem;
+      cursor: pointer;
+    }
+  }
+
+  > .selectPetType {
+    @include flex(column, stertch, flex-start, 0.5rem);
+    width: 100%;
+    height: 60%;
+    background-color: #ffffff;
+    border: 0.0625rem solid #e7e5e4;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    transform: translateY(100%);
+    border-bottom-left-radius: 0.35rem;
+    border-bottom-right-radius: 0.35rem;
+    transition-duration: 200ms;
+    transition-property: transform;
+    padding: 2rem 2rem 1rem 2rem;
+    overflow: hidden;
+    z-index: 32;
+
+    &.visible {
+      transform: translateY(0);
+    }
+
+    > .cancel {
+      right: 3%;
+      top: 3%;
+      position: absolute;
+      cursor: pointer;
+
+      > .image {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+
+    > .text {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    > .typeSearch {
+      height: 2.5rem;
+      border: 0.0625rem solid #e7e5e4;
+      border-radius: 0.35rem;
+      padding-left: 0.75rem;
+    }
+
+    > .typeList {
+      @include flex(column, stretch, flex-start);
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #d6d6d6;
+        border-radius: 999px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      > .type {
+        @include flex(row, center, flex-start);
+        height: 3rem;
+        border-top: 0.0625rem solid #e7e5e4;
+        cursor: pointer;
+        margin-left: 0.5rem;
+
+        &:hover {
+          background-color: $global-gray-background-color;
+          font-weight: 500;
+        }
+
+        &:first-child {
+          border-top: none;
+        }
+      }
+    }
+  }
+
+  > .birthPet {
+    @include flex(column, stretch, flexs-start, 2rem);
+    margin-top: 2.5rem  ;
+
+    > .text {
+      color: #909090;
+      font-size: 0.85rem;
+    }
+
+    > .birth-wrapper {
+      @include flex(row, center, center);
+
+      > .field {
+        @include flex(column, center, center);
+        position: relative;
+
+        &:not(:last-child)::after {
+          content: "/";
+          position: absolute;
+          right: -5%;
+        }
+
+        > .input {
+          width: 8rem;
+          text-align: center;
+          cursor: pointer;
+
+          &.year:hover,
+          &.month:hover,
+          &.date:hover {
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  > .yearList-wrapper,
+  > .monthList-wrapper,
+  > .dateList-wrapper {
+    @include flex(column, stertch, flex-start, 0.5rem);
+    width: 100%;
+    height: 60%;
+    background-color: #ffffff;
+    border: 0.0625rem solid #e7e5e4;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    transform: translateY(100%);
+    border-bottom-left-radius: 0.35rem;
+    border-bottom-right-radius: 0.35rem;
+    transition-duration: 200ms;
+    transition-property: transform;
+    padding: 2.5rem 2rem 2rem 2rem;
+    overflow: hidden;
+    z-index: 32;
+
+    &.visible {
+      transform: translateY(0);
+    }
+
+    > .cancel {
+      right: 3%;
+      top: 3%;
+      position: absolute;
+      cursor: pointer;
+
+      > .image {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+
+    > .yearList,
+    > .monthList,
+    > .dateList {
+      @include flex(column, stretch, flex-start, 0.25rem);
+      height: 100%;
+      overflow: hidden auto;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #d6d6d6;
+        border-radius: 999px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      > .year,
+      > .month,
+      > .date {
+        @include flex(row, center, flex-start);
+        height: 3rem;
+        border-top: 0.0625rem solid #e7e5e4;
+        margin-left: 0.5rem;
+        cursor: pointer;
+
+        &:hover {
+          font-weight: 500;
+        }
+
+        &:first-child {
+          border-top: none;
+        }
+      }
+    }
+  }
+
+  > .introduction {
+    @include flex(column, stretch, flex-start, 0.35rem);
+    margin-top: 2.5rem;
+
+    .title {
+      color: #909090;
+      font-size: 0.85rem;
+    }
+
+    > .introduce {
+      height: 3rem;
+      border: 0.0625rem solid $global-border-color;
+      border-radius: 0.35rem;
+      padding-left: 0.75rem;
+    }
+  }
+}
+
+.dialog-third {
+
+  > .previous {
+    position: fixed;
+    top: 3%;
+    left: 3%;
+    cursor: pointer;
+
+    > .image {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  > .genderLabel {
+    @include flex(column, stretch, flex-start, 0.5rem);
+
+    > .text {
+      color: #909090;
+      font-size: 0.85rem;
+    }
+
+    > .gender-wrapper {
+      @include flex(row, center, center, 0.5rem);
+
+      > .maleLabel,
+      > .femaleLabel {
+        @include flex(column, center, center);
+        width: 8rem;
+        height: 3rem;
+        background-color: #ffffff;
+        border: 0.0625rem solid #e7e5e4;
+        border-radius: 0.35rem;
+        cursor: pointer;
+        transition-duration: 250ms;
+        transition-property: border-color;
+
+        &:hover {
+          border-color: darken(#e7e5e4, 5%);
+        }
+
+        &:active {
+          border-color: darken(#e7e5e4, 10%);
+        }
+
+        &:has(> .input:checked) {
+          background-color: #89CC96;
+          color: #ffffff;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  > .petWeightLabel {
+    @include flex(column, stretch, flex-start, 0.5rem);
+    margin-top: 4rem;
+
+    > .text {
+      color: #909090;
+      font-size: 0.85rem;
+    }
+
+    > .weight-wrapper {
+      @include flex(row, center, flex-start);
+
+      > .weight {
+        height: 3rem;
+        border: 0.0625rem solid #e7e5e4;
+        border-radius: 0.35rem;
+        padding-left: 1.25rem;
+
+        &:hover {
+          border-color: darken(#e7e5e4, 5%);
+        }
+
+        &:active {
+          border-color: darken(#e7e5e4, 10%);
+        }
+
+        &:focus-within {
+          border-color: darken(#e7e5e4, 10%);
+        }
+      }
+
+      > .unit {
+        right: 10%;
+        position: fixed;
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  > .weightTypeLabel {
+    @include flex(column, stretch, flex-start, 0.5rem);
+    margin-top: 4rem;
+
+    > .text {
+      color: #909090;
+      font-size: 0.85rem;
+    }
+
+    > .weightType-wrapper {
+      @include flex(row, center, center, 0.5rem);
+
+      > .label {
+        @include flex(column, center, center);
+        flex-grow: 1;
+        height: 3rem;
+        border: 0.0625rem solid #e7e5e4;
+        border-radius: 0.35rem;
+        cursor: pointer;
+
+        &:hover {
+          border-color: darken(#e7e5e4, 5%);
+        }
+
+        &:active {
+          border-color: darken(#e7e5e4, 10%);
+        }
+
+        &:has(> .input:checked) {
+          background-color: #89CC96;
+          color: #ffffff;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  > .complete {
+    margin-top: auto;
+  }
+}
+
+.petDeleteMessage {
+  @include flex(column, stertch, flex-start, 1rem);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  min-width: 25rem;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  > .title {
+    font-size: 1.35rem;
+    font-weight: 500;
+  }
+
+  > .text {
+    font-size: 1rem;
+  }
+
+  > .button-wrapper {
+    @include flex(row, stretch, center, 2rem);
+
+    > .delete {
+      background-color: #38A34C;
+      border-radius: 0.35rem;
+      color: #ffffff;
+      cursor: pointer;
+      height: 2.25rem;
+      margin-top: 1rem;
+      width: 9rem;
+      transition-duration: 250ms;
+      transition-property: background-color;
+      flex-grow: 1;
+
+      &:hover {
+        background-color: #2F8F43;
+      }
+
+      &:active {
+        background-color: #287A39;
+      }
+    }
+
+    > .cancel {
+      background-color: lighten($global-gray-text-color, 55%);
+      color: lighten($global-gray-text-color, 20%);
+      border-radius: 0.35rem;
+      cursor: pointer;
+      height: 2.25rem;
+      margin-top: 1rem;
+      width: 9rem;
+      transition-duration: 250ms;
+      transition-property: background-color;
+      flex-grow: 1;
+
+      &:hover {
+        background-color: #D6D6D6;
+      }
+
+      &:active {
+        background-color: #C8C8C8;
+      }
+    }
+  }
+}
+
+body:has(> .dialog.visible) {
+  .cover {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+body:has(> .petDeleteMessage.visible) > .cover {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cover {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #212121a0;
+  z-index: 29;
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+
+//주소 변경 모달
+.delivery-change-modal,
+.name-change-modal,
+.nickname-change-modal,
+.phone-change-modal,
+.password-change-modal,
+.delete-user-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 31;
+  justify-content: center;
+  align-items: center;
+
+  /* 어두운 배경 */
+  > .modal-cover {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    pointer-events: none;
+
+    &.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  &.visible {
+    display: flex;
+  }
+
+  .address-wrapper {
+    @include flex(column, flex-end, flex-start);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    background-color: #ffffff;
+    border: 0.0625rem solid $global-border-color;
+    border-radius: 0.35rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 30;
+
+    &.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    > .button {
+      padding: 0.35rem;
+      cursor: pointer;
+
+      > .image {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+
+  > .modal-content,
+  > .delivery-registration {
+    background-color: #ffffff;
+    border-radius: 0.35rem;
+    width: 100%;
+    max-width: 600px;
+    max-height: 80vh;
+    @include flex(column, flex-start, stretch);
+    display: none;
+
+    &.visible {
+      display: flex;
+    }
+
+    > .modal-header {
+      @include flex(row, center, space-between);
+      width: 100%;
+      padding: 1.5rem;
+      border-bottom: 0.0625rem solid lighten($global-gray-right-text-color, 30%);
+
+      > .title {
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      > .close-btn {
+        padding: 0.5rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+
+        > .image {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+      }
+    }
+
+    > .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+      width: 100%;
+
+      > .delivery-list {
+        @include flex(column, flex-start, stretch, 1rem);
+
+        > .delivery-item {
+          padding: 1.5rem;
+          border: 0.0625rem solid lighten($global-gray-right-text-color, 30%);
+          border-radius: 0.35rem;
+          cursor: pointer;
+          width: 100%;
+          transition: all 0.2s;
+
+          &:hover {
+            border-color: $global-green-background-color;
+            background-color: lighten($global-green-background-color, 45%);
+          }
+
+          > .item-content {
+            @include flex(column, flex-start, flex-start, 0.4rem);
+            width: 100%;
+
+            > .item-header {
+              @include flex(row, center, flex-start, 0.5rem);
+              margin-bottom: 0.3rem;
+
+              > .delivery-name {
+                font-size: 1.1rem;
+                font-weight: 600;
+              }
+
+              > .default-badge {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.5rem;
+                background-color: $global-green-background-color;
+                color: #ffffff;
+                border-radius: 0.2rem;
+              }
+            }
+
+            > .recipient {
+              font-size: 1rem;
+              color: $global-gray-text-color;
+            }
+
+            > .address {
+              font-size: 0.95rem;
+              @include flex(row, center, flex-start, 0.3rem);
+
+              > .postal {
+                color: $global-gray-text-color;
+              }
+
+              > .addr {
+                color: $global-gray-text-color;
+              }
+            }
+
+            > .detail-addr {
+              font-size: 0.95rem;
+              color: $global-gray-text-color;
+            }
+
+            > .phone {
+              font-size: 0.95rem;
+              color: $global-gray-text-color;
+              margin-bottom: 0.8rem;
+            }
+
+            > .item-actions {
+              @include flex(row, center, space-between);
+              width: 100%;
+              padding-top: 0.5rem;
+              border-top: 0.0625rem solid lighten($global-gray-right-text-color, 35%);
+
+              > .left-actions {
+                @include flex(row, center, flex-start, 0.5rem);
+
+                > .delete-btn,
+                > .edit-btn {
+                  padding: 0.4rem 0.8rem;
+                  font-size: 0.9rem;
+                  border: 0.0625rem solid lighten($global-gray-right-text-color, 25%);
+                  background-color: #ffffff;
+                  color: $global-gray-text-color;
+                  border-radius: 0.25rem;
+                  cursor: pointer;
+                  transition: all 0.2s;
+
+                  &:hover {
+                    background-color: lighten($global-gray-right-text-color, 35%);
+                  }
+                }
+
+                > .delete-btn {
+                  color: #e74c3c;
+                  border-color: #e74c3c;
+
+                  &:hover {
+                    background-color: lighten(#e74c3c, 45%);
+                  }
+                }
+              }
+
+              > .select-btn {
+                padding: 0.4rem 1.2rem;
+                font-size: 0.9rem;
+                font-weight: 600;
+                background-color: $global-green-background-color;
+                color: #ffffff;
+                border: none;
+                border-radius: 0.25rem;
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &:hover {
+                  background-color: darken($global-green-background-color, 5%);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      > .number-wrapper {
+        @include flex(row, center, flex-start, 1rem);
+        flex: 1;
+        width: 100%;
+
+        > .firstNumber {
+          width: 5rem;
+          height: 2rem;
+          border: 0.0625rem solid $global-border-color;
+          min-width: 0;
+        }
+
+        > .input {
+          height: 2rem;
+          border-bottom: 0.0625rem solid $global-border-color;
+          flex: 1;
+          min-width: 0;
+        }
+      }
+    }
+
+    > .modal-footer {
+      @include flex(row, center, center);
+      padding: 1.5rem;
+      width: 100%;
+      border-top: 0.0625rem solid lighten($global-gray-right-text-color, 30%);
+
+      > .add-btn,
+      > .registrationButton {
+        width: 100%;
+        padding: 0.8rem;
+        background-color: $global-green-background-color;
+        color: #ffffff;
+        border: none;
+        border-radius: 0.35rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background-color: darken($global-green-background-color, 5%);
+        }
+      }
+    }
+
+    > .registration-wrapper {
+      @include flex(column, stretch, flex-start, 2.5rem);
+      padding: 2rem;
+      width: 100%;
+      box-sizing: border-box;
+
+      > .name-wrapper {
+        @include flex(row, center, flex-start);
+        margin-bottom: 1rem;
+
+        > .name {
+          font-size: 1rem;
+          color: #565656;
+          width: 6rem;
+        }
+
+        > .nameInput {
+          border-bottom: 0.0625rem solid $global-border-color;
+          height: 2rem;
+          flex-grow: 1;
+        }
+      }
+
+
+      > .label {
+        @include flex(row, center, flex-start, 0.25rem);
+
+        > .title {
+          font-size: 1rem;
+          color: #565656;
+          width: 6rem;
+        }
+
+        > .number-wrapper {
+          @include flex(row, center, flex-start, 0.5rem);
+          flex: 1;
+          min-width: 0;
+
+          > .firstNumber {
+            border: 0.0625rem solid $global-border-color;
+            height: 2rem;
+            width: 6rem;
+          }
+
+          > .input {
+            flex-shrink: 1;
+            min-width: 0;
+          }
+        }
+
+        > .input,
+        > .number-wrapper > .input {
+          border-bottom: 0.0625rem solid $global-border-color;
+          height: 2rem;
+          flex-grow: 1;
+        }
+
+        > .button {
+          background-color: $global-green-background-color;
+          color: $global-white-text-color;
+          border-radius: 0.35rem;
+          padding: 0.4rem 1.2rem;
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover {
+            background-color: darken($global-green-background-color, 5%);
+          }
+        }
+      }
+    }
+  }
+
+  > .modal-content {
+    > .modal-body {
+      @include flex(column, stretch, flex-start, 0.5rem);
+
+      > .title {
+        font-size: 1rem;
+        color: #565656;
+
+        &.bottom {
+          margin-top: 1rem;
+        }
+      }
+
+      > .input {
+        border: 0.0625rem solid $global-border-color;
+        border-radius: 0.35rem;
+        height: 2.5rem;
+        padding-left: 0.5rem;
+      }
+    }
+
+    > .modal-footer {
+      @include flex(row, center, center, 1rem);
+
+      > .button {
+        width: 6rem;
+        height: 2.5rem;
+        border-radius: 0.35rem;
+        color: $global-white-text-color;
+        cursor: pointer;
+
+        &.modify-button {
+          background-color: $global-green-background-color;
+          transition-duration: 250ms;
+          transition-property: background-color;
+
+          &:hover {
+            background-color: darken($global-green-background-color, 5%);
+          }
+
+          &:active {
+            background-color: darken($global-green-background-color, 10%);
+          }
+        }
+
+        &.delete-button {
+          background-color: #e53935;
+          transition-duration: 250ms;
+          transition-property: background-color;
+
+          &:hover {
+            background-color: darken(#e53935, 5%);
+          }
+
+          &:active {
+            background-color: darken(#e53935, 10%);
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+/* ================= 오른쪽 ================= */
+
+.content {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 1.2rem;
+  box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.08);
+  position: relative;
+  @include flex(column, stretch, flex-start);
+  min-width: 0;
+
+
+
+
+  /* ----------------- 내 정보 관리 --------------- */
+
+  > .myInformation {
+    @include flex(column, stretch, flex-start, 1.5rem);
+    pointer-events: none;
+    display: none;
+    width: 100%;
+    max-width: 100rem;
+    padding: 2rem;
+
+    &.visible {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .info-card {
+      @include flex(column, stretch, flex-start, 2rem);
+      background: #e8f5e9;
+      border-radius: 1rem;
+      box-shadow: 0 0.3rem 1rem rgba(0,0,0,0.05);
+      padding: 1rem;
+      height: 100%;
+    }
+
+    /* 프로필 영역 */
+    .profile-wrapper {
+      @include flex(row, center, space-between, 1rem);
+
+      .profile-image {
+        width: 5rem;
+        height: 5rem;
+        border-radius: 999rem;
+
+        > .image {
+          width: 5rem;
+          height: 5rem;
+          object-fit: cover;
+          border-radius: 999rem;
+          background-color: #ffffff;
+        }
+      }
+
+      .profile-text {
+        flex: 1;
+        @include flex(column, flex-start, center, 0.3rem);
+
+        .nickname {
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+
+        .email {
+          font-size: 0.85rem;
+          color: $global-gray-text-color;
+        }
+      }
+
+      > .point {
+        @include flex(column, center, center);
+        border-radius: 0.35rem;
+        width: 10rem;
+        height: 2.2rem;
+        background-color: $global-gray-background-color;
+        color: $global-gray-text-color;
+      }
+
+      > .coupon {
+        @include flex(column, center, center);
+        width: 4rem;
+        height: 2.2rem;
+        border-radius: 0.35rem;
+        background-color: $global-green-background-color;
+        color: $global-white-text-color;
+        cursor: pointer;
+      }
+
+      .edit-button {
+        height: 2.5rem;
+        padding: 0 1rem;
+        border-radius: 0.6rem;
+        border: none;
+        background: #4CAF50;
+        color: #ffffff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 200ms;
+
+        &:hover {
+          background: darken(#4CAF50, 5%);
+        }
+      }
+    }
+
+    /* -------- 정보 그리드 (수정 반영됨) -------- */
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .info-item {
+      @include flex(row, center, space-between, 1rem);
+      padding: 0.9rem 1rem;
+      background: #ffffff;
+      border-radius: 0.8rem;
+      box-shadow: 0 0.15rem 0.5rem rgba(0,0,0,0.04);
+
+      .text {
+        @include flex(column, flex-start, center, 0.3rem);
+        flex: 1;
+        min-width: 0;
+      }
+
+      .label {
+        font-size: 0.8rem;
+        color: $global-gray-text-color;
+      }
+
+      .value {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
+
+    /* 수정 버튼 */
+    .small-button {
+      height: 2.2rem;
+      padding: 0 0.8rem;
+      border-radius: 0.5rem;
+      border: none;
+      background: #4CAF50;
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 200ms;
+
+      &:hover {
+        background: darken(#4CAF50, 5%);
+      }
+    }
+
+    /* 배송지 관리 버튼 (info-grid에서도 사용 가능) */
+    .outline-button {
+      height: 2.2rem;
+      padding: 0 1rem;
+      border-radius: 0.6rem;
+      border: 0.0625rem solid #4CAF50;
+      background: transparent;
+      color: #4CAF50;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 200ms;
+
+      &:hover {
+        background: #4CAF50;
+        color: #ffffff;
+      }
+    }
+
+    /* ---------------- 계정 보안 ---------------- */
+
+    .security-section {
+      margin-top: 1rem;
+      padding-top: 1.5rem;
+      border-top: 0.0625rem solid $global-border-color;
+      @include flex(column, stretch, flex-start, 1.5rem);
+
+      .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .security-item {
+        @include flex(row, center, space-between, 1rem);
+        padding: 1rem 1.2rem;
+        border-radius: 0.8rem;
+        background: #ffffff;
+        border: 0.0625rem solid $global-border-color;
+
+        .text {
+          @include flex(column, flex-start, center, 0.3rem);
+
+          .label {
+            font-weight: 600;
+            font-size: 0.95rem;
+          }
+
+          .desc {
+            font-size: 0.8rem;
+            color: $global-gray-text-color;
+          }
+        }
+      }
+
+      .danger-button {
+        height: 2.3rem;
+        padding: 0 1rem;
+        border-radius: 0.6rem;
+        border: none;
+        background: #e53935;
+        color: #ffffff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 200ms;
+
+        &:hover {
+          background: darken(#e53935, 5%);
+        }
+      }
+
+      .danger {
+        border-color: #ffcdd2;
+        background: #fff5f5;
+      }
+    }
+  }
+
+  > .petInformation,
+  > .reservationInformation {
+    @include flex(column, stretch, flex-start);
+    display: none;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+
+    &.visible {
+      display: block;
+      pointer-events: auto;
+    }
+
+    > .title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+
+    > .pet-grid,
+    > .reservation-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+
+      /* ---------------- 일반 펫 카드 ---------------- */
+
+      > .pet-card,
+      > .reservation-card {
+        @include flex(column, stretch, flex-start, 0.5rem);
+        padding: 1.8rem;
+        border-radius: 1rem;
+        background-color: #f3f3f3;
+        border: 0.0625rem solid #dddddd;
+
+        &.add-card {
+          @include flex(column, center, center, 0.5rem);
+          background-color: #ffffff;
+          border: 0.125rem dashed #3c9a4d;
+          cursor: pointer;
+          padding: 1.8rem;
+          border-radius: 1rem;
+          height: 207.59px;
+
+          > .plus {
+            @include flex(column, center, center);
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #3c9a4d;
+            line-height: 1;
+          }
+
+          > .text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #3c9a4d;
+          }
+
+          &:hover {
+            background-color: #3c9a4d;
+
+            > .plus,
+            > .text {
+              color: #ffffff;
+            }
+          }
+        }
+
+        /* 왼쪽 이미지 영역 */
+
+        > .pet-wrapper {
+          @include flex(row, stretch, center, 1.5rem);
+
+          > .pet-left {
+
+            > .pet-image {
+              width: 7rem;
+              height: 7rem;
+              border-radius: 50%;
+              overflow: hidden;
+              background-color: #ffffff;
+              border: 0.0625rem solid #dddddd;
+
+              > img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+
+
+          }
+
+          /* 오른쪽 정보 영역 */
+
+          > .pet-right {
+            @include flex(column, flex-start, center, 0.4rem);
+            flex-grow: 1;
+            flex-shrink: 1;
+
+            > .pet-name {
+              @include flex(row, center, flex-start, 0.4rem);
+              font-size: 1.1rem;
+              font-weight: 600;
+
+              > .gender {
+                width: 1rem;
+                height: 1rem;
+              }
+            }
+
+            > .pet-info {
+              font-size: 0.9rem;
+              color: #444444;
+            }
+          }
+        }
+
+        > .pet-bottom {
+          @include flex(row, stretch, flex-start, 0.5rem);
+
+          > .remember {
+            @include flex(row, center, center);
+            width: 7rem;
+            height: 1.75rem;
+            cursor: pointer;
+            background-color: $global-gray-background-color;
+            border: 0.0625rem solid $global-border-color;
+            border-radius: 0.35rem;
+            color: $global-black-text-color;
+
+            > .text::before {
+              content: '대표지정';
+            }
+
+
+            &:has(> .checkbox:checked) {
+              background-color: $global-green-text-color;
+              color: $global-white-text-color;
+
+              > .text::before {
+                content: '대표동물';
+              }
+            }
+          }
+
+          > .modify {
+            cursor: pointer;
+            color: $global-gray-text-color;
+          }
+
+          > .delete {
+            cursor: pointer;
+            color: $global-gray-text-color;
+          }
+        }
+
+        /* ---------- 헤더 ---------- */
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          position: relative;
+
+          .place-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+
+            .place {
+              font-size: 1.05rem;
+              font-weight: 600;
+            }
+
+            .category {
+              font-size: 0.8rem;
+              color: #777;
+            }
+          }
+
+          .status {
+            font-size: 0.8rem;
+            font-weight: 600;
+            position: absolute;
+            top: 0;
+            right: 0;
+
+            &.complete::before {
+              border-radius: 1rem;
+              padding: 0.3rem 0.7rem;
+              content: '예약완료';
+              background: darken(#e8f5e9, 5%);
+              color: #2e7d32;
+            }
+
+            &.canceled::before {
+              border-radius: 1rem;
+              padding: 0.3rem 0.7rem;
+              content: '예약취소';
+              background: #ffebee;
+              color: #c62828;
+            }
+          }
+        }
+
+        /* ---------- 날짜 & 시간 ---------- */
+
+        .date-time {
+          display: flex;
+          align-items: center;
+          gap: 1.2rem;
+        }
+
+        .date-box {
+          width: 4.5rem;
+          height: 4.5rem;
+          background: #4CAF50;
+          border-radius: 0.8rem;
+          color: #ffffff;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          .day {
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1;
+          }
+
+          .month {
+            font-size: 0.7rem;
+            letter-spacing: 0.05rem;
+          }
+        }
+
+        .time-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
+
+          .date {
+            font-size: 0.9rem;
+            color: #666;
+          }
+
+          .time {
+            font-size: 1.1rem;
+            font-weight: 600;
+          }
+        }
+
+        /* ---------- 가게 정보 ---------- */
+
+        .store-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          padding: 0.8rem;
+          background: #f9f9f9;
+          border-radius: 0.6rem;
+
+          .row {
+            display: flex;
+            gap: 0.8rem;
+            font-size: 0.85rem;
+
+            .label {
+              width: 4rem;
+              color: #999;
+              flex-shrink: 0;
+            }
+
+            .value {
+              color: #444;
+              word-break: break-word;
+            }
+          }
+        }
+
+        /* ---------- 요청사항 ---------- */
+
+        .request {
+          @include flex(column, stretch, flex-start, 0.25rem);
+          margin-top: 1rem;
+
+          .label {
+            font-size: 0.9rem;
+            color: #999;
+          }
+
+          .text {
+            margin: 0;
+            font-size: 1rem;
+            overflow: hidden;
+          }
+        }
+
+        /* ---------- 하단 버튼 ---------- */
+
+        .card-footer {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: auto;
+
+          .cancel-btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 0.0625rem solid #ef5350;
+            background: #ffebee;
+            color: #c62828;
+            transition: 200ms;
+
+            &:hover {
+              background: #ef5350;
+              color: #ffffff;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+@media (max-width: 1225px) {
+  .myPage-wrapper {
+    padding: 4rem 4rem;
+  }
+}
+
+@media (max-width: 1225px) {
+  .myPage-wrapper {
+    flex-direction: column;
+    padding: 3rem 1.5rem;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+}

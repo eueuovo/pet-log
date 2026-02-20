@@ -791,10 +791,32 @@ body:has(> .address-wrapper.visible) > .cover {
 .register-container > .register-third > .label {
   height: 3rem;
 }
-.register-container > .register-third > .label.emailVerifyLabel > .emailVerifyNumber:disabled {
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  justify-content: flex-start;
+}
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > .-flex-stretch {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper {
+  margin-top: 1.5rem;
+}
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > .countTime {
+  align-self: flex-end;
+  color: #565656;
+}
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > .emailVerifyNumber:disabled {
   border-color: #e7e5e4 !important;
 }
-.register-container > .register-third > .label.emailVerifyLabel > .emailVerifyNumber:disabled::placeholder {
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > .emailVerifyNumber:disabled::placeholder {
   color: #898989;
 }
 .register-container > .register-third > .label.emailVerifyLabel > .button:disabled {
@@ -967,7 +989,8 @@ body:has(> .address-wrapper.visible) > .cover {
 .register-container > .register-third > .label > .id-wrapper > .input,
 .register-container > .register-third > .label > .phone-wrapper > .number-wrapper > .input,
 .register-container > .register-third > .label > .nickname-wrapper > .input,
-.register-container > .register-third > .label > .businessId-wrapper > .input {
+.register-container > .register-third > .label > .businessId-wrapper > .input,
+.register-container > .register-third > .label > .verifyNumber-wrapper > .input {
   border-bottom: 0.1rem solid #E7E5E4;
   height: 2rem;
   font-size: 1rem;
@@ -979,7 +1002,8 @@ body:has(> .address-wrapper.visible) > .cover {
 .register-container > .register-third > .label > .id-wrapper > .input:disabled,
 .register-container > .register-third > .label > .phone-wrapper > .number-wrapper > .input:disabled,
 .register-container > .register-third > .label > .nickname-wrapper > .input:disabled,
-.register-container > .register-third > .label > .businessId-wrapper > .input:disabled {
+.register-container > .register-third > .label > .businessId-wrapper > .input:disabled,
+.register-container > .register-third > .label > .verifyNumber-wrapper > .input:disabled {
   border-color: #e7e5e4 !important;
   color: #bcbcbc;
 }
@@ -987,21 +1011,24 @@ body:has(> .address-wrapper.visible) > .cover {
 .register-container > .register-third > .label > .id-wrapper > .input:disabled::placeholder,
 .register-container > .register-third > .label > .phone-wrapper > .number-wrapper > .input:disabled::placeholder,
 .register-container > .register-third > .label > .nickname-wrapper > .input:disabled::placeholder,
-.register-container > .register-third > .label > .businessId-wrapper > .input:disabled::placeholder {
+.register-container > .register-third > .label > .businessId-wrapper > .input:disabled::placeholder,
+.register-container > .register-third > .label > .verifyNumber-wrapper > .input:disabled::placeholder {
   color: #898989;
 }
 .register-container > .register-third > .label > .input:hover,
 .register-container > .register-third > .label > .id-wrapper > .input:hover,
 .register-container > .register-third > .label > .phone-wrapper > .number-wrapper > .input:hover,
 .register-container > .register-third > .label > .nickname-wrapper > .input:hover,
-.register-container > .register-third > .label > .businessId-wrapper > .input:hover {
+.register-container > .register-third > .label > .businessId-wrapper > .input:hover,
+.register-container > .register-third > .label > .verifyNumber-wrapper > .input:hover {
   border-bottom-color: #abaaa9;
 }
 .register-container > .register-third > .label > .input:focus-within,
 .register-container > .register-third > .label > .id-wrapper > .input:focus-within,
 .register-container > .register-third > .label > .phone-wrapper > .number-wrapper > .input:focus-within,
 .register-container > .register-third > .label > .nickname-wrapper > .input:focus-within,
-.register-container > .register-third > .label > .businessId-wrapper > .input:focus-within {
+.register-container > .register-third > .label > .businessId-wrapper > .input:focus-within,
+.register-container > .register-third > .label > .verifyNumber-wrapper > .input:focus-within {
   border-bottom-color: #abaaa9;
 }
 .register-container > .register-third > .label > .button {
@@ -1404,6 +1431,50 @@ body:has(> .address-wrapper.visible) > .cover {
 }
 .register-container > .register-forth > .label {
   height: 3rem;
+}
+.register-container > .register-forth > .label > .tel-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+.register-container > .register-forth > .label > .tel-wrapper > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.register-container > .register-forth > .label > .tel-wrapper > .-flex-stretch {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.register-container > .register-forth > .label > .tel-wrapper {
+  flex-grow: 1;
+}
+.register-container > .register-forth > .label > .tel-wrapper > .telFirst {
+  width: 6rem;
+  height: 2rem;
+  border-bottom: 0.1rem solid #E7E5E4;
+  font-size: 1rem;
+  transition-duration: 300ms;
+  transition-property: border-bottom-color;
+}
+.register-container > .register-forth > .label > .tel-wrapper > .telMiddle,
+.register-container > .register-forth > .label > .tel-wrapper > .telLast {
+  border-bottom: 0.1rem solid #E7E5E4;
+  height: 2rem;
+  font-size: 1rem;
+  width: 6rem;
+  transition-duration: 300ms;
+  transition-property: border-bottom-color;
+  flex-grow: 1;
+}
+.register-container > .register-forth > .label > .tel-wrapper > .telMiddle:hover,
+.register-container > .register-forth > .label > .tel-wrapper > .telLast:hover {
+  border-bottom-color: rgb(219, 216, 214.5);
+}
+.register-container > .register-forth > .label > .tel-wrapper > .telMiddle:focus-within,
+.register-container > .register-forth > .label > .tel-wrapper > .telLast:focus-within {
+  border-bottom-color: #cfcbc9;
 }
 .register-container > .register-forth > .label > .caption {
   width: 8rem;

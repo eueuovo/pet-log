@@ -51,10 +51,10 @@ function goToStep(stepNumber) {
         return;
     }
     if (stepNumber === 2) {
-        if (selectedMemberType === 'personal') {
+        if (selectedMemberType === 'PERSONAL') {
             $registerSecondPersonalStep.classList.remove('hidden');
             $registerSecondPersonalStep.scrollTop = 0;
-        } else if (selectedMemberType === 'business') {
+        } else if (selectedMemberType === 'BUSINESS') {
             $registerSecondBusinessStep.classList.remove('hidden');
             $registerSecondBusinessStep.scrollTop = 0;
         }
@@ -62,20 +62,20 @@ function goToStep(stepNumber) {
     }
 
     if (stepNumber === 3) {
-        if (selectedMemberType === 'personal') {
+        if (selectedMemberType === 'PERSONAL') {
             $registerThirdPersonalStep.classList.remove('hidden');
             $registerThirdPersonalStep.scrollTop = 0;
-        } else if (selectedMemberType === 'business') {
+        } else if (selectedMemberType === 'BUSINESS') {
             $registerThirdBusinessStep.classList.remove('hidden');
             $registerThirdBusinessStep.scrollTop = 0;
         }
     }
 
     if (stepNumber === 4) {
-        if (selectedMemberType === 'personal') {
+        if (selectedMemberType === 'PERSONAL') {
             $registerForthPersonalStep.classList.remove('hidden');
             $registerForthPersonalStep.scrollTop = 0;
-        } else if (selectedMemberType === 'business') {
+        } else if (selectedMemberType === 'BUSINESS') {
             $registerForthBusinessStep.classList.remove('hidden');
             $registerForthBusinessStep.scrollTop = 0;
         }
@@ -122,13 +122,13 @@ function showCheckMessage(text) {
 
 // 회원가입 첫번째 단계에서 개인회원을 눌렀을 때
 $personalMember.addEventListener('click', () => {
-    selectedMemberType = 'personal';
+    selectedMemberType = 'PERSONAL';
     goToStep(2);
 });
 
 // 회원가입 첫번째 단계에서 사업자회원을 눌렀을 때
 $businessMember.addEventListener('click', () => {
-    selectedMemberType = 'business';
+    selectedMemberType = 'BUSINESS';
     goToStep(2);
 });
 
@@ -186,16 +186,6 @@ $registerSecondSteps.forEach(step => {
 // 회원가입 세번째 단계(공용)
 const $registerThirdSteps = $registerContainer.querySelectorAll(':scope > .register-third');
 let isEmailVerified = false;
-
-// 회원가입 세번째 단계에서 인증번호 전송 버튼 누르면 인증번호 확인 버튼 활성화
-$registerThirdSteps.forEach(step => {
-    const emailSendButton = step.querySelector(':scope > .emailSendLabel > .button');
-    const emailInput = step.querySelector(':scope > .emailSendLabel > .email');
-    const emailVerifyNumberInput = step.querySelector(':scope > .emailVerifyLabel > .emailVerifyNumber');
-    const emailVerifyButton = step.querySelector(':scope > .emailVerifyLabel > .button');
-
-});
-
 
 
 // 주소검색 창 관련
@@ -1071,12 +1061,36 @@ birthWrappers.forEach(step => {
 
 
 const weightInput = $petDialogThird.querySelector(':scope > .petWeightLabel > .weight-wrapper > .weight');
+// 몸무게 자릿수 제한
+weightInput.addEventListener('input', () => {
+    if (parseFloat(weightInput.value) > 100) {
+        weightInput.value = 100;
+    }
+
+    if (weightInput.value.length > 1 && weightInput.value.startsWith('0') && !weightInput.value.startsWith('0.')) {
+        weightInput.value = weightInput.value.replace(/^0+/, '');
+    }
+
+    if (weightInput.value < 0) {
+        weightInput.value = 0;
+    }
+
+    if (weightInput.value.includes('.')) {
+        const [intPart, decimalPart] = weightInput.value.split('.');
+        if (decimalPart.length > 1) {
+            weightInput.value = intPart + '.' + decimalPart.slice(0, 1);
+        }
+    }
+});
 function dialogThirdCompleteButton() {
     const genderCheck = $petDialogThird.querySelector('input[name="gender"]:checked');
     const weightTypeCheck = $petDialogThird.querySelector('input[name="weightType"]:checked');
     if (genderCheck && weightInput.value.trim() !== '' && weightTypeCheck) {
         $petDialogThirdCompleteButton.removeAttribute('disabled');
     } else {
+        $petDialogThirdCompleteButton.setAttribute('disabled', '');
+    }
+    if (weightInput.value <= 0) {
         $petDialogThirdCompleteButton.setAttribute('disabled', '');
     }
 }
@@ -1146,12 +1160,12 @@ $petDialogThirdCompleteButton.addEventListener('click', () => {
         birthDate: petDate.value || petDate.placeholder,
         age: `${age}살`,
         introduction: introduction.value,
-        gender: genderInput ? genderInput.classList.contains('male') ? '남아' : '여아' : null,
+        gender: genderInput ? genderInput.classList.contains('male') ? 'MALE' : 'FEMALE' : null,
         weight: weight.value,
         weightType: weightTypeInput
-            ? weightTypeInput.classList.contains('slim') ? 'slim'
-            : weightTypeInput.classList.contains('normal') ? 'normal'
-            : 'chubby'
+            ? weightTypeInput.classList.contains('slim') ? 'SLIM'
+            : weightTypeInput.classList.contains('normal') ? 'NORMAL'
+            : 'CHUBBY'
             : null
     }
 
@@ -1163,7 +1177,7 @@ $petDialogThirdCompleteButton.addEventListener('click', () => {
         const li = petList.querySelector(`li[data-pet-id="${editMod.petId}"]`);
         if (li) {
             li.querySelector('.petName').firstChild.textContent = petData.name;
-            li.querySelector('.petName .gender').src = petData.gender === '남아'
+            li.querySelector('.petName .gender').src = petData.gender === 'MALE'
                 ? '/user/assets/images/male.png'
                 : '/user/assets/images/female.png';
             li.querySelector('.species').textContent = `품종 : ${petData.species}`;
@@ -1194,7 +1208,7 @@ function addPetToList(petData) {
     const li = document.createElement('li');
     li.classList.add('pet');
     li.dataset.petId = petData.petId;
-    const genderIcon = petData.gender === '남아' ? '/user/assets/images/male.png' : '/user/assets/images/female.png';
+    const genderIcon = petData.gender === 'MALE' ? '/user/assets/images/male.png' : '/user/assets/images/female.png';
     const petImage = petData.petImage;
     li.innerHTML = `
     <div class="petInformation">
@@ -1388,10 +1402,10 @@ function loadPetDialog(petData) {
     // 세번째 dialog
     const maleInput = $petDialogThird.querySelector(':scope > .genderLabel > .gender-wrapper > .maleLabel > .male');
     const femaleInput = $petDialogThird.querySelector(':scope > .genderLabel > .gender-wrapper > .femaleLabel > .female');
-    if (petData.gender === "남아") {
+    if (petData.gender === "MALE") {
         maleInput.checked = true;
     }
-    if (petData.gender === '여아') {
+    if (petData.gender === 'FEMALE') {
         femaleInput.checked = true;
     }
 
@@ -1443,26 +1457,43 @@ $registerContainer.addEventListener('submit', async (e) => {
 
     let phone;
     let store;
-    if (selectedMemberType === 'personal') {
-        phone = $registerThirdPersonalStep.querySelector('.firstNumber').value + '-' + $registerThirdPersonalStep.querySelector('.contactNumber.first').value + '-' + $registerThirdPersonalStep.querySelector('.contactNumber.second').value;
+    let storePhone;
+    if (selectedMemberType === 'PERSONAL') {
+        phone = $registerThirdPersonalStep.querySelector('.firstNumber').value + $registerThirdPersonalStep.querySelector('.contactNumber.first').value + $registerThirdPersonalStep.querySelector('.contactNumber.second').value;
     }
-    if (selectedMemberType === 'business') {
-        phone = $registerThirdBusinessStep.querySelector('.firstNumber').value + '-' + $registerThirdBusinessStep.querySelector('.contactNumber.first').value + '-' + $registerThirdBusinessStep.querySelector('.contactNumber.second').value;
+    if (selectedMemberType === 'BUSINESS') {
+        phone = $registerThirdBusinessStep.querySelector('.firstNumber').value + $registerThirdBusinessStep.querySelector('.contactNumber.first').value + $registerThirdBusinessStep.querySelector('.contactNumber.second').value;
 
-        store = {
-            storeName: $registerForthBusinessStep.querySelector('.storeName.input').value,
-            category: $registerForthBusinessStep.querySelector('.category').value,
-            postalCode: $registerForthBusinessStep.querySelector('.postalNumber').value,
-            addressPrimary: $registerForthBusinessStep.querySelector('.primaryAddress').value,
-            addressSecondary: $registerForthBusinessStep.querySelector('.detailAddress').value
+        storePhone = $registerForthBusinessStep.querySelector('.telFirst').value +
+            $registerForthBusinessStep.querySelector('.telMiddle').value + $registerForthBusinessStep.querySelector('.telLast').value;
+
+        const storeName = $registerForthBusinessStep.querySelector('.storeName.input').value.trim();
+        if (storeName !== '') {
+            store = {
+                storeName: storeName,
+                storePhone: storePhone,
+                category: $registerForthBusinessStep.querySelector('.category').value,
+                postalCode: $registerForthBusinessStep.querySelector('.postalNumber').value,
+                addressPrimary: $registerForthBusinessStep.querySelector('.primaryAddress').value,
+                addressSecondary: $registerForthBusinessStep.querySelector('.detailAddress').value
+            }
+        } else {
+            store = null;
         }
+
     }
+
+    // 대표동물 여부 반영
+    const checkedRadio = petList.querySelector('input[name="primary"]:checked');
+    const checkedId = checkedRadio ? Number(checkedRadio.value) : null;
+
 
     const petsDtoArray = pets.map(pet => {
         // 문자열에 '년', '월', '일'이 붙어있다면 제거
         const year = Number(pet.birthYear.toString().replace(/\D/g,''));
         const month = Number(pet.birthMonth.toString().replace(/\D/g,''));
         const day = Number(pet.birthDate.toString().replace(/\D/g,''));
+        pet.isPrimary = (pet.petId === checkedId);
 
         // 숫자가 제대로 파싱되지 않으면 에러
         if (!year || !month || !day) {
@@ -1476,14 +1507,16 @@ $registerContainer.addEventListener('submit', async (e) => {
             species: pet.species,
             birthDate: birthDate,  // yyyy-MM-dd
             gender: pet.gender,
+            introduction: pet.introduction,
             weight: pet.weight,
             bodyType: pet.weightType,
-            imageUrl: pet.petImage
+            imageUrl: pet.petImage,
+            isPrimary: pet.isPrimary
         };
     });
 
 
-    const form = selectedMemberType === 'personal' ? $registerThirdPersonalStep : $registerThirdBusinessStep;
+    const form = selectedMemberType === 'PERSONAL' ? $registerThirdPersonalStep : $registerThirdBusinessStep;
 
 
     const payload = {
@@ -1492,11 +1525,11 @@ $registerContainer.addEventListener('submit', async (e) => {
         password: form.querySelector('.password').value,
         phone: phone,
         userType: selectedMemberType,
-        name: selectedMemberType === 'personal' ? form.querySelector('.name').value : null,
-        nickname: selectedMemberType === 'personal' ? form.querySelector('.nickname').value : null,
-        companyName: selectedMemberType === 'business' ? form.querySelector('.companyName').value : null,
-        representativeName: selectedMemberType === 'business' ? form.querySelector('.representativeName').value : null,
-        businessNumber: selectedMemberType === 'business' ? form.querySelector('.businessNumber').value : null,
+        name: selectedMemberType === 'PERSONAL' ? form.querySelector('.name').value : null,
+        nickname: selectedMemberType === 'PERSONAL' ? form.querySelector('.nickname').value : null,
+        companyName: selectedMemberType === 'BUSINESS' ? form.querySelector('.companyName').value : null,
+        representativeName: selectedMemberType === 'BUSINESS' ? form.querySelector('.representativeName').value : null,
+        businessNumber: selectedMemberType === 'BUSINESS' ? form.querySelector('.businessNumber').value : null,
         address: {
             receiverName: null,
             phone: phone,
@@ -1508,7 +1541,7 @@ $registerContainer.addEventListener('submit', async (e) => {
         termsIds: Array.from(document.querySelectorAll('.agreement-check > .checkbox'))
             .filter(cb => cb.checked)
             .map(cb => parseInt(cb.dataset.termsId)),
-        pets: selectedMemberType === 'personal' ? petsDtoArray : null
+        pets: selectedMemberType === 'PERSONAL' ? petsDtoArray : null
     };
 
     try {
@@ -1537,7 +1570,9 @@ const loading = document.getElementById('loading');
 $registerThirdSteps.forEach(step => {
     // region 이메일 검증
     const sendButton = step.querySelector(':scope > .emailSendLabel > .button');
-        const emailInput = step.querySelector(':scope > .emailSendLabel > .email');
+    const emailInput = step.querySelector(':scope > .emailSendLabel > .email');
+    const emailCodeInput = step.querySelector(':scope > .emailVerifyLabel > .verifyNumber-wrapper > .emailVerifyNumber');
+    const verifyButton = step.querySelector(':scope > .emailVerifyLabel > .button');
 
     sendButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1565,15 +1600,14 @@ $registerThirdSteps.forEach(step => {
             const response = JSON.parse(xhr.responseText);
             switch (response.result) {
                 case 'FAILURE':
-                    showMessage('전송 실패! 다시 확인해주세요.');
+                    showMessage('전송 실패! 이메일을 다시 입력해주세요.');
+                    emailInput.focus();
+                    emailInput.select();
                     break;
                 case 'FAILURE_DUPLICATE':
                     showMessage('이미 사용중인 이메일입니다. 다시 입력해주세요.');
                     emailInput.focus();
                     emailInput.select();
-                    break;
-                case 'FAILURE_EXPIRED':
-                    showMessage('인증번호 유효기간이 지났습니다. 다시 시도해 주세요.');
                     break;
                 case 'SUCCESS':
                     showMessage('작성하신 이메일로 인증번호를 발송하였습니다. \n 인증번호는 5분간만 유효하니 유의해주세요.');
@@ -1593,8 +1627,7 @@ $registerThirdSteps.forEach(step => {
     });
 
 
-    const verifyButton = step.querySelector(':scope > .emailVerifyLabel > .button');
-    const emailCodeInput = step.querySelector(':scope > .emailVerifyLabel > .emailVerifyNumber');
+
 
     verifyButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1700,7 +1733,7 @@ $registerThirdSteps.forEach(step => {
             return;
         }
 
-        const phone = `${firstNumber.value}-${middleNumber.value}-${lastNumber.value}`;
+        const phone = `${firstNumber.value}${middleNumber.value}${lastNumber.value}`;
 
         phoneTimeout = setTimeout(() => {
             const xhr = new XMLHttpRequest();

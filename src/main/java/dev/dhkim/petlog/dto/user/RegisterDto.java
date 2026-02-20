@@ -1,5 +1,6 @@
 package dev.dhkim.petlog.dto.user;
 
+import dev.dhkim.petlog.enums.user.UserType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,7 @@ import java.util.List;
 public class RegisterDto {
     // 공통정보
     private int id;
-    private String userType; // personal | business
+    private UserType userType; // PERSONAL | BUSINESS
 
     // 로그인정보
     private String email;

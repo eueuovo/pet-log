@@ -13,6 +13,6 @@ public class UserTermsAgreementEntity {
     private int agreementId;
     private int userId;
     private int termsId;
-    private boolean agreed;
+    private Boolean agreed;
     private LocalDateTime agreedAt;
 }

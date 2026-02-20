@@ -41,7 +41,7 @@ public class SalonController {
         return "미용싷 위도/경도 업데이트 완료!";
     }
 
-    //병원 목록 내보내기
+    //미용실 목록 내보내기
     @GetMapping("/salon")
     public List<SalonDto> getSalon() {
 

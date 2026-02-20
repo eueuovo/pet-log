@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dev.dhkim.petlog.mappers.myPage.MyPageMapper">
+    <update id="updatePrimary">
+        UPDATE `petlog`.`pets`
+        SET `is_primary` = true
+        WHERE `pet_id` = #{petId}
+
+    </update>
+    <update id="updatePet">
+        UPDATE `petlog`.`pets`
+        SET `name` = #{pet.name},
+            `species` = #{pet.species},
+            `birth_date` = #{pet.birthDate},
+            `introduction` = #{pet.introduction},
+            `gender` = #{pet.gender},
+            `weight` = #{pet.weight},
+            `body_type` = #{pet.bodyType},
+            `image_url` = #{pet.imageUrl},
+            `updated_at` =  now()
+        WHERE `pet_id` = #{pet.petId}
+          AND `user_id` = #{userId}
+    </update>
+    <delete id="deletePet">
+        DELETE
+        FROM `petlog`.`pets`
+        WHERE `pet_id` = #{petId}
+          AND `user_id` = #{userId}
+        LIMIT 1
+    </delete>
+    <select id="selectByUserId" resultType="dev.dhkim.petlog.entities.user.UserEntity">
+        SELECT `id`         AS id,
+               `email`      AS email,
+               `login_id`   AS loginId,
+               `password`   AS password,
+               `phone`      AS phone,
+               `user_type`  AS userType,
+               `shop_point` AS shopPoint,
+               `created_at` AS createdAt,
+               `updated_at` AS updatedAt
+        FROM `petlog`.`users`
+        WHERE `id` = #{userId}
+        LIMIT 1
+    </select>
+    <select id="selectPersonalByUserId" resultType="dev.dhkim.petlog.entities.user.PersonalUserEntity">
+        SELECT `user_id`    AS userId,
+               `name`       AS name,
+               `nickname`   AS nickname,
+               `created_at` AS createdAt,
+               `updated_at` AS updatedAt
+        FROM `petlog`.`personal_user`
+        WHERE `user_id` = #{userId}
+        LIMIT 1
+    </select>
+    <select id="selectDefaultAddressByUserId" resultType="dev.dhkim.petlog.entities.user.AddressEntity">
+        SELECT `address_id`        AS addressId,
+               `user_id`           AS userId,
+               `receiver_name`     AS receiverName,
+               `phone`             AS phone,
+               `postal_code`       AS postalCode,
+               `address_primary`   AS addressPrimary,
+               `address_secondary` AS addressSecondary,
+               `lat`               AS lat,
+               `lng`               AS lng,
+               `is_default`        AS isDefault,
+               `created_at`        AS createdAt,
+               `updated_at`        AS updatedAt
+        FROM `petlog`.`address`
+        WHERE `user_id` = #{userId}
+          AND `is_default` = 1
+        LIMIT 1
+    </select>
+    <select id="selectPrimaryPetByUserId" resultType="dev.dhkim.petlog.entities.user.PetEntity">
+        SELECT `pet_id`       AS petId,
+               `user_id`      AS userId,
+               `name`         AS name,
+               `species`      AS species,
+               `birth_date`   AS birthDate,
+               `introduction` AS introduction,
+               `gender`       AS gender,
+               `weight`       AS weight,
+               `body_type`    AS bodyType,
+               `image_url`    AS imageUrl,
+               `is_primary`   AS isPrimary,
+               `created_at`   AS createdAt,
+               `updated_at`   AS updatedAt
+        FROM `petlog`.`pets`
+        WHERE `user_id` = #{userId}
+          AND `is_primary` = 1
+        LIMIT 1
+    </select>
+    <select id="selectPetsByUserId" resultType="dev.dhkim.petlog.entities.user.PetEntity">
+        SELECT `pet_id`       AS petId,
+               `user_id`      AS userId,
+               `name`         AS name,
+               `species`      AS species,
+               `birth_date`   AS birthDate,
+               `introduction` AS introduction,
+               `gender`       AS gender,
+               `weight`       AS weight,
+               `body_type`    AS bodyType,
+               `image_url`    AS imageUrl,
+               `is_primary`   AS isPrimary,
+               `created_at`   AS createdAt,
+               `updated_at`   AS updatedAt
+        FROM `petlog`.`pets`
+        WHERE `user_id` = #{userId}
+        ORDER BY `pet_id` ASC
+    </select>
+    <select id="selectByPetIdAndUserId" resultType="dev.dhkim.petlog.entities.user.PetEntity">
+        SELECT `pet_id`       AS petId,
+               `user_id`      AS userId,
+               `name`         AS name,
+               `species`      AS species,
+               `birth_date`   AS birthDate,
+               `introduction` AS introduction,
+               `gender`       AS gender,
+               `weight`       AS weight,
+               `body_type`    AS bodyType,
+               `image_url`    AS imageUrl,
+               `is_primary`   AS isPrimary,
+               `created_at`   AS createdAt,
+               `updated_at`   AS updatedAt
+        FROM `petlog`.`pets`
+        WHERE `user_id` = #{userId}
+          AND `pet_id` = #{petId}
+        LIMIT 1
+    </select>
+
+</mapper>
