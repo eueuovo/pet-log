@@ -6,7 +6,7 @@
     @include flex(column, center, center, 1rem);
     width: min(75rem, 92%);
     height: 100%;
-    margin: 0 auto;
+    margin: 5rem auto 0 auto;
 }
 
 .options {
@@ -14,7 +14,6 @@
     width: 100%;
     padding: 0.5rem 0 0 0;
     margin-top: 0.65rem;
-    //border-bottom: 0.175rem solid darken($global-border-green-color, 20%);
     background-color: inherit;
     flex-wrap: wrap;
 }
@@ -48,6 +47,15 @@
     }
 }
 
+.go-login {
+    background-color: #DBF0DF;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+
+    &:hover {
+        background-color: #CFE9D6;
+    }
+}
 // 본인 프로필 이동
 .my-profile {
     @include flex(row, center, center, 0.3rem);
@@ -59,10 +67,19 @@
 
     > img {
         border-radius: 999rem;
-        background-color: #FDC756;
+        background-color: #DBF0DF;
         width: 2rem;
         height: 2rem;
         color: inherit;
+    }
+
+    &:hover {
+        img {
+            background-color: #CFE9D6
+        }
+        > span {
+            text-decoration: underline;
+        }
     }
 }
 
@@ -148,11 +165,30 @@
     grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
     gap: 1.5rem;
     width: 100%;
+
+    // 스크롤 감지 기준
+    > #scroll-sentinel {
+        height: 1px;
+    }
 }
-// 스크롤 감지 기준
-#scroll-sentinel {
-    height: 1px;
+
+.reload-wrapper {
+    text-align: center;
+    margin-bottom: 3rem;
+    > .reload-btn{
+        @include flex(row, center, center, 0.3rem);
+        color: $global-gray-text-color;
+        font-size: 0.875rem;
+        > .reload-icon {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+    }
+    &.hidden {
+        display: none;
+    }
 }
+
 @media (max-width: 1023px) {
     #feed-container {
         grid-template-columns: repeat(3, minmax(0, 1fr));

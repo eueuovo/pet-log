@@ -35,7 +35,8 @@ import static dev.dhkim.petlog.enums.user.UserType.PERSONAL;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class
+UserService {
     private final UserMapper userMapper;
     private final EmailVerificationMapper emailVerificationMapper;
     private final JavaMailSender mailSender;
