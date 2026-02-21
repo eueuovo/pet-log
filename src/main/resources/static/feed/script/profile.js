@@ -128,51 +128,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await res.json();
 
-            if (data.result === "LOGIN_REQUIRED") {
-                alert("로그인이 필요합니당");
-                return;
+            switch (data.result) {
+                case "LOGIN_REQUIRED" :
+                    showMessage("로그인 후 이용 가능합니다.");
+                    break;
+                case "SUCCESS" :
+                    if (data.following) {
+                        // 버튼 스타일 변경
+                        $followToggle.textContent = '팔로우 해제';
+                        $followToggle.classList.remove('is-follow');
+                        $followToggle.classList.add('is-following');
+                        if ($followerStrong) { // 팔로워 +1
+                            $followerStrong.textContent = formatCount(data.followerCount);
+                        }
+                        // 이미 메세지 버튼이 없다면 생성
+                        if (!$btnArea.querySelector('.btn-message')) {
+                            const msgBtn = document.createElement('button');
+                            msgBtn.className = 'btn-message';
+                            msgBtn.type = 'button';
+                            msgBtn.textContent = '메세지';
+
+                            msgBtn.addEventListener('click', () => {
+                                alert('메세지 기능 연결 필요');
+                            });
+
+                            $btnArea.appendChild(msgBtn);
+                        }
+                    } else {
+                        // 팔로우 취소 상태
+                        $followToggle.textContent = '팔로우';
+                        $followToggle.classList.remove('is-following');
+                        $followToggle.classList.add('is-follow');
+                        if ($followerStrong) { // 팔로워 -1
+                            $followerStrong.textContent = formatCount(data.followerCount);
+                        }
+                        // 메세지 버튼 제거
+                        const $msg = $btnArea.querySelector('.btn-message');
+                        if ($msg) {
+                            $msg.remove();
+                        }
+                    }
+                    break;
+                default :
+                    showMessage("알 수 없는 이유로 오류가 발생하였습니다.");
+                    break;
             }
 
-            if (data.result !== "SUCCESS") {
-                alert("저장 실패");
-                return;
-            }
 
-            if (data.following) {
-                // 버튼 스타일 변경
-                $followToggle.textContent = '팔로우 해제';
-                $followToggle.classList.remove('is-follow');
-                $followToggle.classList.add('is-following');
-                if ($followerStrong) { // 팔로워 +1
-                    $followerStrong.textContent = formatCount(data.followerCount);
-                }
-                // 이미 메세지 버튼이 없다면 생성
-                if (!$btnArea.querySelector('.btn-message')) {
-                    const msgBtn = document.createElement('button');
-                    msgBtn.className = 'btn-message';
-                    msgBtn.type = 'button';
-                    msgBtn.textContent = '메세지';
-
-                    msgBtn.addEventListener('click', () => {
-                        alert('메세지 기능 연결 필요');
-                    });
-
-                    $btnArea.appendChild(msgBtn);
-                }
-            } else {
-                // 팔로우 취소 상태
-                $followToggle.textContent = '팔로우';
-                $followToggle.classList.remove('is-following');
-                $followToggle.classList.add('is-follow');
-                if ($followerStrong) { // 팔로워 -1
-                    $followerStrong.textContent = formatCount(data.followerCount);
-                }
-                // 메세지 버튼 제거
-                const $msg = $btnArea.querySelector('.btn-message');
-                if ($msg) {
-                    $msg.remove();
-                }
-            }
         });
     }
 

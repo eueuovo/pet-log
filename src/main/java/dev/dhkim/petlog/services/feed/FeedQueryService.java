@@ -103,21 +103,30 @@ public class FeedQueryService {
     // 디테일 페이지 - 동일 지역 피드 조회 (좌측 영역)
     public List<FeedDto> getRelatedFeeds(int feedId, Integer userId) {
 
+        //현재 피드 조회
         FeedDto dbFeed = feedMapper.selectFeedById(feedId);
-        if (dbFeed == null || dbFeed.getAddress() == null) return List.of();
+        if (dbFeed == null || dbFeed.getAddress() == null)
+            return List.of();
+
+        // 도시만 뺴내기
+        String city = addressUtil.extractCity(dbFeed.getAddress());
+        if (city.isBlank()) {
+            return List.of();
+        }
 
         // 같은 지역 피드 조회 (현재 피드는 제외)
-        List<FeedDto> relatedFeeds = feedMapper.selectFeedByAddress(dbFeed.getAddress(), feedId);
-        if (relatedFeeds.isEmpty()) return relatedFeeds;
+        List<FeedDto> relatedFeeds = feedMapper.selectFeedByAddress(city, feedId);
+        if (relatedFeeds.isEmpty())
+            return relatedFeeds;
 
         // 피드 ID에 해당하는 미디어 넣어주기
         feedMediaService.addMediaToFeed(relatedFeeds);
         // 피드 ID에 맞게 주소 넣어주기
-        relatedFeeds.forEach(f ->
-                f.setAddress(addressUtil.extractCity(f.getAddress()))
+        relatedFeeds.forEach(feed ->
+                feed.setAddress(addressUtil.extractCity(feed.getAddress()))
         );
 
-        // 좋아요 누른 게시물 전부 가져오기
+        // 좋아요 누른 피드 좋아요 표시
         if (userId != null) {
             List<Integer> feedIds = relatedFeeds.stream()
                     .map(FeedDto::getFeedId)

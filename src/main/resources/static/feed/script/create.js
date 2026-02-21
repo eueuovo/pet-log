@@ -94,12 +94,10 @@ $submitButton.addEventListener('click', (e) => {
         alert("이미지 또는 동영상을 최소 1개 업로드해주세요.");
         return;
     }
-
     if (!$title) {
         alert("제목을 입력해주세요");
         return;
     }
-
     if (!$description) {
         alert("내용을 입력해주세요.")
         return;
@@ -119,17 +117,19 @@ $submitButton.addEventListener('click', (e) => {
             return;
         }
         if (xhr.status < 200 || xhr.status >= 400) {
-            showMessage('박살남');
+            showMessage('알 수 없는 오류가 발생하였습니다.');
             return;
         }
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
-            case "result" : showMessage('로그인을 먼저 진행해주세요');
+            case "LOGIN_REQUIRED" : showMessage('로그인 후 이용 가능합니다.');
             break;
-            case "FAILURE": showMessage('박살남');
+            case "SUCCESS": showMessage('작성을 완료하였습니다.', () => {
+                window.location.href = "/feed/explore";
+            });
+
             break;
-            case "SUCCESS": showMessage('성공함');
-            break;
+            default : showMessage('알 수 없는 오류가 발생하였습니다.');
         }
     };
     xhr.open('POST', '/api/feed');

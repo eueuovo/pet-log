@@ -8,13 +8,19 @@
     <link rel="stylesheet" href="/assets/styles/header.css">
     <link rel="stylesheet" href="/feed/style/common.css">
     <link rel="stylesheet" href="/feed/style/detail.css">
+    <script defer src="/assets/scripts/header.js"></script>
+    <script defer src="/assets/scripts/common.js"></script>
     <script defer src="/feed/script/common.js"></script>
     <script defer src="/feed/script/detail.js"></script>
-    <script defer src="/assets/scripts/header.js"></script>
 </head>
 <body>
 
 <div th:replace="~{fragments/common :: topNavigator}"></div>
+
+<div class="cover"></div>
+<div class="message" id="message">
+    <button type="button" class="button">확인</button>
+</div>
 
 <div class="page">
     <button class="create-feed" id="createFeedBtn">
