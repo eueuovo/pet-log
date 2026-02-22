@@ -30,7 +30,7 @@ public class FriendService {
 
         if (myLat == 0.0 || myLng == 0.0) return List.of();
 
-        double radiusKm = 1.5;  // 👈 여기서 고정
+        double radiusKm = 1.5;  // 여기서 고정
 
         ensureAllOtherUsersHaveLatLng(userId);
 

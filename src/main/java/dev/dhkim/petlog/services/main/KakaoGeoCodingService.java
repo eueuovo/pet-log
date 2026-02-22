@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KakaoGeoCodingService {
 
-    private final String REST_API_KEY = "a4993f28bfdc1e9149e84e29a51993c0"; // 본인 키로 교체
+    private final String REST_API_KEY = ""; // 본인 키로 교체
     private final String GEO_URL = "https://dapi.kakao.com/v2/local/search/address.json?query=";
 
     public double[] getLatLng(String address) {

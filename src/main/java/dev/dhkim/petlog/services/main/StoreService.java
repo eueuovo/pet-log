@@ -23,7 +23,7 @@ public class StoreService {
 
     private final StoreMapper storeMapper;
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String KAKAO_REST_KEY = "a4993f28bfdc1e9149e84e29a51993c0";
+    private static final String KAKAO_REST_KEY = "";
 
     /**
      * 주소 → 위도/경도 변환

@@ -29,7 +29,7 @@ public class SalonService {
 
     private static final int NUM_OF_ROWS = 10;
     private static final String SERVICE_KEY = "d7e0beb3d81a4064f3ed977303249c76aa7241b310eb6acafcd84e66bda26176";
-    private static final String KAKAO_REST_KEY = "a4993f28bfdc1e9149e84e29a51993c0";
+    private static final String KAKAO_REST_KEY = "";
 
     /* =======================
        공공데이터 API 호출 관련

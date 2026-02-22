@@ -30,7 +30,7 @@ public class HospitalService {
 
     private static final int NUM_OF_ROWS = 10;
 
-    private static final String SERVICE_KEY = "d7e0beb3d81a4064f3ed977303249c76aa7241b310eb6acafcd84e66bda26176";
+    private static final String SERVICE_KEY = "";
     /*
      */
 

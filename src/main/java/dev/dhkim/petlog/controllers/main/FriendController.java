@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController   // 👈 이걸로 변경
+@RestController   //  이걸로 변경
 @RequiredArgsConstructor
-@RequestMapping("/api/friends")  // 👈 JS에 맞춤
+@RequestMapping("/api/friends")  //  JS에 맞춤
 public class FriendController {
 
     private final FriendService friendService;
@@ -25,7 +25,7 @@ public class FriendController {
             return List.of();
         }
 
-        Integer userId = sessionUser.getUserId();  // 👈 추가
+        Integer userId = sessionUser.getUserId();  // 추가
 
         return friendService.getNearbyFriends(userId, lat, lng);
     }
