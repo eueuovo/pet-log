@@ -154,11 +154,22 @@ if (infoTab && reviewTab && detail && review) {
         review.style.display = 'none';
     });
 
+    let reviewLoaded = false;
     reviewTab.addEventListener('click', () => {
         reviewTab.classList.add('active');
         infoTab.classList.remove('active');
         detail.style.display = 'none';
         review.style.display = 'flex';
+
+        if (!reviewLoaded) {
+            reviewLoaded = true;
+            fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=best`)
+                .then(res => res.json())
+                .then(data => {
+                    renderReviews(data.reviews);
+                    renderRatingSummary(data);
+                });
+        }
     });
 }
 
@@ -476,7 +487,7 @@ if (bestFilter) {
         bestFilter.classList.add('active');
         rowFilter.classList.remove('active');
         newFilter.classList.remove('active');
-        fetch(`/shop/products/${productId}/reviews?sort=best`)
+        fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=best`)
             .then(res => res.json())
             .then(data => {
                 renderReviews(data.reviews);
@@ -488,7 +499,7 @@ if (bestFilter) {
         rowFilter.classList.add('active');
         bestFilter.classList.remove('active');
         newFilter.classList.remove('active');
-        fetch(`/shop/products/${productId}/reviews?sort=low`)
+        fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=low`)
             .then(res => res.json())
             .then(data => {
                 renderReviews(data.reviews);
@@ -500,7 +511,7 @@ if (bestFilter) {
         newFilter.classList.add('active');
         bestFilter.classList.remove('active');
         rowFilter.classList.remove('active');
-        fetch(`/shop/products/${productId}/reviews?sort=new`)
+        fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=new`)
             .then(res => res.json())
             .then(data => {
                 renderReviews(data.reviews);
@@ -527,6 +538,8 @@ function renderReviews(reviews) {
         return;
     }
 
+    const currentUserId = parseInt(document.querySelector('#product')?.dataset.userId) || null;
+
     reviews.forEach(review => {
         const item = document.createElement('div');
         item.className = 'review-item';
@@ -546,7 +559,7 @@ function renderReviews(reviews) {
             ${(review.reviewImages || []).map(img => `<img src="${img}" class="review-img" alt="리뷰이미지">`).join('')}
         </div>
         <div class="review-text">${review.content || ''}</div>
-        <div class="update">수정</div>
+        ${review.userId && currentUserId && review.userId == currentUserId ? '<div class="update">수정</div>' : ''}
         `;
 
         item.querySelector('.update')?.addEventListener('click', () => {
@@ -734,7 +747,7 @@ document.querySelector('.submit-review')?.addEventListener('click', () => {
                 editingReviewId = null;
                 closeModal();
                 document.querySelector('.review-tab').click();
-                fetch(`/shop/products/${productId}/reviews?sort=best`)
+                fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=best`)
                     .then(res => res.json())
                     .then(data => {
                         renderReviews(data.reviews);
@@ -748,7 +761,7 @@ document.querySelector('.submit-review')?.addEventListener('click', () => {
 
 function renderRatingSummary(data) {
     const scoreEl = document.querySelector('.summary-score');
-    if (scoreEl) scoreEl.textContent = data.averageRating;
+    if (scoreEl) scoreEl.textContent = parseFloat(data.averageRating).toFixed(1);
 
     document.querySelectorAll('.rating-summary .stars span').forEach((span, idx) => {
         const i = idx + 1;

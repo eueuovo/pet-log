@@ -133,6 +133,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (couponSelect) {
+        Array.from(couponSelect.options).forEach(option => {
+            const minOrder = parseInt(option.dataset.minOrder || 0);
+            if (minOrder > 0 && baseAmount < minOrder) {
+                option.text = '(사용불가) ' + option.text;
+                option.disabled = true;
+            }
+        });
+    }
+
     updatePaymentSummary();
 });
 

@@ -644,6 +644,7 @@
 
             > .rating-summary {
               @include flex(row, center, center, 0.5rem);
+              align-self: center;
 
               > .stars {
                 @include flex(row, center, center);
@@ -674,6 +675,11 @@
               @include flex(column, center, center, 0.4rem);
               flex: 1;
               padding: 0 3rem;
+
+              @media (max-width: 600px) {
+                @include flex(column, center, center, 0.4rem);
+                padding: 0;
+              }
 
               > .rating-item{
                 @include flex(row, center, flex-start);
@@ -709,7 +715,7 @@
 
                 > .count {
                   font-size: 0.7rem;
-                  width: 3.5rem;
+                  width: 1.5rem;
                   flex-shrink: 0;
                   margin-left: 0.5rem;
                 }

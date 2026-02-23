@@ -3,6 +3,7 @@
 <mapper namespace="dev.dhkim.petlog.mappers.shop.ReviewMapper">
     <select id="selectReviews" resultType="map">
         SELECT r.id, r.rating, r.content,
+        r.user_id AS userId,
         r.created_at AS createdAt,
         p.name AS petName,
         p.image_url AS profileImageUrl,

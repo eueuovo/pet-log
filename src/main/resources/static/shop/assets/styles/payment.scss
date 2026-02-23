@@ -400,6 +400,10 @@
           margin-right: 0.7rem;
           width: 15rem;
           height: 2.5rem;
+
+          option:disabled {
+            color: #aaaaaa;
+          }
         }
       }
 

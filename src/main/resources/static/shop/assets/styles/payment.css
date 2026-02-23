@@ -505,6 +505,8 @@
           margin-right: 0.7rem;
           width: 15rem;
           height: 2.5rem; }
+          #payment > .info-wrapper > .discount > .coupon > .coupon-list option:disabled {
+            color: #aaaaaa; }
       #payment > .info-wrapper > .discount > .point {
         align-items: flex-start;
         display: flex;

@@ -200,10 +200,11 @@
                             th:data-discount-value="${coupon.get('discountValue')}"
                             th:data-min-order="${coupon.get('minOrderAmount')}"
                             th:data-max-discount="${coupon.get('maxDiscountAmount')}"
+                            th:classappend="${coupon.get('minOrderAmount') > 0} ? 'coupon-unavailable'"
                             th:text="${coupon.get('name') +
-                         (coupon.get('discountType').toString().toUpperCase().equals('AMOUNT') ?
-                          ' (' + #numbers.formatInteger(coupon.get('discountValue'), 0, 'COMMA') + '원 할인)' :
-                          ' (' + coupon.get('discountValue') + '% 할인)')}">
+                            (coupon.get('discountType').toString().toUpperCase().equals('AMOUNT') ?
+                            ' (' + #numbers.formatInteger(coupon.get('discountValue'), 0, 'COMMA') + '원 할인)' :
+                            ' (' + coupon.get('discountValue') + '% 할인)')}">
                     </option>
                 </select>
             </label>
