@@ -6,6 +6,7 @@ import dev.dhkim.petlog.dto.main.SalonDto;
 import dev.dhkim.petlog.entities.main.SalonEntity;
 import dev.dhkim.petlog.mappers.main.SalonMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+//카카오 서비스 키
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +26,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SalonService {
 
+
+    @Value("${kakao.rest.key}")
+    private String kakaoRestKey;
     private final SalonMapper salonMapper;
     private final RestTemplate restTemplate = new RestTemplate(); // API 호출용
     private final ObjectMapper mapper = new ObjectMapper(); // JSON 파싱용
 
     private static final int NUM_OF_ROWS = 10;
     private static final String SERVICE_KEY = "d7e0beb3d81a4064f3ed977303249c76aa7241b310eb6acafcd84e66bda26176";
-    private static final String KAKAO_REST_KEY = "";
 
     /* =======================
        공공데이터 API 호출 관련
@@ -133,7 +138,7 @@ public class SalonService {
             System.out.println("API 호출 URL: " + url);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "KakaoAK " + KAKAO_REST_KEY);
+            headers.set("Authorization", "KakaoAK " + kakaoRestKey);
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             ResponseEntity<JsonNode> response =

@@ -4,6 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="dev.dhkim.petlog.mappers.main.StoreMapper">
+    <insert id="insert" parameterType="dev.dhkim.petlog.entities.user.StoreEntity">
+        INSERT INTO `petlog`.store (store_id,user_id,store_name,postal_code,address_primary, address_secondary, lat, lng, category,  store_phone)
+        VALUES (#{storeId},#{userId},#{storeName}, #{postalCode}, #{addressPrimary}, #{addressSecondary}, #{lat}, #{lng},#{category}, #{storePhone})
+    </insert>
 
 
     <!-- 좌표 변환 필요 장소 조회 -->

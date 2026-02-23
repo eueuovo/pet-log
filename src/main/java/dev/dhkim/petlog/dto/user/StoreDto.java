@@ -1,12 +1,9 @@
 package dev.dhkim.petlog.dto.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
-
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,4 +16,8 @@ public class StoreDto {
     private String addressSecondary;
     private String category;
     private LocalDateTime createdAt;
+    private Double lng;
+    private Double lat;
+    private int userId;
+    private int storeId;
 }

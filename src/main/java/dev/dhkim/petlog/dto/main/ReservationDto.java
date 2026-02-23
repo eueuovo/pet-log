@@ -20,4 +20,18 @@ public class ReservationDto {
     private LocalTime reservationTime;
     private String requestText;
     private String paymentMethod = "OFFLINE"; // 기본값
+
+
+    @Override
+    public String toString() {
+        return "ReservationDto{" +
+                "reservationId=" + reservationId +
+                ", userId=" + userId +
+                ", storeId=" + storeId +
+                ", reservationDate='" + reservationDate + '\'' +
+                ", reservationTime='" + reservationTime + '\'' +
+                ", requestText='" + requestText + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                '}';
+    }
 }

@@ -341,6 +341,7 @@ $registerForthBusinessStepAddressFindButton.addEventListener('click', () => {
 });
 
 
+
 // 회원가입 네번째 단계에서 취소버튼을 눌렀을 때
 $registerForthSteps.forEach(step => {
     const cancelButton = step.querySelector(':scope > .button-wrapper > .cancel');
@@ -363,7 +364,57 @@ $registerForthSteps.forEach(step => {
     const completeButton = step.querySelector(':scope > .button-wrapper > .complete');
 });
 
+/*
+//store db 위도 경도 변환 하기 위해
+const completeButton = $registerForthBusinessStep.querySelector(':scope > .button-wrapper > .complete');
 
+completeButton.addEventListener('click', async () => {
+    // 입력값 확인
+    const userName = $registerThirdBusinessStep.querySelector('.userName').value;
+    const email = $registerThirdBusinessStep.querySelector('.email').value;
+    const password = $registerThirdBusinessStep.querySelector('.password').value;
+
+    const storeName = $registerForthBusinessStep.querySelector('.storeName').value;
+    const postalCode = $registerForthBusinessStep.querySelector('.postalNumber').value;
+    const addressPrimary = $registerForthBusinessStep.querySelector('.primaryAddress').value;
+    const addressSecondary = $registerForthBusinessStep.querySelector('.detailAddress').value;
+    const category = $registerForthBusinessStep.querySelector('.category').value;
+    const storePhone = $registerForthBusinessStep.querySelector('.storePhone').value;
+
+    // 필수 입력 체크
+    if (!userName || !email || !password || !storeName || !addressPrimary || !category) {
+        showMessage("필수 정보를 모두 입력해주세요.");
+        return;
+    }
+
+    const payload = {
+        userName, email, password,
+        storeName, postalCode, addressPrimary, addressSecondary,
+        category, storePhone
+    };
+
+    try {
+        const res = await fetch('/api/register/business', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            showMessage(err.message || '회원가입 실패');
+            return;
+        }
+
+        // 성공 시 로그인 페이지 이동
+        location.href = '/user/login';
+    } catch (e) {
+        showMessage('서버와 연결되지 않았습니다.');
+        console.error(e);
+    }
+});
+
+*/
 
 
 // region 회원가입 네번쨰 단계(개인+애완동물 로직)
@@ -1594,7 +1645,7 @@ $registerThirdSteps.forEach(step => {
             }
             loading.classList.remove('visible');
             if(xhr.status < 200 || xhr.status >= 400){
-                
+
                 return;
             }
             const response = JSON.parse(xhr.responseText);
@@ -1620,7 +1671,7 @@ $registerThirdSteps.forEach(step => {
                     showMessage('알 수 없는 이유로 실패하였습니다. 다시 시도해주세요.');
 
             }
-            
+
         };
         xhr.open('POST', '/user/email');
         xhr.send(formData);

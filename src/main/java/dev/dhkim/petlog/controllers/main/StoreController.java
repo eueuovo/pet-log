@@ -1,29 +1,35 @@
 package dev.dhkim.petlog.controllers.main;
 
+import dev.dhkim.petlog.dto.user.SessionUser;
+import dev.dhkim.petlog.dto.user.StoreDto;
 import dev.dhkim.petlog.entities.user.StoreEntity;
+import dev.dhkim.petlog.entities.user.UserEntity;
 import dev.dhkim.petlog.services.main.StoreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/stores")
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class StoreController {
 
     private final StoreService storeService;
 
-    // 좌표 업데이트 (기존)
-    @GetMapping(value = "/update-coords", produces = "text/plain; charset=UTF-8")
-    public String updateCoords() {
-        storeService.updateAllStoreLatLng();
-        return "좌표 변환 완료";
+    // 1️⃣ 카테고리별 또는 전체 가게 조회
+    @GetMapping
+    public ResponseEntity<List<StoreEntity>> getStores(@RequestParam(required = false) String category) {
+        List<StoreEntity> stores = storeService.getStoresByCategoryOrAll(category);
+        return ResponseEntity.ok(stores);
     }
 
-    // 단일 엔드포인트: 전체 or 카테고리별 조회
-    @GetMapping("/stores")
-    public List<StoreEntity> getStores(@RequestParam(required = false) String category) {
-        return storeService.getStoresByCategoryOrAll(category);
+    // 2️⃣ 가게 등록
+    @PostMapping
+    public ResponseEntity<String> registerStore(@RequestBody StoreDto storeDto) {
+        storeService.registerStore(storeDto);
+        return ResponseEntity.ok("가게 등록 완료");
     }
 }
+

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+//카카오 서비스 키
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class HospitalService {
+
+    @Value("${kakao.rest.key}")
+    private String kakaoRestKey;
     private final HospitalMapper hospitalMapper;
     //공공데이터 API 자체를 호출할 수 없음
     private final RestTemplate restTemplate = new RestTemplate();
@@ -30,7 +35,7 @@ public class HospitalService {
 
     private static final int NUM_OF_ROWS = 10;
 
-    private static final String SERVICE_KEY = "";
+    private static final String SERVICE_KEY = "d7e0beb3d81a4064f3ed977303249c76aa7241b310eb6acafcd84e66bda26176";
     /*
      */
 
@@ -160,7 +165,7 @@ public class HospitalService {
                 + "&output_coord=WGS84";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "KakaoAK " + "a4993f28bfdc1e9149e84e29a51993c0"); // REST API Key
+        headers.set("Authorization", "KakaoAK " + kakaoRestKey);// REST API Key
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<JsonNode> response =

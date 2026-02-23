@@ -106,7 +106,8 @@ function normalizePlaceData(place, category) {
             status: '영업 중',  // 기본값
             lat: place.lat,
             lng: place.lng,
-            category
+            category,
+            storeId: place.storeId,
         };
     }
 
@@ -119,7 +120,8 @@ function normalizePlaceData(place, category) {
             status: place.status || '영업 중',
             lat: place.lat,
             lng: place.lng,
-            category
+            category,
+            storeId: place.storeId,
         };
     }
 
@@ -132,7 +134,8 @@ function normalizePlaceData(place, category) {
             status: place.sals_STTS_NM || '상태 정보 없음',
             lat: place.lat,
             lng: place.lng,
-            category
+            category,
+            storeId: place.storeId,
         };
     }
 
@@ -337,19 +340,6 @@ function addSingleMarker(lat, lng, title, address) {
 
 /* ================= 카테고리 ================= */
 
-/*// 장소 탭 강제 활성화
-const friendTab = document.getElementById('friendTab');
-const storeTab = document.getElementById('storeTab');
-const friendList = document.querySelector('.main.friend-list');
-const storePanel = document.querySelector('.store-panel');
-
-storeTab.classList.add('active');
-friendTab.classList.remove('active');
-
-friendList.classList.add('hidden');
-storePanel.classList.remove('hidden');*/
-
-
 async function handleCategoryClick(category) {
 
 
@@ -377,24 +367,71 @@ async function handleCategoryClick(category) {
     await showCategory(category);
 }
 
+function convertAddressToLatLng(address, callback) {
+    if (!geocoder) {
+        console.error("Geocoder가 초기화되지 않았습니다.");
+        return;
+    }
+
+    geocoder.addressSearch(address, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+            const lat = Number(result[0].y);
+            const lng = Number(result[0].x);
+            callback({ lat, lng });
+        } else {
+            console.error("주소 변환 실패:", status);
+            callback(null);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const submitBtn = document.getElementById('storeRegisterBtn'); // 가게 등록 버튼
+    submitBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const addressPrimary = document.querySelector('#addressPrimary').value;
+        const addressSecondary = document.querySelector('#addressSecondary').value;
+        const fullAddress = addressSecondary
+            ? `${addressPrimary} ${addressSecondary}`
+            : addressPrimary;
+
+        convertAddressToLatLng(fullAddress, ({lat, lng}) => {
+            if (!lat || !lng) {
+                alert('주소 변환에 실패했습니다.');
+                return;
+            }
+
+            console.log('위도:', lat, '경도:', lng);
+
+            // 여기서 form에 hidden input 추가
+            document.querySelector('#lat').value = lat;
+            document.querySelector('#lng').value = lng;
+
+            // 폼 전송
+            document.querySelector('#storeForm').submit();
+        });
+    });
+});
+
 async function showCategory(category) {
     try {
 
         let list = [];
 
-        // 1️⃣ 병원
+        // 1️병원
         if (category === 'hospital') {
             const res = await fetch('/api/hospital');
             list = await res.json();
         }
 
-        // 2️⃣ 미용실
+        // 2️미용실
         else if (category === 'salon') {
             const res = await fetch('/api/salon');
             list = await res.json();
         }
 
-        // 3️⃣ 나머지는 store 테이블
+        // 3️ 나머지는 store 테이블
         else {
             const res = await fetch(`/api/stores?category=${encodeURIComponent(category)}`);
             list = await res.json();
@@ -627,23 +664,21 @@ function renderPlaceDetail(place) {
         const min = getWalkMinutes(place.distanceKm);
         timeText = ` · 도보 ${min}분`;
     }
-
+    // 예: 서버에서 내려오는 JSON이 snake_case라면
+    console.log(place.store_id);  // 21
     el.innerHTML = `
-        <h2 class="name">${place.name}</h2>
-        <div class="distance">📍 ${distanceText}${timeText}</div>
+  <h2 class="name">${place.name}</h2>
+  <div class="distance">📍 ${distanceText}${timeText}</div>
 
-        <p><strong>주소</strong><br>${place.address}</p>
+  <p><strong>주소</strong><br>${place.address}</p>
 
-        ${place.tel ? `<p><strong>전화</strong><br>${place.tel}</p>` : ''}
-
-        ${place.status ? `<p><strong>영업 상태</strong><br>${place.status}</p>` : ''}
-
-        <p><strong>영업 시간</strong><br>평일 09:00 - 18:00</p>
-
-        ${place.category !== 'search' ? `<button class="reserve-btn">예약하기</button>` : ''}
-    `;
+  ${place.tel ? `<p><strong>전화</strong><br>${place.tel}</p>` : ''}
+  ${place.status ? `<p><strong>영업 상태</strong><br>${place.status}</p>` : ''}
+  <p><strong>영업 시간</strong><br>평일 09:00 - 18:00</p> 
+  ${place.category !== 'search' ? `<button class="reserve-btn" data-store-id="${place.storeId}">예약하기</button>` : ''}
+`;
 }
-
+//주변 친구 불러오기 함수
 function loadNearbyFriendsByCurrentLocation() {
 
     if (!navigator.geolocation) {
@@ -803,21 +838,34 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----- 예약 모달 -----
+// ----- 예약 모달 -----
     const modal = document.getElementById('reserveModal');
     if (modal) {
         document.addEventListener('click', async (e) => {
             // 예약 버튼 (동적 생성 대응)
             const reserveBtn = e.target.closest('.reserve-btn');
             if (reserveBtn) {
+                const storeId = reserveBtn.dataset.storeId;
+                if (!storeId) {
+                    alert('가게 정보가 없습니다.');
+                    return;
+                }
 
-/*                const isLoggedIn = /!*[[${sessionUser != null}]]*!/ false; // 서버에서 세션 전달
-                if (!isLoggedIn) {
-                    alert('로그인 후 예약할 수 있습니다.');
-                    return; // 로그인 안 되면 모달 안 열기
-                }*/
+                // selectedPlace 객체 세팅
+                selectedPlace = { id: parseInt(storeId) };
 
+                // confirm 버튼 dataset 세팅
+                const confirmBtn = modal.querySelector('.btn.confirm');
+                if (confirmBtn) {
+                    confirmBtn.dataset.storeId = storeId;
+                    console.log("confirmBtn dataset.storeId 세팅됨:", confirmBtn.dataset.storeId);
+                }
+
+                // 모달 열기 전 input 리셋
+                resetModalInputs();
                 generateReserveTime();
+
+                // 모달 열기
                 modal.classList.add('open');
                 return;
             }
@@ -829,6 +877,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 e.target === modal
             ) {
                 modal.classList.remove('open');
+                // 닫을 때도 리셋
+                resetModalInputs();
                 return;
             }
         });
@@ -840,7 +890,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const dateInput = document.getElementById('reserveDate');
                 const timeSelect = document.getElementById('reserveTime');
                 const requestInput = document.getElementById('reserveRequest');
-
+                const storeId = confirmBtn.dataset.storeId; //  여기서 직접 가져옴
                 if (!dateInput || !timeSelect) return;
 
                 const date = dateInput.value;
@@ -853,11 +903,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const payload = {
-                    storeId: selectedPlace ? selectedPlace.id : null,
-                    reservationDate: date,       // DTO 필드명
-                    reservationTime: time,       // DTO 필드명
-                    requestText: request,        // DTO 필드명
-                    paymentMethod: 'OFFLINE',    // 필요시
+                    storeId: parseInt(storeId),
+                    reservationDate: dateInput.value,
+                    reservationTime: timeSelect.value,
+                    requestText: requestInput.value,
+                    paymentMethod: 'OFFLINE',
                 };
 
                 try {
@@ -868,26 +918,31 @@ window.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (res.ok) {
-                        // 성공 시 text()로 받음
                         const message = await res.text();
-                        alert(message);  // "예약이 완료되었습니다!" 출력
+                        alert(message); // "예약이 완료되었습니다!"
+
+                        // 모달 닫기 + input 리셋
                         modal.classList.remove('open');
+                        resetModalInputs();
                     } else {
-                        // 실패 시 JSON일 수 있으니 안전하게 처리
-                        let data;
-                        try {
-                            data = await res.json();
-                        } catch {
-                            data = await res.text();
-                        }
                         alert('예약 실패: 로그인을 해주세요');
                     }
                 } catch (err) {
                     console.error(err);
                     alert('예약일자를 확인해 주세요');
                 }
-
             });
+        }
+
+        // ----- 모달 input 리셋 함수 -----
+        function resetModalInputs() {
+            const dateInput = modal.querySelector('#reserveDate');
+            const timeSelect = modal.querySelector('#reserveTime');
+            const requestInput = modal.querySelector('#reserveRequest');
+
+            if (dateInput) dateInput.value = '';
+            if (timeSelect) timeSelect.selectedIndex = 0;
+            if (requestInput) requestInput.value = '';
         }
     }
 
