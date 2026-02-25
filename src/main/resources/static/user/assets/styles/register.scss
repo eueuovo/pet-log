@@ -264,7 +264,7 @@ body:has(> .address-wrapper.visible) > .cover {
 .register-container {
   @include flex(row, center, center);
   min-height: calc(100vh - 5rem);
-  padding: 3rem 0;
+  margin-top: 5rem;
 
   > .register-first {
     width: 100%;

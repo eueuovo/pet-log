@@ -45,7 +45,6 @@ public class FriendService {
             newAddress.setAddressSecondary("");
             newAddress.setLat(0.0);
             newAddress.setLng(0.0);
-            newAddress.setDefault(true);
 
             friendMapper.insertAddress(newAddress);
             return newAddress;

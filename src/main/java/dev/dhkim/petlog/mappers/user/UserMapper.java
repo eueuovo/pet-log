@@ -27,8 +27,7 @@ public interface UserMapper {
                    @Param(value = "pet") PetDto pet);
 
     int insertAddress(@Param(value = "userId") int userId,
-                       @Param(value = "address") AddressDto address,
-                       @Param(value = "isDefault") Boolean isDefault);
+                       @Param(value = "address") AddressDto address);
 
     int insertStore(@Param(value = "userId") int userId,
                      @Param(value = "store") StoreDto store);

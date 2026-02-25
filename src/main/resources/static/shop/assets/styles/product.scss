@@ -6,6 +6,9 @@
     width: 100%;
     min-height: 100%;
     padding: 1rem max(1rem, calc((100vw - 1200px) / 2));
+    margin: 5rem 0 2rem 0;
+
+
 
     > .overview {
       @include flex(row, flex-start, center, 1rem);

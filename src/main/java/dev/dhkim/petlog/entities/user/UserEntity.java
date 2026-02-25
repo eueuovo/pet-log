@@ -20,7 +20,6 @@ public class UserEntity {
     private String password;
     private String phone;
     private String userType;
-    private int shopPoint;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

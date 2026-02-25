@@ -2,5 +2,9 @@ package dev.dhkim.petlog.results;
 
 public enum MyPageResult {
     FAILURE,
+    FAILURE_SESSION_EXPIRED,
+    FAILURE_NICKNAME_DUPLICATE,
+    FAILURE_PASSWORD_DUPLICATE,
+    FAILURE_PHONE_DUPLICATE,
     SUCCESS
 }

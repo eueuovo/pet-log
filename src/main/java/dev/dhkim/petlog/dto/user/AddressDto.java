@@ -10,8 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressDto {
-    private String receiverName;
-    private String phone;
+    private String addressType;
     private String postalCode;
     private String addressPrimary;
     private String addressSecondary;

@@ -15,6 +15,7 @@ public class PersonalUserEntity {
     private String nickname;
     private int followingCount;
     private int followerCount;
+    private int shopPoint;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
