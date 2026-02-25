@@ -19,6 +19,7 @@ public class ReviewController {
     @GetMapping("/{id}/reviews")
     public Map<String, Object> getReviews(
             @PathVariable Integer id) {
-        return reviewService.getReviewsByProductId(id);
+        Integer userId = 1;
+        return reviewService.getReviewsByProductId(id,userId);
     }
 }
