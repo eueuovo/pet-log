@@ -1,5 +1,6 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Chewy&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@use "sass:color";
 [data-object=button] {
   align-items: center;
   display: flex;
@@ -522,6 +523,12 @@ ol, ul {
   padding: 0 1rem 0.5rem 1rem;
   cursor: pointer;
 }
+@media (max-width: 700px) {
+  #category > .menu > .main > .list > .item {
+    font-size: 1rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
+  }
+}
 #category > .menu > .main > .list > .item::after {
   content: "";
   position: absolute;
@@ -561,6 +568,12 @@ ol, ul {
   position: relative;
   padding: 0 1rem 0.5rem 1rem;
   cursor: pointer;
+}
+@media (max-width: 700px) {
+  #category > .menu > .main > .list > .menu-item-wrapper > .item {
+    font-size: 1rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
+  }
 }
 #category > .menu > .main > .list > .menu-item-wrapper > .item::after {
   content: "";
@@ -692,6 +705,11 @@ ol, ul {
 #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target=etc]:hover) > .item[data-target=etc]::after, #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.etc:hover) > .item[data-target=etc]::after {
   width: 100%;
 }
+@media (max-width: 700px) {
+  #category > .menu > .main > .list {
+    gap: 0.5rem;
+  }
+}
 #category > .search {
   align-items: stretch;
   display: flex;
@@ -711,7 +729,7 @@ ol, ul {
   border: 0.0625rem solid rgba(95, 100, 102, 0.1254901961);
   border-radius: 999rem;
   height: 2.7rem;
-  width: clamp(15rem, 35vw, 30rem);
+  width: clamp(12rem, 40vw, 30rem);
   overflow: hidden;
 }
 #category > .search > .search-wrapper {
@@ -735,10 +753,26 @@ ol, ul {
   height: 100%;
   padding: 0 2rem;
 }
+@media (max-width: 700px) {
+  #category > .search > .search-wrapper {
+    padding: 0 1.2rem;
+  }
+}
 #category > .search > .search-wrapper > .search-box {
   height: 100%;
   width: 100%;
   box-sizing: border-box;
+}
+#category > .search > .search-wrapper > .search-box::placeholder {
+  font-size: 1rem;
+}
+@media (max-width: 700px) {
+  #category > .search > .search-wrapper > .search-box {
+    padding: 0 0 0.2rem 0;
+  }
+  #category > .search > .search-wrapper > .search-box::placeholder {
+    font-size: 0.7rem;
+  }
 }
 #category > .search > .submit {
   align-items: center;
@@ -759,11 +793,26 @@ ol, ul {
   width: 3rem;
   height: 100%;
   background-color: #89CC96;
-  padding: 0 0.7rem;
+  padding: 0 0.2rem 0 0;
   cursor: pointer;
 }
 #category > .search > .submit > .image {
   width: 1.5rem;
+}
+@media (max-width: 700px) {
+  #category > .search > .submit > .image {
+    width: 1.3rem;
+  }
+}
+@media (max-width: 700px) {
+  #category > .search > .submit {
+    width: 2.5rem;
+  }
+}
+@media (max-width: 700px) {
+  #category > .search {
+    height: 2.3rem;
+  }
 }
 
 .message {
@@ -830,6 +879,57 @@ body:has(> .message.visible) > .cover {
   z-index: 29;
   opacity: 0;
   pointer-events: none;
+}
+
+.toast {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: center;
+}
+.toast > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.toast > .-flex-stretch {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+@media (max-width: 700px) {
+  .toast {
+    font-size: 0.8rem;
+  }
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.toast .toast-link {
+  color: #4ade80;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-top: 0.5rem;
+}
+.toast .toast-link:hover {
+  color: rgb(117.1355140187, 229.8644859813, 158.2663551402);
 }
 
 /*# sourceMappingURL=common.css.map */

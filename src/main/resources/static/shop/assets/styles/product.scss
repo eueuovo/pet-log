@@ -6,6 +6,7 @@
     width: 100%;
     min-height: 100%;
     padding: 1rem max(1rem, calc((100vw - 1200px) / 2));
+    margin: 5rem 0 2rem 0;
 
     > .overview {
       @include flex(row, flex-start, center, 1rem);
@@ -102,6 +103,7 @@
                 font-size: 1.1rem;
                 color: $global-gray-text-color;
                 font-weight: 500;
+                cursor: pointer;
               }
 
               > .product-name {
@@ -378,6 +380,7 @@
             font-size: 1.1rem;
             color: $global-gray-text-color;
             font-weight: 500;
+            cursor: pointer;
           }
 
           > .product-name {
@@ -641,6 +644,7 @@
 
             > .rating-summary {
               @include flex(row, center, center, 0.5rem);
+              align-self: center;
 
               > .stars {
                 @include flex(row, center, center);
@@ -671,6 +675,11 @@
               @include flex(column, center, center, 0.4rem);
               flex: 1;
               padding: 0 3rem;
+
+              @media (max-width: 600px) {
+                @include flex(column, center, center, 0.4rem);
+                padding: 0;
+              }
 
               > .rating-item{
                 @include flex(row, center, flex-start);
@@ -706,7 +715,7 @@
 
                 > .count {
                   font-size: 0.7rem;
-                  width: 3.5rem;
+                  width: 1.5rem;
                   flex-shrink: 0;
                   margin-left: 0.5rem;
                 }
@@ -728,143 +737,22 @@
             padding: 0.7rem 0;
 
             > .text-filter {
-              @include flex(row, center, center, 0.5rem);
+              @include flex(row, center, center, 0.8rem);
 
               > .best-filter,
-              > .new-filter{
+              > .row-filter,
+              > .new-filter {
                 font-size: 0.9rem;
                 font-weight: 500;
                 color: $global-gray-right-text-color;
                 cursor: pointer;
 
-                &:hover{
+                &:hover {
                   color: $global-green-text-color;
                 }
 
                 &.active {
                   color: $global-green-text-color;
-                }
-              }
-            }
-
-            > .select-filter {
-              @include flex(row, center, center, 0.5rem);
-              position: relative;
-
-              > .star-filter{
-                > .filter-btn {
-                  padding: 0.3rem 0.6rem;
-                  border: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
-                  border-radius: 0.25rem;
-                  font-size: 0.85rem;
-                  cursor: pointer;
-                }
-
-                > .dropdown {
-                  position: absolute;
-                  top: calc(100% + 0.5rem);
-                  right: 0;
-                  width: 13rem;
-                  padding: 0.5rem;
-                  background: #ffffff;
-                  border: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
-                  border-radius: 0.25rem;
-                  display: none;
-                  flex-direction: column;
-                  gap: 0.2rem;
-                  z-index: 10;
-
-                  &.active {
-                    display: flex;
-                  }
-
-                  > .option {
-                    @include flex(row, center, flex-start, 0.6rem);
-                    padding: 0.3rem 0.4rem;
-                    border-radius: 0.4rem;
-                    cursor: pointer;
-
-                    &:hover {
-                      background-color: $global-gray-background-color;
-                    }
-
-                    > input {
-                      width: 0.9rem;
-                      height: 0.9rem;
-                    }
-
-                    > .stars {
-                      color: $global-green-background-color;
-                      letter-spacing: 0.1rem;
-                      font-size: 0.9rem;
-                    }
-
-                    > .count {
-                      font-size: 0.7rem;
-                      color: $global-gray-right-text-color;
-                    }
-                  }
-                }
-              }
-
-              > .option-filter{
-                > .filter-btn {
-                  padding: 0.3rem 0.6rem;
-                  border: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
-                  border-radius: 0.25rem;
-                  font-size: 0.85rem;
-                  cursor: pointer;
-                  background-color: #fff;
-                }
-
-                > .dropdown {
-                  position: absolute;
-                  top: calc(100% + 0.5rem);
-                  right: 0;
-                  width: 13rem;
-                  padding: 0.5rem;
-                  background: #ffffff;
-                  border: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
-                  border-radius: 0.25rem;
-                  display: none;
-                  flex-direction: column;
-                  gap: 0.2rem;
-                  z-index: 10;
-
-                  &.active {
-                    display: flex;
-                  }
-
-                  > .option {
-                    @include flex(row, center, flex-start, 0.6rem);
-                    padding: 0.3rem 0.4rem;
-                    border-radius: 0.4rem;
-                    cursor: pointer;
-
-                    &:hover {
-                      background-color: $global-gray-background-color;
-                    }
-
-                    > input {
-                      width: 0.9rem;
-                      height: 0.9rem;
-                    }
-
-                    > .stars {
-                      color: $global-green-background-color;
-                      letter-spacing: 0.1rem;
-                      font-size: 0.9rem;
-                    }
-
-                    > .count {
-                      font-size: 0.7rem;
-                      color: $global-gray-right-text-color;
-                    }
-
-                    > .option-name {
-                      font-size: 0.85rem;
-                    }
-                  }
                 }
               }
             }
@@ -875,6 +763,7 @@
             width: 100%;
             border-bottom: 0.0625rem solid lighten($global-gray-right-text-color, 45%);
             padding-bottom: 1rem;
+            position: relative;
 
             &:last-child {
               border-bottom: none;
@@ -937,6 +826,16 @@
               font-weight: 400;
               color: lighten($global-gray-text-color, 10%);
             }
+
+            > .update{
+              font-size: 0.9rem;
+              font-weight: 500;
+              color: $global-green-text-color;
+              position: absolute;
+              right: 0;
+              top: 0;
+              cursor: pointer;
+            }
           }
 
           > .empty{
@@ -945,41 +844,6 @@
           }
         }
       }
-    }
-  }
-}
-
-.toast {
-  @include flex(column, center, center);
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 1000;
-
-  &.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-
-  .toast-link {
-    color: #4ade80;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: underline;
-    cursor: pointer;
-    white-space: nowrap;
-    margin-top: 0.5rem;
-
-    &:hover {
-      color: lighten(#4ade80, 10%);
     }
   }
 }
@@ -1001,13 +865,17 @@
     > .bottom-bar {
       @include flex(row, center, center);
       padding: 0.5rem;
+      width: 100%;
       border-bottom: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
+      cursor: pointer;
 
       > .image-wrapper {
+        @include flex(row, center, center);
+        width: 100%;
+
         > .image {
           width: 2.5rem;
           height: 1rem;
-          cursor: pointer;
         }
       }
 
@@ -1157,6 +1025,163 @@
         border-radius: 0.35rem;
         font-size: 1.1rem;
         cursor: pointer;
+      }
+    }
+  }
+}
+
+.review-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  @include flex(column, center, center);
+
+  > .review-modal {
+    background: #fff;
+    border-radius: 0.75rem;
+    width: min(500px, 90vw);
+    max-height: 80vh;
+    overflow-y: auto;
+    @include flex(column, flex-start, flex-start);
+
+    > .modal-header {
+      @include flex(row, center, space-between);
+      width: 100%;
+      padding: 1.2rem 1.5rem;
+      border-bottom: 0.0625rem solid lighten($global-gray-right-text-color, 45%);
+
+      > .modal-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+
+      > .modal-close {
+        font-size: 1.2rem;
+        color: $global-gray-right-text-color;
+        cursor: pointer;
+
+        &:hover {
+          color: $global-gray-text-color;
+        }
+      }
+    }
+
+    > .modal-body {
+      @include flex(column, flex-start, flex-start, 0.5rem);
+      width: 100%;
+      padding: 1.5rem;
+
+      > .rating-select {
+        @include flex(row, center, flex-start, 0.3rem);
+        width: 100%;
+        font-size: 2.3rem;
+        color: darken($global-gray-background-color, 15%);
+        cursor: pointer;
+        padding-bottom: 0.5rem;
+
+        > .star-input {
+          transition: color 0.1s;
+
+          &.active {
+            color: $global-green-background-color;
+          }
+
+          &:hover {
+            color: $global-green-background-color;
+          }
+        }
+      }
+
+      > .review-content {
+        width: 100%;
+        height: 8rem;
+        border: 0.0625rem solid lighten($global-gray-right-text-color, 35%);
+        border-radius: 0.25rem;
+        padding: 0.8rem;
+        resize: none;
+        font-size: 0.95rem;
+
+        &:focus {
+          outline: none;
+          border-color: $global-green-background-color;
+        }
+      }
+
+      > .rating-text,
+      > .image-text,
+      > .content-text{
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      > .image-upload-label {
+        > .upload-btn {
+          padding: 0.5rem 1rem;
+          border: 0.0625rem solid lighten($global-gray-right-text-color, 35%);
+          border-radius: 0.25rem;
+          font-size: 0.9rem;
+          cursor: pointer;
+          color: $global-gray-text-color;
+
+          &:hover {
+            background-color: $global-gray-background-color;
+          }
+        }
+      }
+
+      > .preview-images {
+        @include flex(row, center, flex-start, 0.5rem);
+        flex-wrap: wrap;
+        padding-bottom: 0.5rem;
+
+        > .preview-img-wrapper {
+          position: relative;
+
+          > img {
+            width: 5rem;
+            height: 5rem;
+            object-fit: cover;
+            border-radius: 0.4rem;
+            border: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
+            border-radius: 0.25rem;
+          }
+
+          > .remove-img {
+            position: absolute;
+            top: -0.3rem;
+            right: -0.3rem;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border-radius: 99rem;
+            width: 1.2rem;
+            height: 1.2rem;
+            font-size: 0.7rem;
+            @include flex(row, center, center);
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    > .modal-footer {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border-top: 0.0625rem solid lighten($global-gray-right-text-color, 45%);
+
+      > .submit-review {
+        width: 100%;
+        padding: 0.9rem;
+        background-color: $global-green-background-color;
+        color: white;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+
+        &:hover {
+          background-color: darken($global-green-background-color, 10%);
+        }
       }
     }
   }

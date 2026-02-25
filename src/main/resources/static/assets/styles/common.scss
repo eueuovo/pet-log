@@ -168,6 +168,11 @@ ol, ul {
           position: relative;
           padding: 0 1rem 0.5rem 1rem;
           cursor: pointer;
+          
+          @media (max-width: 700px) {
+            font-size: 1rem;
+            padding: 0 0.5rem 0.5rem 0.5rem;
+          }
 
           &::after {
             content: "";
@@ -215,6 +220,11 @@ ol, ul {
             position: relative;
             padding: 0 1rem 0.5rem 1rem;
             cursor: pointer;
+
+            @media (max-width: 700px) {
+              font-size: 1rem;
+              padding: 0 0.5rem 0.5rem 0.5rem;
+            }
 
             &::after {
               content: "";
@@ -351,6 +361,10 @@ ol, ul {
             }
           }
         }
+        
+        @media (max-width: 700px) {
+          gap: 0.5rem;
+        }
       }
     }
   }
@@ -360,7 +374,7 @@ ol, ul {
     border: 0.0625rem solid #5F646620;
     border-radius: 999rem;
     height: 2.7rem;
-    width: clamp(15rem, 35vw, 30rem);
+    width: clamp(12rem, 40vw, 30rem);
     overflow: hidden;
 
     > .search-wrapper{
@@ -370,10 +384,25 @@ ol, ul {
       height: 100%;
       padding: 0 2rem;
 
+      @media (max-width: 700px){
+        padding: 0 1.2rem;
+      }
+
       > .search-box{
         height: 100%;
         width: 100%;
         box-sizing: border-box;
+
+        &::placeholder {
+          font-size: 1rem;
+        }
+
+        @media (max-width: 700px){
+          padding: 0 0 0.2rem 0;
+          &::placeholder {
+            font-size: 0.7rem;
+          }
+        }
       }
     }
 
@@ -382,12 +411,24 @@ ol, ul {
       width: 3rem;
       height: 100%;
       background-color: #89CC96;
-      padding: 0 0.7rem;
+      padding: 0 0.2rem 0 0;
       cursor: pointer;
 
       > .image{
         width: 1.5rem;
+        
+        @media (max-width: 700px) {
+          width: 1.3rem;
+        }
       }
+
+      @media (max-width: 700px) {
+        width: 2.5rem;
+      }
+    }
+
+    @media (max-width: 700px){
+      height: 2.3rem;
     }
   }
 }
@@ -446,4 +487,43 @@ body:has(> .message.visible) > .cover {
   z-index: 29;
   opacity: 0;
   pointer-events: none;
+}
+
+.toast {
+  @include flex(column, center, center);
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+
+  @media (max-width: 700px) {
+    font-size: 0.8rem;
+  }
+
+  &.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  .toast-link {
+    color: #4ade80;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-top: 0.5rem;
+
+    &:hover {
+      color: lighten(#4ade80, 10%);
+    }
+  }
 }

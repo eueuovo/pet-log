@@ -1,6 +1,6 @@
 @import "../../../assets/styles/def";
 
-.cover{
+.address-cover {
   display: none;
   position: fixed;
   top: 0;
@@ -8,7 +8,18 @@
   background-color: #00000070;
   width: 100%;
   height: 100%;
-  z-index: 29;
+  z-index: 30;
+}
+
+.cover {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #00000070;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
 }
 
 .address-container {
@@ -16,13 +27,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  position: absolute;
+  position: fixed;
   background-color: #ffffff;
   border: 0.0625rem solid $global-border-color;
   border-radius: 0.35rem;
   opacity: 0;
   pointer-events: none;
-  z-index: 30;
+  z-index: 31;
 
   &.visible {
     opacity: 1;
@@ -45,7 +56,7 @@
   width: 100%;
   height: 100%;
   padding: 1rem max(1rem, calc((100vw - 1000px) / 2));
-  margin: 1rem 0 2rem 0;
+  margin: 6rem 0 2rem 0;
 
   label {
     display: flex;
@@ -153,32 +164,17 @@
           padding-bottom: 0.5rem;
         }
 
-        > .change{
-          font-size: 1rem;
-          font-weight: 600;
-          padding-bottom: 0.5rem;
-          color: $global-green-text-color;
-          cursor: pointer;
-        }
-      }
+        > .action{
+          @include flex(row, center, center, 1.3rem);
 
-      > .delivery-name{
-        @include flex(row, center, flex-start);
-        width: 100%;
-        padding-top: 0.7rem;
-
-        > .title{
-          font-size: 1rem;
-          color: $global-gray-text-color;
-        }
-
-        > .input{
-          background-color: #ffffff;
-          border: 0.0625rem solid lighten($global-gray-right-text-color, 30%);
-          padding: 0.5rem 0.9rem;
-          border-radius: 0.35rem;
-          width: 15rem;
-          height: 2.5rem;
+          > .paste,
+          > .change{
+            font-size: 1rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            color: $global-green-text-color;
+            cursor: pointer;
+          }
         }
       }
 
@@ -264,6 +260,7 @@
               }
 
               > .postal-code {
+                @include flex(column, stretch, center);
                 background-color: #ffffff;
                 border: 0.0625rem solid lighten($global-gray-right-text-color, 30%);
                 padding: 0.5rem 0.9rem;
@@ -403,6 +400,10 @@
           margin-right: 0.7rem;
           width: 15rem;
           height: 2.5rem;
+
+          option:disabled {
+            color: #aaaaaa;
+          }
         }
       }
 
@@ -625,7 +626,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 31;
+  z-index: 32;
   justify-content: center;
   align-items: center;
 
@@ -816,41 +817,6 @@
           background-color: darken($global-green-background-color, 5%);
         }
       }
-    }
-  }
-}
-
-.toast {
-  @include flex(column, center, center);
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 1000;
-
-  &.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-
-  .toast-link {
-    color: #4ade80;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: underline;
-    cursor: pointer;
-    white-space: nowrap;
-    margin-top: 0.5rem;
-
-    &:hover {
-      color: lighten(#4ade80, 10%);
     }
   }
 }

@@ -14,45 +14,6 @@ shareBtns.forEach(shareBtn => {
     });
 });
 
-// 토스트 메세지
-let currentToast = null;
-
-function showToast(message, linkText = null, linkHref = null) {
-    if (currentToast) {
-        currentToast.remove();
-    }
-
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-
-    const msgSpan = document.createElement('span');
-    msgSpan.textContent = message;
-    toast.appendChild(msgSpan);
-
-    if (linkText && linkHref) {
-        const link = document.createElement('a');
-        link.href = linkHref;
-        link.textContent = linkText;
-        link.className = 'toast-link';
-        toast.appendChild(link);
-    }
-
-    document.body.appendChild(toast);
-    currentToast = toast;
-
-    setTimeout(() => toast.classList.add('show'), 10);
-
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-            if (currentToast === toast) {
-                currentToast = null;
-            }
-        }, 300);
-    }, 3000);
-}
-
 // ========== 상품 상세 페이지 관련 코드 ==========
 // 장바구니 페이지에서는 필요 없는 코드들이지만 에러 방지를 위해 조건부로 실행
 
@@ -126,6 +87,12 @@ function setupQuantityControls(element, option) {
     const minusBtn = element.querySelector('.minus');
     const input = element.querySelector('.quantity-input');
 
+    input?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            input.blur();
+        }
+    });
+
     plusBtn?.addEventListener('click', () => {
         let value = parseInt(input.value);
         if (value < 999) {
@@ -141,11 +108,22 @@ function setupQuantityControls(element, option) {
     });
 
     input?.addEventListener('input', (e) => {
-        let numericValue = e.target.value.replace(/[^0-9]/g, '');
-        let value = parseInt(numericValue) || 1;
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
 
-        if (value < 1) value = 1;
-        if (value > 999) value = 999;
+        const value = parseInt(e.target.value) || 0;
+        if (value > 999) {
+            showToast('개수는 1~999까지 입력 가능합니다.');
+            e.target.value = '999';
+        }
+    });
+
+    input?.addEventListener('blur', (e) => {
+        let value = parseInt(e.target.value) || 0;
+
+        if (value < 1 || value > 999) {
+            showToast('개수는 1~999까지 입력 가능합니다.');
+            value = Math.min(Math.max(value, 1), 999);
+        }
 
         updateQuantity(option.name, value);
     });
@@ -176,11 +154,22 @@ if (infoTab && reviewTab && detail && review) {
         review.style.display = 'none';
     });
 
+    let reviewLoaded = false;
     reviewTab.addEventListener('click', () => {
         reviewTab.classList.add('active');
         infoTab.classList.remove('active');
         detail.style.display = 'none';
         review.style.display = 'flex';
+
+        if (!reviewLoaded) {
+            reviewLoaded = true;
+            fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=best`)
+                .then(res => res.json())
+                .then(data => {
+                    renderReviews(data.reviews);
+                    renderRatingSummary(data);
+                });
+        }
     });
 }
 
@@ -190,7 +179,7 @@ const optionArea = document.querySelector('.bottom-option .option-area');
 const bottomBar = document.querySelector('.bottom-option .bottom-bar');
 
 if (imageWrapper && optionArea && bottomBar) {
-    imageWrapper.addEventListener('click', () => {
+    bottomBar.addEventListener('click', () => {
         optionArea.classList.toggle('show');
         bottomBar.classList.toggle('active');
     });
@@ -321,15 +310,17 @@ document.addEventListener('DOMContentLoaded', function() {
 function syncOptions() {
     const desktopContainer = document.querySelector('.content');
     const mobileContainer = document.querySelector('.bottom-option');
+    const totalOptionCount = document.querySelectorAll('#option-select option:not([disabled])').length;
 
-    desktopContainer?.querySelectorAll('.option-detail[style*="flex"]').forEach(el => el.remove());
-    mobileContainer?.querySelectorAll('.option-detail[style*="flex"]').forEach(el => el.remove());
+    desktopContainer?.querySelectorAll('.option-detail:not(.template)').forEach(el => el.remove());
+    mobileContainer?.querySelectorAll('.option-detail:not(.template)').forEach(el => el.remove());
 
     selectedOptions.forEach(option => {
         if (desktopContainer) {
-            const templateDetail = desktopContainer.querySelector('.option-detail');
+            const templateDetail = desktopContainer.querySelector('.option-detail.template');
             if (templateDetail) {
                 const newOptionDetail = templateDetail.cloneNode(true);
+                newOptionDetail.classList.remove('template');
                 newOptionDetail.querySelector('.text').textContent = option.name;
                 newOptionDetail.querySelector('.quantity-input').value = option.quantity;
 
@@ -337,7 +328,7 @@ function syncOptions() {
                 newOptionDetail.querySelector('.check > .price').textContent = optionTotal.toLocaleString() + '원';
                 newOptionDetail.style.display = 'flex';
 
-                if (selectedOptions.length === 1) {
+                if (totalOptionCount <= 1) {
                     newOptionDetail.querySelector('.delete-btn').style.display = 'none';
                 }
 
@@ -351,9 +342,10 @@ function syncOptions() {
         }
 
         if (mobileContainer) {
-            const templateDetail = mobileContainer.querySelector('.option-area > .option-detail');
+            const templateDetail = mobileContainer.querySelector('.option-area > .option-detail.template');
             if (templateDetail) {
                 const newOptionDetail = templateDetail.cloneNode(true);
+                newOptionDetail.classList.remove('template');
                 newOptionDetail.querySelector('.text').textContent = option.name;
                 newOptionDetail.querySelector('.quantity-input').value = option.quantity;
 
@@ -361,7 +353,7 @@ function syncOptions() {
                 newOptionDetail.querySelector('.check > .price').textContent = optionTotal.toLocaleString() + '원';
                 newOptionDetail.style.display = 'flex';
 
-                if (selectedOptions.length === 1) {
+                if (totalOptionCount <= 1) {
                     newOptionDetail.querySelector('.delete-btn').style.display = 'none';
                 }
 
@@ -400,6 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function addToCart() {
+    const btn = document.querySelector('.content .cart');
+    if (!btn || btn.dataset.login === 'false') {  // null 체크 추가
+        showToast('로그인이 필요합니다.', '로그인하기', '/user/login');
+        return;
+    }
+
     if (selectedOptions.length === 0) {
         showToast('상품을 선택해주세요.');
         return;
@@ -409,16 +407,16 @@ function addToCart() {
     xhr.open('POST', '/shop/cart/add', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
 
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const result = JSON.parse(xhr.responseText);
-            if (result.success) {
-                showToast('장바구니에 담았습니다.', '장바구니 바로가기', '/shop/cart');
-            } else if (result.alreadyExists) {
-                showToast('이미 장바구니에 추가되어 있습니다.', '장바구니 바로가기', '/shop/cart');
-            } else {
-                alert(result.message);
-            }
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState !== XMLHttpRequest.DONE) return;
+        if (xhr.status < 200 || xhr.status >= 400) return;
+        const result = JSON.parse(xhr.responseText);
+        if (result.success) {
+            showToast('장바구니에 담았습니다.', '장바구니 바로가기', '/shop/cart');
+        } else if (result.alreadyExists) {
+            showToast('이미 장바구니에 추가되어 있습니다.', '장바구니 바로가기', '/shop/cart');
+        } else {
+            showToast(result.message);
         }
     };
 
@@ -435,25 +433,6 @@ function getProductIdFromUrl() {
     const pathParts = window.location.pathname.split('/');
     return parseInt(pathParts[pathParts.length - 1]);
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const desktopBuyBtn = document.querySelector('.content .buy');
-    const mobileBuyBtn = document.querySelector('.bottom-option .buy-btn');
-
-    if (desktopBuyBtn) {
-        desktopBuyBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            buyNow();
-        });
-    }
-
-    if (mobileBuyBtn) {
-        mobileBuyBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            buyNow();
-        });
-    }
-});
 
 // 바로 구매
 document.addEventListener('DOMContentLoaded', function() {
@@ -476,6 +455,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function buyNow() {
+    const btn = document.querySelector('.content .buy');
+    if (!btn || btn.dataset.login === 'false') {  // null 체크 추가
+        showToast('로그인이 필요합니다.', '로그인하기', '/user/login');
+        return;
+    }
+
     if (selectedOptions.length === 0) {
         showToast('상품을 선택해주세요.');
         return;
@@ -489,28 +474,101 @@ function buyNow() {
     window.location.href = `/shop/payment/buynow?productId=${productId}&optionId=${optionId}&quantity=${quantity}`;
 }
 
-// 리뷰 필터
-const filterBoxes = document.querySelectorAll('.star-filter, .option-filter');
+// 리뷰 필터 (최신순, 베스트순)
+const productId = window.location.pathname.split('/').pop();
+const bestFilter = document.querySelector('.best-filter');
+const rowFilter = document.querySelector('.row-filter');
+const newFilter = document.querySelector('.new-filter');
 
-filterBoxes.forEach(box => {
-    const btn = box.querySelector('.filter-btn');
-    const dropdown = box.querySelector('.dropdown');
+if (bestFilter) {
+    bestFilter.classList.add('active');
 
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-
-        document.querySelectorAll('.dropdown')
-            .forEach(d => {
-                if (d !== dropdown) d.classList.remove('active');
+    bestFilter.addEventListener('click', () => {
+        bestFilter.classList.add('active');
+        rowFilter.classList.remove('active');
+        newFilter.classList.remove('active');
+        fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=best`)
+            .then(res => res.json())
+            .then(data => {
+                renderReviews(data.reviews);
+                renderRatingSummary(data);
             });
-
-        dropdown.classList.toggle('active');
     });
 
-    dropdown.addEventListener('click', (e) => {
-        e.stopPropagation();
+    rowFilter.addEventListener('click', () => {
+        rowFilter.classList.add('active');
+        bestFilter.classList.remove('active');
+        newFilter.classList.remove('active');
+        fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=low`)
+            .then(res => res.json())
+            .then(data => {
+                renderReviews(data.reviews);
+                renderRatingSummary(data);
+            });
     });
-});
+
+    newFilter.addEventListener('click', () => {
+        newFilter.classList.add('active');
+        bestFilter.classList.remove('active');
+        rowFilter.classList.remove('active');
+        fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=new`)
+            .then(res => res.json())
+            .then(data => {
+                renderReviews(data.reviews);
+                renderRatingSummary(data);
+            });
+    });
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')}`;
+}
+
+function renderReviews(reviews) {
+    const container = document.querySelector('.inner');
+    container.querySelectorAll('.review-item').forEach(el => el.remove());
+    container.querySelector('.empty')?.remove();
+
+    if (!reviews || reviews.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = '등록된 리뷰가 없습니다.';
+        container.appendChild(empty);
+        return;
+    }
+
+    const currentUserId = parseInt(document.querySelector('#product')?.dataset.userId) || null;
+
+    reviews.forEach(review => {
+        const item = document.createElement('div');
+        item.className = 'review-item';
+        item.innerHTML = `
+        <div class="profile">
+            <img class="img" src="${review.profileImageUrl || ''}" alt="프로필">
+            <div class="info">
+                <div class="nickname">${review.petName || ''}</div>
+                <div class="rating">
+                    <div class="score">${[1,2,3,4,5].map(i => `<span>${i <= review.rating ? '★' : '☆'}</span>`).join('')}</div>
+                    <div class="date">${review.createdAt ? formatDate(review.createdAt) : ''}</div>
+                </div>
+            </div>
+        </div>
+        <div class="option">${review.optionName || ''}</div>
+        <div class="review-images">
+            ${(review.reviewImages || []).map(img => `<img src="${img}" class="review-img" alt="리뷰이미지">`).join('')}
+        </div>
+        <div class="review-text">${review.content || ''}</div>
+        ${review.userId && currentUserId && review.userId == currentUserId ? '<div class="update">수정</div>' : ''}
+        `;
+
+        item.querySelector('.update')?.addEventListener('click', () => {
+            openEditModal(review.id, review.rating, review.content);
+        });
+
+        container.appendChild(item);
+    });
+}
 
 document.addEventListener('click', () => {
     document.querySelectorAll('.dropdown')
@@ -529,3 +587,215 @@ document.querySelectorAll('.review-wrapper .count').forEach(count => {
         reviewContainer.scrollIntoView({ behavior: 'smooth' });
     });
 });
+
+// 리뷰 모달
+const reviewBtn = document.querySelector('.review-btn .button');
+const overlay = document.querySelector('.review-modal-overlay');
+const modalClose = document.querySelector('.modal-close');
+const stars = document.querySelectorAll('.star-input');
+const imageInput = document.querySelector('.review-image-input');
+const previewImages = document.querySelector('.preview-images');
+let selectedRating = 0;
+let selectedFiles = [];
+
+if (modalClose) {
+    modalClose.addEventListener('click', closeModal);
+}
+if (overlay) {
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+}
+
+if (reviewBtn) {
+    reviewBtn.addEventListener('click', () => {
+        editingReviewId = null; // 새 작성이니까 초기화
+        selectedRating = 0;
+        stars.forEach(s => s.classList.remove('active'));
+        document.querySelector('.review-content').value = '';
+        selectedFiles = [];
+        previewImages.innerHTML = '';
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    });
+}
+
+function closeModal() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// 수정 모달 열기
+let editingReviewId = null;
+
+function openEditModal(reviewId, rating, content) {
+    editingReviewId = reviewId;
+    selectedRating = rating;
+    stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= selectedRating));
+    document.querySelector('.review-content').value = content;
+    selectedFiles = [];
+    previewImages.innerHTML = '';
+
+    fetch(`/shop/products/0/reviews/${reviewId}/images`)
+        .then(res => res.json())
+        .then(images => {
+            images.forEach(imageUrl => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'preview-img-wrapper';
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'remove-img';
+                removeBtn.textContent = '✕';
+                removeBtn.addEventListener('click', () => {
+                    fetch(`/shop/products/0/reviews/${reviewId}/images?imageUrl=${encodeURIComponent(imageUrl)}`, {
+                        method: 'DELETE'
+                    }).then(res => {
+                        if (res.ok) wrapper.remove();
+                    });
+                });
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                previewImages.appendChild(wrapper);
+            });
+        });
+
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// 정적 리뷰 수정 버튼
+document.querySelectorAll('.review-item .update').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const item = btn.closest('.review-item');
+        const reviewId = item.dataset.reviewId;
+        const filledStars = [...item.querySelectorAll('.score span')].filter(s => s.textContent === '★').length;
+        const content = item.querySelector('.review-text').textContent;
+        openEditModal(reviewId, filledStars, content);
+    });
+});
+
+stars.forEach(star => {
+    star.addEventListener('mouseover', () => {
+        const val = parseInt(star.dataset.value);
+        stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= val));
+    });
+
+    star.addEventListener('mouseout', () => {
+        stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= selectedRating));
+    });
+
+    star.addEventListener('click', () => {
+        selectedRating = parseInt(star.dataset.value);
+        stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= selectedRating));
+    });
+});
+
+imageInput?.addEventListener('change', () => {
+    if (selectedFiles.length + imageInput.files.length > 3) {
+        showToast('이미지는 3장까지 첨부 가능합니다.');
+        imageInput.value = '';
+        return;
+    }
+
+    Array.from(imageInput.files).forEach(file => {
+        selectedFiles.push(file);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'preview-img-wrapper';
+
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+
+        const removeBtn = document.createElement('div');
+        removeBtn.className = 'remove-img';
+        removeBtn.textContent = '✕';
+        removeBtn.addEventListener('click', () => {
+            selectedFiles = selectedFiles.filter(f => f !== file);
+            wrapper.remove();
+        });
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(removeBtn);
+        previewImages.appendChild(wrapper);
+    });
+    imageInput.value = '';
+});
+
+document.querySelector('.submit-review')?.addEventListener('click', () => {
+    if (selectedRating === 0) {
+        showToast('별점을 선택해주세요.');
+        return;
+    }
+
+    const content = document.querySelector('.review-content').value;
+    const productId = getProductIdFromUrl();
+
+    const formData = new FormData();
+    formData.append('productId', productId);
+    formData.append('rating', selectedRating);
+    formData.append('content', content);
+    selectedFiles.forEach(file => formData.append('images', file));
+
+    const isEdit = editingReviewId !== null;
+    const url = isEdit
+        ? `/shop/products/${productId}/reviews/${editingReviewId}`
+        : `/shop/products/${productId}/reviews`;
+    const method = isEdit ? 'PUT' : 'POST';
+    fetch(url, { method, body: formData })
+        .then(res => {
+            if (res.ok) {
+                showToast(isEdit ? '리뷰가 수정되었습니다.' : '리뷰가 등록되었습니다.');
+                editingReviewId = null;
+                closeModal();
+
+                // 새 등록일 때만 버튼 숨기기
+                if (!isEdit) {
+                    document.querySelector('.review-btn')?.style &&
+                    (document.querySelector('.review-btn').style.display = 'none');
+                }
+
+                document.querySelector('.review-tab').click();
+                fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=best`)
+                    .then(res => res.json())
+                    .then(data => {
+                        renderReviews(data.reviews);
+                        renderRatingSummary(data);
+                    });
+            } else {
+                showToast(isEdit ? '리뷰 수정에 실패했습니다.' : '리뷰 등록에 실패했습니다.');
+            }
+        });
+});
+
+function renderRatingSummary(data) {
+    const scoreEl = document.querySelector('.summary-score');
+    if (scoreEl) scoreEl.textContent = parseFloat(data.averageRating).toFixed(1);
+
+    document.querySelectorAll('.rating-summary .stars span').forEach((span, idx) => {
+        const i = idx + 1;
+        span.className = '';
+        if (i <= data.averageRating) span.classList.add('filled');
+        else if (i - 0.5 <= data.averageRating) span.classList.add('half');
+    });
+
+    const totalCount = data.reviews.length;
+    const maxCount = Math.max(...[5,4,3,2,1].map(i => data.ratingMap[i] || 0));
+    [5,4,3,2,1].forEach(i => {
+        const count = data.ratingMap[i] || 0;
+        const width = totalCount > 0 ? (count / totalCount * 100) : 0;
+        const item = document.querySelector(`.rating-item.rating-${i}`);
+        if (!item) return;
+        item.querySelector('.count').textContent = count;
+        item.querySelector('.fill').style.width = width + '%';
+        const fill = item.querySelector('.fill');
+        if (count > 0 && count === maxCount) {
+            fill.classList.add('best');
+        } else {
+            fill.classList.remove('best');
+        }
+    });
+}

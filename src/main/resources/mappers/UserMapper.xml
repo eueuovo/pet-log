@@ -42,14 +42,12 @@
                 #{pet.isPrimary})
     </insert>
     <insert id="insertAddress">
-        INSERT INTO `petlog`.`address` (user_id, receiver_name, phone, postal_code, address_primary, address_secondary, is_default)
+        INSERT INTO `petlog`.`address` (user_id, address_type, postal_code, address_primary, address_secondary)
         VALUES (#{userId},
-                #{address.receiverName},
-                #{address.phone},
+                #{address.addressType},
                 #{address.postalCode},
                 #{address.addressPrimary},
-                #{address.addressSecondary},
-                #{isDefault})
+                #{address.addressSecondary})
     </insert>
     <insert id="insertTerm">
         INSERT INTO `petlog`.`user_terms_agreement` (user_id, terms_id, agreed)
@@ -89,7 +87,6 @@
                `password`   AS password,
                `phone`      AS phone,
                `user_type`  AS userType,
-               `shop_point` AS shopPoint,
                `created_at` AS createdAt
         FROM `petlog`.`users`
         WHERE `login_id` = #{loginId}
@@ -102,7 +99,6 @@
                `password`   AS password,
                `phone`      AS phone,
                `user_type`  AS userType,
-               `shop_point` AS shopPoint,
                `created_at` AS createdAt
         FROM `petlog`.`users`
         WHERE `email` = #{email}
@@ -115,7 +111,6 @@
                `password`   AS password,
                `phone`      AS phone,
                `user_type`  AS userType,
-               `shop_point` AS shopPoint,
                `created_at` AS createdAt
         FROM `petlog`.`users`
         WHERE `phone` = #{phone}
@@ -137,7 +132,6 @@
                `password`   AS password,
                `phone`      AS phone,
                `user_type`  AS userType,
-               `shop_point` AS shopPoint,
                `created_at` AS createdAt
         FROM `petlog`.`users`
         WHERE `login_id` = #{loginId}
@@ -169,7 +163,6 @@
                `password`            AS password,
                `phone`               AS phone,
                `user_type`           AS userType,
-               `shop_point`          AS shopPoint,
                `t1`.`created_at`          AS createdAt,
                `user_id`             AS userId,
                `company_name`        AS companyName,

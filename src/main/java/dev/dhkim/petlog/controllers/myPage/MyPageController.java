@@ -1,15 +1,13 @@
 package dev.dhkim.petlog.controllers.myPage;
 
-import dev.dhkim.petlog.dto.user.PetDto;
-import dev.dhkim.petlog.dto.user.SessionUser;
-import dev.dhkim.petlog.entities.user.AddressEntity;
-import dev.dhkim.petlog.entities.user.PersonalUserEntity;
-import dev.dhkim.petlog.entities.user.PetEntity;
-import dev.dhkim.petlog.entities.user.UserEntity;
+import dev.dhkim.petlog.dto.user.*;
+import dev.dhkim.petlog.entities.user.*;
 import dev.dhkim.petlog.results.MyPageResult;
 import dev.dhkim.petlog.services.myPage.MyPageService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +27,7 @@ public class MyPageController {
     private final MyPageService myPageService;
 
 
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getMyPage(ModelAndView modelAndView,
                                   @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
         if (sessionUser == null) {
@@ -39,30 +37,44 @@ public class MyPageController {
         modelAndView.setViewName("myPage/my");
         Pair<MyPageResult, UserEntity> user = this.myPageService.getUser(sessionUser.getUserId());
         Pair<MyPageResult, PersonalUserEntity> personalUser = this.myPageService.getPersonalUser(sessionUser.getUserId());
-        Pair<MyPageResult, AddressEntity> address = this.myPageService.getAddress(sessionUser.getUserId());
+        Pair<MyPageResult, BusinessUserEntity> businessUser = this.myPageService.getBusinessUser(sessionUser.getUserId());
+
         Pair<MyPageResult, PetEntity> primaryPet = this.myPageService.getPrimaryPet(sessionUser.getUserId());
         Pair<MyPageResult, List<PetEntity>> pets = this.myPageService.getPets(sessionUser.getUserId());
-        if (user.getLeft() != MyPageResult.SUCCESS ||
-                personalUser.getLeft() != MyPageResult.SUCCESS ||
-                address.getLeft() != MyPageResult.SUCCESS) {
-            modelAndView.setViewName("/user/login");
-            return modelAndView;
-        }
+        Pair<MyPageResult, List<StoreEntity>> stores = this.myPageService.getStores(sessionUser.getUserId());
+        Pair<MyPageResult, List<MyPageReservationDto>> reservations = this.myPageService.getReservation(sessionUser.getUserId());
+        System.out.println(reservations);
 
 
         List<PetEntity> readPets = pets.getRight();
         if (readPets == null) {
             readPets = new ArrayList<>();
         }
+        if (sessionUser.getUserType().equals("PERSONAL")) {
+            Pair<MyPageResult, List<AddressEntity>> personalAddresses = this.myPageService.getPersonalAddress(sessionUser.getUserId());
+            Pair<MyPageResult, List<DeliveryAddressEntity>> deliveryAddresses = this.myPageService.getAllDeliveryAddress(sessionUser.getUserId());
+            Pair<MyPageResult, DeliveryAddressEntity> deliveryAddress = this.myPageService.getDeliveryAddress(sessionUser.getUserId());
+            modelAndView.addObject("personalAddresses", personalAddresses.getRight());
+            modelAndView.addObject("deliveryAddresses", deliveryAddresses.getRight());
+            modelAndView.addObject("deliveryPrimaryAddress", deliveryAddress.getRight());
+            modelAndView.addObject("reservations", reservations.getRight());
+        } else {
+            Pair<MyPageResult, AddressEntity> businessAddress = this.myPageService.getBusinessAddress(sessionUser.getUserId());
+            modelAndView.addObject("businessAddress", businessAddress.getRight());
+        }
+        modelAndView.addObject("sessionUser", sessionUser);
         modelAndView.addObject("user", user.getRight());
         modelAndView.addObject("personalUser", personalUser.getRight());
-        modelAndView.addObject("address", address.getRight());
+        modelAndView.addObject("businessUser", businessUser.getRight());
         modelAndView.addObject("primaryPet", primaryPet.getRight());
         modelAndView.addObject("pets", readPets);
+        modelAndView.addObject("stores", stores.getRight());
         return modelAndView;
     }
 
-    @RequestMapping(value = "/pet/delete", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    // 애완동물 삭제
+    @RequestMapping(value = "/pet/delete", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Object> deletePet(@RequestParam(value = "petId") int petId,
                                          @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
@@ -72,6 +84,7 @@ public class MyPageController {
         return response;
     }
 
+    // 새 애완동물 등록
     @RequestMapping(value = "/pet/registration", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Object> insertPet(@SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser, @RequestBody PetDto pet) {
@@ -79,9 +92,11 @@ public class MyPageController {
         Map<String, Object> response = new HashMap<>();
         response.put("result", result.getLeft());
         response.put("petId", result.getRight());
+        response.put("petIsPrimary", pet.getIsPrimary());
         return response;
     }
 
+    // 펫 수정을 할때 모달에 펫 정보 가져오는 컨트롤러
     @RequestMapping(value = "/pet/load", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Object> getPet(@RequestParam(value = "petId") int petId,
@@ -93,6 +108,7 @@ public class MyPageController {
         return response;
     }
 
+    // 펫 수정해서 정보 수정시키는 컨트롤러
     @RequestMapping(value = "/pet/update", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Object> postPet(@RequestBody PetEntity pet,
@@ -102,4 +118,310 @@ public class MyPageController {
         response.put("result", result.name());
         return response;
     }
+
+    // 대표동물 변경 컨트롤러
+    @RequestMapping(value = "/pet/primary/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchPrimaryPet(@RequestParam(value = "petId") int petId,
+                                               @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        MyPageResult result = this.myPageService.changePrimaryPet(petId, sessionUser.getUserId());
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    /*------------------------------개인 회원 정보 수정-----------------------------------------*/
+    // 실명 변경
+    @RequestMapping(value = "/name/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchName(@RequestParam(value = "name") String name,
+                                         @RequestParam(value = "password") String password,
+                                         @SessionAttribute(value = "sessionUser" ,required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.changeName(name, password, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+    // 닉네임 변경
+    @RequestMapping(value = "/nickname/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchNickname(@RequestParam(value = "nickname") String nickname,
+                                         @SessionAttribute(value = "sessionUser" ,required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.changeNickname(nickname, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    // 전화번호 변경
+    @RequestMapping(value = "/phone/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchPhone(@RequestParam(value = "phone") String phone,
+                                         @RequestParam(value = "password") String password,
+                                         @SessionAttribute(value = "sessionUser" ,required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.changePhone(phone, password, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    // 기본주소 추가 등록
+    @RequestMapping(value = "/address/registration", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> postAddress(AddressDto addressDto,
+                                           @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.postAddress(addressDto, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    // 기본주소 수정
+    @RequestMapping(value = "/address/modify", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchAddress(@RequestParam(value = "addressId") int addressId,
+                                            AddressDto addressDto,
+                                           @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.patchAddress(addressId, addressDto, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+    // 기본주소 삭제
+    @RequestMapping(value = "/address/delete", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> deleteAddress(@RequestParam(value = "addressId") int addressId,
+                                             @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.deleteAddress(addressId, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    // 배송지 등록
+    @RequestMapping(value = "/delivery/registration", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> postDeliveryAddress(DeliveryAddressEntity deliveryAddress,
+                                           @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.postDeliveryAddress(deliveryAddress, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+    // 배송지 수정
+    @RequestMapping(value = "/delivery/modify", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchDeliveryAddress(@RequestParam(value = "deliveryAddressId") int deliveryAddressId,
+                                            DeliveryAddressEntity deliveryAddress,
+                                            @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.patchDeliveryAddress(deliveryAddressId, deliveryAddress, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+    // 배송지 삭제
+    @RequestMapping(value = "/delivery/delete", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> deleteDeliveryAddress(@RequestParam(value = "deliveryAddressId") int deliveryAddressId,
+
+                                                   @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.deleteDeliveryAddress(deliveryAddressId, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+
+    // 비밀번호 변경
+    @RequestMapping(value = "/password/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchPassword(@RequestParam(value = "password") String password,
+                                          @RequestParam(value = "newPassword") String newPassword,
+                                          @SessionAttribute(value = "sessionUser" ,required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.changePassword(password, newPassword, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    // 회원탈퇴
+    @RequestMapping(value = "/delete/user", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> deleteUser(@RequestParam(value = "password") String password,
+                                          @SessionAttribute(value = "sessionUser" ,required = false) SessionUser sessionUser,
+                                          HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.deleteUser(password, sessionUser.getUserId());
+        if (result == MyPageResult.SUCCESS) {
+            session.invalidate();
+        }
+        response.put("result", result.name());
+        return response;
+    }
+
+
+
+    /*--------------------------사업자 회원 정보 변경---------------------------------------*/
+    // 기업명 변경
+    @RequestMapping(value = "/companyName/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchCompanyName(@RequestParam(value = "companyName") String companyName,
+                                         @RequestParam(value = "password") String password,
+                                         @SessionAttribute(value = "sessionUser" ,required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.changeCompanyName(companyName, password, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+    // 대표자명 변경
+    @RequestMapping(value = "/representativeName/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchRepresentativeName(@RequestParam(value = "representativeName") String representativeName,
+                                                @RequestParam(value = "password") String password,
+                                                @SessionAttribute(value = "sessionUser" ,required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.changeRepresentativeName(representativeName, password, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    // 회사 주소 변경
+    @RequestMapping(value = "/companyAddress/change", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchCompanyAddress(@RequestParam(value = "postalCode") String postalCode,
+                                                   @RequestParam(value = "addressPrimary") String addressPrimary,
+                                                   @RequestParam(value = "addressSecondary") String addressSecondary,
+                                                   @RequestParam(value = "password") String password,
+                                                   @SessionAttribute(value = "sessionUser") SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.changeCompanyAddress(postalCode, addressPrimary, addressSecondary, password, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+
+
+
+
+
+
+    // 가게등록
+    @RequestMapping(value = "/store/registration", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> postStore(StoreDto store,
+                                         @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.postStore(store, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+    // 가게 수정
+    @RequestMapping(value = "store/modify", method = PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchStore(@RequestParam(value = "storeId") int storeId,
+                                          StoreDto store,
+                                          @SessionAttribute(value = "sessionUser") SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.modifyStore(storeId, store, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
+    // 가게삭제
+    @RequestMapping(value = "/store/delete", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> deleteStore(@RequestParam(value = "storeId") int storeId,
+                                           @RequestParam(value = "password") String password,
+                                           @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.deleteStore(storeId, password, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
+    }
+
+
 }
