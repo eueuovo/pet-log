@@ -1,10 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="dev.dhkim.petlog.mappers.myPage.MyPageMapper">
+    <insert id="insertStore">
+        INSERT INTO `petlog`.`store` (user_id, store_name, postal_code, address_primary, address_secondary, category, store_phone)
+        VALUES (#{userId},
+                #{store.storeName},
+                #{store.postalCode},
+                #{store.addressPrimary},
+                #{store.addressSecondary},
+                #{store.category},
+                #{store.storePhone})
+    </insert>
+    <insert id="insertPersonalAddress">
+        INSERT INTO `petlog`.`address` (user_id, address_type, postal_code, address_primary, address_secondary)
+        VALUES (#{userId},
+                'MAP',
+                #{address.postalCode},
+                #{address.addressPrimary},
+                #{address.addressSecondary})
+    </insert>
+    <insert id="insertDeliveryAddress">
+        INSERT INTO `petlog`.`delivery_address` (user_id, delivery_name, receiver_name, phone, postal_code, address_primary, address_secondary, is_default)
+        VALUES (#{userId},
+                #{deliveryAddress.deliveryName},
+                #{deliveryAddress.receiverName},
+                #{deliveryAddress.phone},
+                #{deliveryAddress.postalCode},
+                #{deliveryAddress.addressPrimary},
+                #{deliveryAddress.addressSecondary},
+                #{deliveryAddress.isDefault})
+    </insert>
     <update id="updatePrimary">
         UPDATE `petlog`.`pets`
         SET `is_primary` = true
         WHERE `pet_id` = #{petId}
+          AND `user_id` = #{userId}
 
     </update>
     <update id="updatePet">
@@ -21,12 +51,121 @@
         WHERE `pet_id` = #{pet.petId}
           AND `user_id` = #{userId}
     </update>
+    <update id="updatePetsNoPrimary">
+        UPDATE `petlog`.`pets`
+        SET `is_primary` = false
+        WHERE `user_id` = #{userId}
+    </update>
+    <update id="updateName">
+        UPDATE `petlog`.`personal_user`
+        SET `name` = #{name},
+            `updated_at` = NOW()
+        WHERE `user_id` = #{userId}
+    </update>
+    <update id="updateNickname">
+        UPDATE `petlog`.`personal_user`
+        SET `nickname`   = #{nickname},
+            `updated_at` = NOW()
+        WHERE `user_id` = #{userId}
+    </update>
+    <update id="updatePhone">
+        UPDATE `petlog`.`users`
+        SET `phone`      = #{phone},
+            `updated_at` = NOW()
+        WHERE `id` = #{userId}
+    </update>
+    <update id="updatePassword">
+        UPDATE `petlog`.`users`
+        SET `password`   = #{newPassword},
+            `updated_at` = NOW()
+        WHERE `id` = #{userId}
+    </update>
+    <update id="updateCompanyName">
+        UPDATE `petlog`.`business_user`
+        SET `company_name` = #{companyName},
+            `updated_at`   = NOW()
+        WHERE `user_id` = #{userId}
+    </update>
+    <update id="updateRepresentativeName">
+        UPDATE `petlog`.`business_user`
+        SET `representative_name` = #{representativeName},
+            `updated_at`   = NOW()
+        WHERE `user_id` = #{userId}
+    </update>
+    <update id="updateCompanyAddress">
+        UPDATE `petlog`.`address`
+        SET `postal_code`       = #{postalCode},
+            `address_primary`   = #{addressPrimary},
+            `address_secondary` = #{addressSecondary},
+            `updated_at`        = NOW()
+        WHERE `user_id` = #{userId}
+    </update>
+    <update id="updateStore">
+        UPDATE `petlog`.`store`
+        SET `store_name`        = #{store.storeName},
+            `store_phone`       = #{store.storePhone},
+            `postal_code`       = #{store.postalCode},
+            `address_primary`   = #{store.addressPrimary},
+            `address_secondary` = #{store.addressSecondary},
+            `updated_at`        = NOW()
+        WHERE `user_id` = #{userId}
+          AND `store_id` = #{storeId}
+    </update>
+    <update id="updateAddress">
+        UPDATE `petlog`.`address`
+        SET `postal_code`       = #{address.postalCode},
+            `address_primary`   = #{address.addressPrimary},
+            `address_secondary` = #{address.addressSecondary},
+            `updated_at`        = NOW()
+        WHERE `user_id` = #{userId}
+          AND `address_id` = #{addressId}
+    </update>
+    <update id="updateDefaultDeliveryAddress">
+        UPDATE `petlog`.`delivery_address`
+        SET `is_default` = TRUE
+        WHERE `delivery_address_id` = #{deliveryAddressId}
+          AND `user_id` = #{userId}
+    </update>
+    <update id="updateDeliveryAddress">
+        UPDATE `petlog`.`delivery_address`
+        SET `delivery_name`     = #{deliveryAddress.deliveryName},
+            `receiver_name`     = #{deliveryAddress.receiverName},
+            `phone`             = #{deliveryAddress.phone},
+            `postal_code`       = #{deliveryAddress.postalCode},
+            `address_primary`   = #{deliveryAddress.addressPrimary},
+            `address_secondary` = #{deliveryAddress.addressSecondary},
+            `updated_at`        = NOW()
+        WHERE `delivery_address_id` = #{deliveryAddressId}
+          AND `user_id` = #{userId}
+    </update>
     <delete id="deletePet">
         DELETE
         FROM `petlog`.`pets`
         WHERE `pet_id` = #{petId}
           AND `user_id` = #{userId}
         LIMIT 1
+    </delete>
+    <delete id="deleteUser">
+        DELETE FROM `petlog`.`users`
+        WHERE `id` = #{userId}
+    </delete>
+    <delete id="deleteStore">
+        DELETE
+        FROM `petlog`.`store`
+        WHERE `store_id` = #{storeId}
+          AND `user_id` = #{userId}
+    </delete>
+    <delete id="deleteAddress">
+        DELETE
+        FROM `petlog`.`address`
+        WHERE `address_id` = #{addressId}
+          AND `user_id` = #{userId}
+    </delete>
+    <delete id="deleteDeliveryAddress">
+        DELETE
+        FROM `petlog`.`delivery_address`
+        WHERE `delivery_address_id` = #{deliveryAddressId}
+          AND `user_id` = #{userId}
     </delete>
     <select id="selectByUserId" resultType="dev.dhkim.petlog.entities.user.UserEntity">
         SELECT `id`         AS id,
@@ -35,7 +174,6 @@
                `password`   AS password,
                `phone`      AS phone,
                `user_type`  AS userType,
-               `shop_point` AS shopPoint,
                `created_at` AS createdAt,
                `updated_at` AS updatedAt
         FROM `petlog`.`users`
@@ -46,29 +184,27 @@
         SELECT `user_id`    AS userId,
                `name`       AS name,
                `nickname`   AS nickname,
+               `shop_point` AS shopPoint,
                `created_at` AS createdAt,
                `updated_at` AS updatedAt
         FROM `petlog`.`personal_user`
         WHERE `user_id` = #{userId}
         LIMIT 1
     </select>
-    <select id="selectDefaultAddressByUserId" resultType="dev.dhkim.petlog.entities.user.AddressEntity">
+    <select id="selectPersonalAddressesByUserId" resultType="dev.dhkim.petlog.entities.user.AddressEntity">
         SELECT `address_id`        AS addressId,
                `user_id`           AS userId,
-               `receiver_name`     AS receiverName,
-               `phone`             AS phone,
+               `address_type`      AS addressType,
                `postal_code`       AS postalCode,
                `address_primary`   AS addressPrimary,
                `address_secondary` AS addressSecondary,
                `lat`               AS lat,
                `lng`               AS lng,
-               `is_default`        AS isDefault,
                `created_at`        AS createdAt,
                `updated_at`        AS updatedAt
         FROM `petlog`.`address`
         WHERE `user_id` = #{userId}
-          AND `is_default` = 1
-        LIMIT 1
+          AND `address_type` = 'MAP'
     </select>
     <select id="selectPrimaryPetByUserId" resultType="dev.dhkim.petlog.entities.user.PetEntity">
         SELECT `pet_id`       AS petId,
@@ -124,6 +260,163 @@
         FROM `petlog`.`pets`
         WHERE `user_id` = #{userId}
           AND `pet_id` = #{petId}
+        LIMIT 1
+    </select>
+    <select id="selectStoresByUserId" resultType="dev.dhkim.petlog.entities.user.StoreEntity">
+        SELECT `store_id`          AS storeId,
+               `user_id`           AS userId,
+               `store_name`        AS storeName,
+               `postal_code`       AS postalCode,
+               `address_primary`   AS addressPrimary,
+               `address_secondary` AS addressSecondary,
+               `lat`               AS lat,
+               `lng`               AS lng,
+               `category`          AS category,
+               `store_phone`       AS storePhone,
+               `created_at`        AS createdAt,
+               `updated_at`        AS updatedAt
+        FROM `petlog`.`store`
+        WHERE `user_id` = #{userId}
+    </select>
+    <select id="selectBusinessByUserId" resultType="dev.dhkim.petlog.entities.user.BusinessUserEntity">
+        SELECT `user_id`             AS userId,
+               `company_name`        AS companyName,
+               `representative_name` AS representativeName,
+               `business_number`     AS businessNumber,
+               `created_at`          AS createdAt,
+               `updated_at`          AS updatedAt
+        FROM `petlog`.`business_user`
+        WHERE `user_id` = #{userId}
+        LIMIT 1
+    </select>
+    <select id="selectPhoneByPhone" resultType="dev.dhkim.petlog.entities.user.UserEntity">
+        SELECT `id`         AS id,
+               `email`      AS email,
+               `login_id`   AS loginId,
+               `password`   AS password,
+               `phone`      AS phone,
+               `user_type`  AS userType,
+               `created_at` AS createdAt,
+               `updated_at` AS updatedAt
+        FROM `petlog`.`users`
+        WHERE `phone` = #{phone}
+    </select>
+    <select id="selectBusinessAddressByUserId" resultType="dev.dhkim.petlog.entities.user.AddressEntity">
+        SELECT `address_id`        AS addressId,
+               `user_id`           AS userId,
+               `address_type`      AS addressType,
+               `postal_code`       AS postalCode,
+               `address_primary`   AS addressPrimary,
+               `address_secondary` AS addressSecondary,
+               `lat`               AS lat,
+               `lng`               AS lng,
+               `created_at`        AS createdAt,
+               `updated_at`        AS updatedAt
+        FROM `petlog`.`address`
+        WHERE `user_id` = #{userId}
+          AND `address_type` = 'COMPANY'
+    </select>
+    <select id="selectDeliveryAddressesByUserId"
+            resultType="dev.dhkim.petlog.entities.user.DeliveryAddressEntity">
+        SELECT `delivery_address_id` AS deliveryAddressId,
+               `user_id`             AS userId,
+               `delivery_name`       AS deliveryName,
+               `receiver_name`       AS receiverName,
+               `phone`               AS phone,
+               `postal_code`         AS postalCode,
+               `address_primary`     AS addressPrimary,
+               `address_secondary`   AS addressSecondary,
+               `is_default`          AS isDefault,
+               `created_at`          AS createdAt,
+               `updated_at`          AS updatedAt
+        FROM `petlog`.`delivery_address`
+        WHERE `user_id` = #{userId}
+    </select>
+    <select id="selectPrimaryDeliveryAddressByUserId"
+            resultType="dev.dhkim.petlog.entities.user.DeliveryAddressEntity">
+        SELECT `delivery_address_id` AS deliveryAddressId,
+               `user_id`             AS userId,
+               `delivery_name`       AS deliveryName,
+               `receiver_name`       AS receiverName,
+               `phone`               AS phone,
+               `postal_code`         AS postalCode,
+               `address_primary`     AS addressPrimary,
+               `address_secondary`   AS addressSecondary,
+               `is_default`          AS isDefault,
+               `created_at`          AS createdAt,
+               `updated_at`          AS updatedAt
+        FROM `petlog`.`delivery_address`
+        WHERE `user_id` = #{userId}
+          AND `is_default` = TRUE
+        LIMIT 1
+    </select>
+    <select id="selectDeliveryAddressByDeliveryAddressIdAndUserId"
+            resultType="dev.dhkim.petlog.entities.user.DeliveryAddressEntity">
+        SELECT `delivery_address_id` AS deliveryAddressId,
+               `user_id`             AS userId,
+               `delivery_name`       AS deliveryName,
+               `receiver_name`       AS receiverName,
+               `phone`               AS phone,
+               `postal_code`         AS postalCode,
+               `address_primary`     AS addressPrimary,
+               `address_secondary`   AS addressSecondary,
+               `is_default`          AS isDefault,
+               `created_at`          AS createdAt,
+               `updated_at`          AS updatedAt
+        FROM `petlog`.`delivery_address`
+        WHERE `delivery_address_id` = #{deliveryAddressId}
+          AND `user_id` = #{userId}
+        LIMIT 1
+    </select>
+    <select id="selectOldestDeliveryAddressByUserId"
+            resultType="dev.dhkim.petlog.entities.user.DeliveryAddressEntity">
+        SELECT `delivery_address_id` AS deliveryAddressId,
+               `user_id`             AS userId,
+               `delivery_name`       AS deliveryName,
+               `receiver_name`       AS receiverName,
+               `phone`               AS phone,
+               `postal_code`         AS postalCode,
+               `address_primary`     AS addressPrimary,
+               `address_secondary`   AS addressSecondary,
+               `is_default`          AS isDefault,
+               `created_at`          AS createdAt,
+               `updated_at`          AS updatedAt
+        FROM `petlog`.`delivery_address`
+        WHERE `user_id` = #{userId}
+        ORDER BY `created_at` ASC
+        LIMIT 1
+    </select>
+    <select id="selectAllReservationByUserId" resultType="dev.dhkim.petlog.dto.user.MyPageReservationDto">
+        SELECT `t1`.`reservation_id`    AS reservationId,
+               `t1`.`reservation_date`  AS reservationDate,
+               `t1`.`reservation_time`  AS reservationTime,
+               `t1`.`request_text`      AS requestText,
+               `t1`.`payment_method`    AS paymentMethod,
+               `t1`.`created_at`        AS createdAt,
+
+               `t2`.`store_id`          AS storeId,
+               `t2`.`store_name`        AS storeName,
+               `t2`.`postal_code`       AS postalCode,
+               `t2`.`address_primary`   AS addressPrimary,
+               `t2`.`address_secondary` AS addressSecondary,
+               `t2`.`category`          AS category,
+               `t2`.`store_phone`       AS storePhone
+        FROM `petlog`.`reservation` AS `t1`
+                 LEFT JOIN `petlog`.`store` AS `t2` ON `t1`.`store_id` = `t2`.`store_id`
+        WHERE t1.`user_id` = #{userId}
+        ORDER BY `t1`.`created_at` DESC
+    </select>
+    <select id="selectNicknameByNickname" resultType="dev.dhkim.petlog.entities.user.PersonalUserEntity">
+        SELECT `user_id`         AS userId,
+               `name`            AS name,
+               `nickname`        AS nickname,
+               `following_count` AS followingCount,
+               `follower_count`  AS followerCount,
+               `shop_point`      AS shopPoint,
+               `created_at`      AS createdAt,
+               `updated_at`      AS updatedAt
+        FROM `petlog`.`personal_user`
+        WHERE `nickname` = #{nickname}
         LIMIT 1
     </select>
 

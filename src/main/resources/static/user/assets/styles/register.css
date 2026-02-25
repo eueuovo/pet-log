@@ -257,7 +257,7 @@ body:has(> .address-wrapper.visible) > .cover {
   gap: 0;
   justify-content: center;
   min-height: calc(100vh - 5rem);
-  padding: 3rem 0; }
+  margin-top: 5rem; }
   .register-container > * {
     flex-grow: 0;
     flex-shrink: 0; }

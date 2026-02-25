@@ -14,7 +14,28 @@
 <body>
 <th:block th:replace="~{/fragments/common.html :: topNavigator}"></th:block>
 <div class="cover"></div>
-<div class="delivery-change-modal" id="delivery-change-modal">
+<div class="show-message" id="show-message">
+    <button type="button" class="button">확인</button>
+</div>
+<div class="checkMessage" id="checkMessage">
+    <div class="button-wrapper">
+        <button type="button" class="no">취소</button>
+        <button type="button" class="yes">확인</button>
+    </div>
+</div>
+<div class="addressDeleteMessage" id="addressDeleteMessage">
+    <div class="button-wrapper">
+        <button type="button" class="no">취소</button>
+        <button type="button" class="yes">삭제</button>
+    </div>
+</div>
+<div class="deliveryAddressDeleteMessage" id="deliveryAddressDeleteMessage">
+    <div class="button-wrapper">
+        <button type="button" class="no">취소</button>
+        <button type="button" class="yes">삭제</button>
+    </div>
+</div>
+<div class="delivery-change-modal" id="delivery-change-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
     <div class="modal-cover"></div>
     <div class="address-wrapper" id="address-wrapper">
         <button type="button" class="button">
@@ -22,7 +43,7 @@
         </button>
         <div id="address-container"></div>
     </div>
-    <div class="modal-content visible">
+    <div class="modal-content">
         <div class="modal-header">
             <h2 class="title">배송지 변경</h2>
             <button type="button" class="close-btn">
@@ -31,41 +52,26 @@
         </div>
         <div class="modal-body">
             <div class="delivery-list">
-                <div class="delivery-item">
+                <div class="delivery-item" th:each="deliveryAddress : ${deliveryAddresses}" th:if="${deliveryAddress != null}" th:attr="data-delivery-address-id=${deliveryAddress.getDeliveryAddressId()},
+                          data-delivery-name=${deliveryAddress.getDeliveryName()},
+                          data-receiver-name=${deliveryAddress.getReceiverName()},
+                          data-phone=${deliveryAddress.getPhone()},
+                          data-postal-code=${deliveryAddress.getPostalCode()},
+                          data-address-primary=${deliveryAddress.getAddressPrimary()},
+                          data-address-secondary=${deliveryAddress.getAddressSecondary()}">
                     <div class="item-content">
                         <div class="item-header">
-                            <span class="delivery-name">우리집</span>
-                            <span class="default-badge">기본배송지</span>
+                            <span class="delivery-name" th:text="${deliveryAddress.getDeliveryName()}"></span>
+                            <span class="default-badge" th:if="${deliveryAddress.isDefault()}">기본배송지</span>
                         </div>
-                        <div class="recipient">뎌뎌</div>
+                        <div class="recipient" th:text="${deliveryAddress.getReceiverName()}"></div>
                         <div class="address">
-                            <span class="postal">[12345]</span>
-                            <span class="addr">대구광역시 동구 화랑로 51 동대구비스타동원</span>
+                            <span class="postal" th:text="'[' + ${deliveryAddress.getPostalCode()} + '] '"></span>
+                            <span class="addr" th:text="${deliveryAddress.getAddressPrimary()}"></span>
                         </div>
-                        <div class="detail-addr">1호</div>
-                        <div class="phone">010-1234-5678</div>
-                        <div class="item-actions">
-                            <div class="left-actions">
-                                <button type="button" class="delete-btn">삭제</button>
-                                <button type="button" class="edit-btn">수정</button>
-                            </div>
-                            <button type="button" class="select-btn">선택</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="delivery-item">
-                    <div class="item-content">
-                        <div class="item-header">
-                            <span class="delivery-name">회사</span>
-                        </div>
-                        <div class="recipient">학원임사실</div>
-                        <div class="address">
-                            <span class="postal">[11111]</span>
-                            <span class="addr">대구광역시 중구 어딘가</span>
-                        </div>
-                        <div class="detail-addr">10층</div>
-                        <div class="phone">010-1234-5678</div>
-                        <div class="item-actions">
+                        <div class="detail-addr" th:text="${deliveryAddress.getAddressSecondary()}"></div>
+                        <div class="phone" th:text="${deliveryAddress.getPhone().substring(0, 3)} + '-' + ${deliveryAddress.getPhone().substring(3, 7)} + '-' + ${deliveryAddress.getPhone().substring(7, 11)}"></div>
+                        <div class="item-actions delivery">
                             <div class="left-actions">
                                 <button type="button" class="delete-btn">삭제</button>
                                 <button type="button" class="edit-btn">수정</button>
@@ -75,6 +81,7 @@
                     </div>
                 </div>
             </div>
+            <div class="delivery-list empty" th:if="${deliveryPrimaryAddress == null}">배송지를 추가해보세요.</div>
         </div>
         <div class="modal-footer">
             <button type="button" class="add-btn">추가하기</button>
@@ -88,9 +95,13 @@
             </button>
         </div>
         <div class="registration-wrapper">
+            <div class="AddressName-wrapper">
+                <span class="name">배송지명</span>
+                <input class="AddressNameInput" type="text" placeholder="배송지명을 입력해주세요.">
+            </div>
             <div class="name-wrapper">
-                <span class="name">별명</span>
-                <input class="nameInput" type="text" placeholder="별칭을 입력해주세요.">
+                <span class="name">받는 사람</span>
+                <input class="nameInput" type="text" placeholder="받는 분의 성함을 입력해주세요.">
             </div>
             <label class="label">
                 <span class="title">주소</span>
@@ -125,9 +136,212 @@
         </div>
     </div>
 </div>
-<div class="name-change-modal" id="name-change-modal">
+<div class="delivery-address-modify-modal" id="delivery-address-modify-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
     <div class="modal-cover"></div>
-    <div class="modal-content visible">
+    <div class="delivery-address-modify-wrapper" id="delivery-address-modify-wrapper">
+        <button type="button" class="button">
+            <img class="image" src="/user/assets/images/cancelButton.png" alt="">
+        </button>
+        <div id="delivery-address-modify-container"></div>
+    </div>
+    <div class="delivery-address-modify">
+        <div class="modal-header">
+            <h2 class="title">배송지 수정</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="delivery-modify-wrapper">
+            <div class="AddressName-wrapper">
+                <span class="name">배송지명</span>
+                <input class="AddressNameInput" type="text" placeholder="배송지명을 입력해주세요.">
+            </div>
+            <div class="name-wrapper">
+                <span class="name">받는 사람</span>
+                <input class="nameInput" type="text" placeholder="받는 분의 성함을 입력해주세요.">
+            </div>
+            <label class="label">
+                <span class="title">주소</span>
+                <input disabled class="postalCode input" type="text" placeholder="우편번호">
+                <button class="button">주소 검색</button>
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input disabled class="addressPrimary input" type="text" placeholder="기본주소">
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input class="addressSecondary input" type="text" placeholder="상세주소">
+            </label>
+            <label class="contactNumberLabel label">
+                <span class="title">전화번호</span>
+                <span class="number-wrapper">
+                    <select class="firstNumber" name="firstNumber">
+                        <option selected value="010">010</option>
+                    </select>
+                    <span>-</span>
+                    <input autocomplete="off" spellcheck="false" class="contactNumber first input" name="middle"
+                           maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
+                    <span>-</span>
+                    <input autocomplete="off" spellcheck="false" class="contactNumber second input" name="last"
+                           maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
+                </span>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modifyButton">수정</button>
+        </div>
+    </div>
+</div>
+<div class="address-modal" id="address-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
+    <div class="modal-cover"></div>
+    <div class="map-address-wrapper" id="map-address-wrapper">
+        <button type="button" class="button">
+            <img class="image" src="/user/assets/images/cancelButton.png" alt="">
+        </button>
+        <div id="map-address-container"></div>
+    </div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="title">주소 관리</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="address-list">
+                <div class="address-item" th:each="personalAddress, status : ${personalAddresses}" th:if="${personalAddress != null}" th:attr="data-address-id=${personalAddress.getAddressId()},
+                          data-postal-code=${personalAddress.getPostalCode()},
+                          data-address-primary=${personalAddress.getAddressPrimary()},
+                          data-address-secondary=${personalAddress.getAddressSecondary()}">
+                    <div class="item-content">
+                        <div class="item-header">
+                            <span class="default-badge" th:text="${status.count}"></span>
+                        </div>
+                        <div class="address">
+                            <span class="postal" th:text="'[' + ${personalAddress.getPostalCode()} + ']'"></span>
+                            <span class="addr" th:text="${personalAddress.getAddressPrimary()}"></span>
+                        </div>
+                        <div class="detail-addr" th:if="${personalAddress.getAddressSecondary() != null}"
+                             th:text="${personalAddress.getAddressSecondary()}"></div>
+                        <div class="item-actions">
+                            <div class="left-actions">
+                                <button type="button" class="delete-btn">삭제</button>
+                                <button type="button" class="edit-btn">수정</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="add-btn">추가하기</button>
+        </div>
+    </div>
+    <div class="address-registration">
+        <div class="modal-header">
+            <h2 class="title">주소 등록</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="registration-wrapper">
+            <label class="label">
+                <span class="title">주소</span>
+                <input disabled class="postalCode input" type="text" placeholder="우편번호">
+                <button class="button">주소 검색</button>
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input disabled class="addressPrimary input" type="text" placeholder="기본주소">
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input class="addressSecondary input" type="text" placeholder="상세주소">
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="registrationButton">등록</button>
+        </div>
+    </div>
+</div>
+<div class="address-modify-modal" id="address-modify-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
+    <div class="modal-cover"></div>
+    <div class="map-address-modify-wrapper" id="map-address-modify-wrapper">
+        <button type="button" class="button">
+            <img class="image" src="/user/assets/images/cancelButton.png" alt="">
+        </button>
+        <div id="map-address-modify-container"></div>
+    </div>
+    <div class="address-modify">
+        <div class="modal-header">
+            <h2 class="title">주소 수정</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="modify-wrapper">
+            <label class="label">
+                <span class="title">주소</span>
+                <input disabled class="postalCode input" type="text" placeholder="우편번호">
+                <button class="button">주소 검색</button>
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input disabled class="addressPrimary input" type="text" placeholder="기본주소">
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input class="addressSecondary input" type="text" placeholder="상세주소">
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="addressModifyButton">수정</button>
+        </div>
+    </div>
+</div>
+<div class="companyAddress-modal" id="companyAddress-modal" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
+    <div class="modal-cover"></div>
+    <div class="address-wrapper" id="companyAddress-wrapper">
+        <button type="button" class="button">
+            <img class="image" src="/user/assets/images/cancelButton.png" alt="">
+        </button>
+        <div id="companyAddress-container"></div>
+    </div>
+    <div class="companyAddress-change">
+        <div class="modal-header">
+            <h2 class="title">주소 변경</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="companyAddressChange-wrapper">
+            <label class="label">
+                <span class="title">주소</span>
+                <input disabled class="postalCode input" type="text" placeholder="우편번호" th:value="${businessAddress.getPostalCode()}" th:data-default="${businessAddress.getPostalCode()}">
+                <button class="button">주소 검색</button>
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input disabled class="addressPrimary input" type="text" placeholder="기본주소" th:value="${businessAddress.getAddressPrimary()}" th:data-default="${businessAddress.getAddressPrimary()}">
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input class="addressSecondary input" type="text" placeholder="상세주소" th:value="${businessAddress.getAddressSecondary()}" th:data-default="${businessAddress.getAddressSecondary()}">
+            </label>
+            <label class="label">
+                <span class="title bottom">비밀번호</span>
+                <input class="password input" type="password" placeholder="본인인증을 위한 비밀번호를 입력해주세요.">
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="companyAddressChangeButton">변경</button>
+        </div>
+    </div>
+</div>
+<div class="name-change-modal" id="name-change-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
+    <div class="modal-cover"></div>
+    <div class="modal-content">
         <div class="modal-header">
             <h2 class="title">이름 변경</h2>
             <button type="button" class="close-btn">
@@ -139,16 +353,35 @@
             <input class="name input" type="text" placeholder="변경하실 이름(실명)을 입력해주세요.">
             <span class="title bottom">비밀번호</span>
             <input class="password input" type="password" placeholder="본인인증을 위한 비밀번호를 입력해주세요.">
-
         </div>
         <div class="modal-footer">
             <button class="modify-button button -flex-stretch" type="button">수정</button>
         </div>
     </div>
 </div>
-<div class="nickname-change-modal" id="nickname-change-modal">
+<div class="companyName-change-modal" id="companyName-change-modal" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
     <div class="modal-cover"></div>
-    <div class="modal-content visible">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="title">기업명 변경</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="modal-body">
+            <span class="title">기업명</span>
+            <input class="name input" type="text" placeholder="변경하실 기업명을 입력해주세요.">
+            <span class="title bottom">비밀번호</span>
+            <input class="password input" type="password" placeholder="본인인증을 위한 비밀번호를 입력해주세요.">
+        </div>
+        <div class="modal-footer">
+            <button class="modify-button button -flex-stretch" type="button">수정</button>
+        </div>
+    </div>
+</div>
+<div class="nickname-change-modal" id="nickname-change-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
+    <div class="modal-cover"></div>
+    <div class="modal-content">
         <div class="modal-header">
             <h2 class="title">닉네임 변경</h2>
             <button type="button" class="close-btn">
@@ -157,10 +390,27 @@
         </div>
         <div class="modal-body">
             <span class="title">닉네임</span>
-            <input class="name input" type="text" placeholder="변경하실 닉네임을 입력해주세요.">
+            <input class="nickname input" type="text" placeholder="변경하실 닉네임을 입력해주세요.">
+        </div>
+        <div class="modal-footer">
+            <button class="modify-button button -flex-stretch" type="button">수정</button>
+        </div>
+    </div>
+</div>
+<div class="representativeName-change-modal" id="representativeName-change-modal" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
+    <div class="modal-cover"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="title">대표자명 변경</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="modal-body">
+            <span class="title">대표자명</span>
+            <input class="representativeName input" type="text" placeholder="변경하실 대표자명을 입력해주세요.">
             <span class="title bottom">비밀번호</span>
             <input class="password input" type="password" placeholder="본인인증을 위한 비밀번호를 입력해주세요.">
-
         </div>
         <div class="modal-footer">
             <button class="modify-button button -flex-stretch" type="button">수정</button>
@@ -169,9 +419,9 @@
 </div>
 <div class="phone-change-modal" id="phone-change-modal">
     <div class="modal-cover"></div>
-    <div class="modal-content visible">
+    <div class="modal-content">
         <div class="modal-header">
-            <h2 class="title">전화번호 변경</h2>
+            <h2 class="title" th:text="${sessionUser.getUserType() == 'PERSONAL'} ? '전화번호 변경' : '대표자 전화번호 변경'"></h2>
             <button type="button" class="close-btn">
                 <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
             </button>
@@ -199,7 +449,7 @@
 </div>
 <div class="password-change-modal" id="password-change-modal">
     <div class="modal-cover"></div>
-    <div class="modal-content visible">
+    <div class="modal-content">
         <div class="modal-header">
             <h2 class="title">비밀번호 변경</h2>
             <button type="button" class="close-btn">
@@ -208,11 +458,11 @@
         </div>
         <div class="modal-body">
             <span class="title">현재 비밀번호</span>
-            <input class="password input" type="password" placeholder="사용중인 비밀번호를 입력해주세요.">
+            <input class="password input present" type="password" placeholder="사용중인 비밀번호를 입력해주세요.">
             <span class="title">새로운 비밀번호</span>
-            <input class="password input" type="password" placeholder="새로 사용할 비밀번호를 입력해주세요.">
+            <input class="password input new" type="password" placeholder="새로 사용할 비밀번호를 입력해주세요.">
             <span class="title">비밀번호 재입력</span>
-            <input class="password input" type="password" placeholder="한 번 더 비밀번호를 입력해주세요.">
+            <input class="password input newCheck" type="password" placeholder="한 번 더 비밀번호를 입력해주세요.">
         </div>
         <div class="modal-footer">
             <button class="modify-button button -flex-stretch" type="button">수정</button>
@@ -220,9 +470,8 @@
     </div>
 </div>
 <div class="delete-user-modal" id="delete-user-modal">
-
     <div class="modal-cover"></div>
-    <div class="modal-content visible">
+    <div class="modal-content">
         <div class="modal-header">
             <h2 class="title">회원 탈퇴</h2>
             <button type="button" class="close-btn">
@@ -240,7 +489,151 @@
         </div>
     </div>
 </div>
-<div class="dialog dialog-first" id="petFirst">
+<div class="delete-store-modal" id="delete-store-modal">
+    <div class="modal-cover"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="title">가게 삭제</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="modal-body">
+            <span class="title">비밀번호</span>
+            <input class="password input" type="password" placeholder="본인인증을 위해 비밀번호를 입력해주세요.">
+        </div>
+        <div class="modal-footer">
+            <button class="delete-button button -flex-stretch" type="button">삭제</button>
+        </div>
+    </div>
+</div>
+<div class="store-registration-modal" id="store-registration-modal" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
+    <div class="modal-cover"></div>
+    <div class="storeAddress-wrapper" id="storeAddress-wrapper">
+        <button type="button" class="button">
+            <img class="image" src="/user/assets/images/cancelButton.png" alt="">
+        </button>
+        <div id="storeAddress-container"></div>
+    </div>
+    <div class="store-registration visible">
+        <div class="modal-header">
+            <h2 class="title">가게 등록</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="registration-wrapper">
+            <div class="storeName-wrapper">
+                <span class="name">가게명</span>
+                <input class="storeNameInput" type="text" placeholder="가게명을 입력해주세요.">
+            </div>
+            <label class="contactNumberLabel label">
+                <span class="title">가게 전화번호</span>
+                <span class="number-wrapper">
+                    <input autocomplete="off" spellcheck="false" class="contactNumber local input" name="first"
+                           maxlength="3" minlength="2" inputmode="numeric" placeholder="02" type="tel">
+                    <span>-</span>
+                    <input autocomplete="off" spellcheck="false" class="contactNumber first input" name="middle"
+                           maxlength="4" minlength="3" inputmode="numeric" placeholder="0000" type="tel">
+                    <span>-</span>
+                    <input autocomplete="off" spellcheck="false" class="contactNumber second input" name="last"
+                           maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
+                </span>
+            </label>
+            <label class="label">
+                <span class="title">주소</span>
+                <input disabled class="postalCode input" type="text" placeholder="우편번호">
+                <button class="button">주소 검색</button>
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input disabled class="addressPrimary input" type="text" placeholder="기본주소">
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input class="addressSecondary input" type="text" placeholder="상세주소">
+            </label>
+            <label class="storeCategory label">
+                <span class="title">업종 카테고리</span>
+                <select class="category input" name="category" id="">
+                    <option value="hospital">병원</option>
+                    <option value="cafe">카페</option>
+                    <option value="salon">미용실</option>
+                    <option value="school">유치원</option>
+                    <option value="park">공원</option>
+                    <option value="camp">캠핑장</option>
+                </select>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="registrationButton">등록</button>
+        </div>
+    </div>
+</div>
+<div class="store-modify-modal" id="store-modify-modal" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
+    <div class="modal-cover"></div>
+    <div class="storeAddressModify-wrapper" id="storeAddressModify-wrapper">
+        <button type="button" class="button">
+            <img class="image" src="/user/assets/images/cancelButton.png" alt="">
+        </button>
+        <div id="storeAddressModify-container"></div>
+    </div>
+    <div class="store-modify visible">
+        <div class="modal-header">
+            <h2 class="title">가게 수정</h2>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="modify-wrapper">
+            <div class="storeName-wrapper">
+                <span class="name">가게명</span>
+                <input class="storeNameInput" type="text" placeholder="가게명을 입력해주세요.">
+            </div>
+            <label class="contactNumberLabel label">
+                <span class="title">가게 전화번호</span>
+                <span class="number-wrapper">
+                    <input autocomplete="off" spellcheck="false" class="contactNumber local input" name="first"
+                           maxlength="3" minlength="2" inputmode="numeric" placeholder="02" type="tel">
+                    <span>-</span>
+                    <input autocomplete="off" spellcheck="false" class="contactNumber first input" name="middle"
+                           maxlength="4" minlength="3" inputmode="numeric" placeholder="0000" type="tel">
+                    <span>-</span>
+                    <input autocomplete="off" spellcheck="false" class="contactNumber second input" name="last"
+                           maxlength="4" minlength="4" inputmode="numeric" placeholder="0000" type="tel">
+                </span>
+            </label>
+            <label class="label">
+                <span class="title">주소</span>
+                <input disabled class="postalCode input" type="text" placeholder="우편번호">
+                <button class="button">주소 검색</button>
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input disabled class="addressPrimary input" type="text" placeholder="기본주소">
+            </label>
+            <label class="label">
+                <span class="title"></span>
+                <input class="addressSecondary input" type="text" placeholder="상세주소">
+            </label>
+            <label class="storeCategory label">
+                <span class="title">업종 카테고리</span>
+                <select class="category input" name="category" id="">
+                    <option value="hospital">병원</option>
+                    <option value="cafe">카페</option>
+                    <option value="salon">미용실</option>
+                    <option value="school">유치원</option>
+                    <option value="park">공원</option>
+                    <option value="camp">캠핑장</option>
+                </select>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="modifyButton">수정</button>
+        </div>
+    </div>
+</div>
+<div class="dialog dialog-first" id="petFirst" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
     <div class="dialogCover"></div>
     <button class="cancel" type="button">
         <img class="cancelButton" src="/user/assets/images/cancelButton.png" alt="">
@@ -284,7 +677,7 @@
     </label>
     <button disabled type="button" class="button">다음</button>
 </div>
-<div class="dialog dialog-second" id="petSecond">
+<div class="dialog dialog-second" id="petSecond" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
     <div class="dialogCover"></div>
     <button class="previous" type="button">
         <img class="image" src="/user/assets/images/previousButton.png" alt="">
@@ -355,7 +748,7 @@
         </ul>
     </div>
 </div>
-<div class="dialog dialog-third " id="petThird">
+<div class="dialog dialog-third " id="petThird" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
     <div class="dialogCover"></div>
     <button class="previous" type="button">
         <img class="image" src="/user/assets/images/previousButton.png" alt="">
@@ -417,8 +810,11 @@
             <li class="menu active">
                 <span>내 정보 관리</span>
             </li>
-            <li class="menu">
+            <li class="menu" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
                 <span>애완동물 관리</span>
+            </li>
+            <li class="menu" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
+                <span>가게 관리</span>
             </li>
             <li class="menu">
                 <span>예약 조회</span>
@@ -429,18 +825,34 @@
         </ul>
     </div>
     <div class="content">
-        <div class="myInformation visible">
+        <div class="personalInformation" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
             <div class="info-card">
                 <div class="profile-wrapper">
                     <div class="profile-image">
-                        <img class="image" th:src="${primaryPet != null} ? ${primaryPet.imageUrl} : '/user/assets/images/defaultPetImage.png'" alt="#">
+                        <img class="image" th:src="${primaryPet != null} ? ${primaryPet.imageUrl} : '/user/assets/images/defaultPetImage.png'"
+                             alt="#">
                     </div>
                     <div class="profile-text">
-                        <span class="nickname" th:text="${personalUser.getNickname()}"></span>
+                        <span class="nickname personal" th:if="${sessionUser.getUserType() == 'PERSONAL'}"
+                              th:text="${personalUser.getNickname()}"></span>
+                        <span class="nickname companyName" th:if="${sessionUser.getUserType() == 'BUSINESS'}"
+                              th:text="${businessUser.getCompanyName()}"></span>
                         <span class="email" th:text="${user.getEmail()}"></span>
                     </div>
-                    <div class="point" th:text="'마일리지 : ' + ${user.getShopPoint()} + 'P'"></div>
-                    <div class="coupon">쿠폰</div>
+                    <div class="point-wrapper">
+                        <div class="left-wrapper">
+                            <span class="title">마일리지</span>
+                            <span class="point" th:text="${#numbers.formatInteger(personalUser.getShopPoint(), 0, 'COMMA')} + '원'"></span>
+                        </div>
+                        <button type="button" class="point-history">내역</button>
+                    </div>
+                    <div class="coupon-wrapper">
+                        <div class="left-wrapper">
+                            <span class="title">쿠폰</span>
+                            <span class="coupon">1장</span>
+                        </div>
+                        <button type="button" class="coupon-list">쿠폰</button>
+                    </div>
                 </div>
                 <div class="info-grid">
                     <div class="info-item">
@@ -451,21 +863,27 @@
                     </div>
                     <div class="info-item">
                         <div class="text">
-                            <span class="label">실명</span>
-                            <span class="value" th:text="${personalUser.getName()}"></span>
+                            <span class="label" th:text="${sessionUser.getUserType() == 'PERSONAL'} ? '실명' : '기업명(사업자 등록번호)'"></span>
+                            <span class="value" th:if="${sessionUser.getUserType() == 'PERSONAL'}"
+                                  th:text="${personalUser.getName()}"></span>
+                            <span class="value" th:if="${sessionUser.getUserType() == 'BUSINESS'}"
+                                  th:text="${businessUser.getCompanyName()} + ' (' + ${businessUser.getBusinessNumber().substring(0, 3)} + '-' + ${businessUser.getBusinessNumber().substring(3, 5)} + '-' + ${businessUser.getBusinessNumber().substring(5, 10)} + ')'"></span>
                         </div>
                         <button class="small-button nameChangeButton">수정</button>
                     </div>
                     <div class="info-item">
                         <div class="text">
-                            <span class="label">닉네임</span>
-                            <span class="value" th:text="${personalUser.getNickname()}"></span>
+                            <span class="label" th:text="${sessionUser.getUserType() == 'PERSONAL'} ? '닉네임' : '대표자명'"></span>
+                            <span class="value" th:if="${sessionUser.getUserType() == 'PERSONAL'}"
+                                  th:text="${personalUser.getNickname()}"></span>
+                            <span class="value" th:if="${sessionUser.getUserType() == 'BUSINESS'}"
+                                  th:text="${businessUser.getRepresentativeName()}"></span>
                         </div>
                         <button class="small-button nicknameChangeButton">수정</button>
                     </div>
                     <div class="info-item">
                         <div class="text">
-                            <span class="label">휴대전화</span>
+                            <span class="label" th:text="${sessionUser.getUserType() == 'PERSONAL'} ? '전화번호' : '대표자 전화번호'"></span>
                             <span class="value"
                                   th:text="${user.getPhone().substring(0, 3)} + '-' + ${user.getPhone().substring(3, 7)} + '-' + ${user.getPhone().substring(7, 11)}"></span>
                         </div>
@@ -473,11 +891,90 @@
                     </div>
                     <div class="info-item">
                         <div class="text">
+                            <span class="label">기본 주소</span>
+                            <span class="value" th:text="'현재 등록한 주소 : ' + ${personalAddresses.size()} + '개 (최대 5개)'"></span>
+                        </div>
+                        <button class="small-button address-open-button">관리</button>
+                    </div>
+                    <div class="info-item">
+                        <div class="text">
                             <span class="label">기본 배송지</span>
-                            <span class="value"
-                                  th:text="${address.getAddressPrimary()} + ${address.getAddressSecondary()}"></span>
+                            <span class="value" th:if="${deliveryPrimaryAddress != null}" th:text="'[' + ${deliveryPrimaryAddress.getPostalCode()} + '] ' + ${deliveryPrimaryAddress.getAddressPrimary()} + (${deliveryPrimaryAddress.getAddressSecondary() != null} ? ', ' + ${deliveryPrimaryAddress.getAddressSecondary()} : '')">111111111</span>
+                            <span class="value" th:if="${deliveryPrimaryAddress == null}">배송지를 추가하세요.</span>
                         </div>
                         <button class="small-button delivery-open-button">관리</button>
+                    </div>
+                </div>
+                <div class="security-section">
+                    <span class="section-title">계정 보안</span>
+                    <div class="security-item">
+                        <div class="text">
+                            <span class="label">비밀번호</span>
+                            <span class="desc">비밀번호를 변경할 수 있습니다.</span>
+                        </div>
+                        <button class="outline-button passwordChangeButton">비밀번호 변경</button>
+                    </div>
+                    <div class="security-item danger">
+                        <div class="text">
+                            <span class="label">회원 탈퇴</span>
+                            <span class="desc">탈퇴 시 모든 정보가 삭제됩니다.</span>
+                        </div>
+                        <button class="danger-button deleteUserButton">탈퇴하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="businessInformation" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
+            <div class="info-card">
+                <div class="profile-wrapper">
+                    <div class="profile-image">
+                        <img class="image" th:src="${primaryPet != null} ? ${primaryPet.imageUrl} : '/user/assets/images/defaultPetImage.png'"
+                             alt="#">
+                    </div>
+                    <div class="profile-text"></span>
+                        <span class="companyName" th:text="${businessUser.getCompanyName()}"></span>
+                        <span class="email" th:text="${user.getEmail()}"></span>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="text">
+                            <span class="label">아이디</span>
+                            <span class="value" th:text="${user.getLoginId()}"></span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="text">
+                            <span class="label">기업명(사업자 등록번호)</span>
+                            <span class="value" th:text="${businessUser.getCompanyName()} + ' (' + ${businessUser.getBusinessNumber().substring(0, 3)} + '-' + ${businessUser.getBusinessNumber().substring(3, 5)} + '-' + ${businessUser.getBusinessNumber().substring(5, 10)} + ')'"></span>
+                        </div>
+                        <button class="small-button companyNameChangeButton">수정</button>
+                    </div>
+                    <div class="info-item">
+                        <div class="text">
+                            <span class="label" th:text="${sessionUser.getUserType() == 'PERSONAL'} ? '닉네임' : '대표자명'"></span>
+                            <span class="value" th:if="${sessionUser.getUserType() == 'PERSONAL'}"
+                                  th:text="${personalUser.getNickname()}"></span>
+                            <span class="value" th:if="${sessionUser.getUserType() == 'BUSINESS'}"
+                                  th:text="${businessUser.getRepresentativeName()}"></span>
+                        </div>
+                        <button class="small-button representativeNameChangeButton">수정</button>
+                    </div>
+                    <div class="info-item">
+                        <div class="text">
+                            <span class="label" th:text="${sessionUser.getUserType() == 'PERSONAL'} ? '전화번호' : '대표자 전화번호'"></span>
+                            <span class="value"
+                                  th:text="${user.getPhone().substring(0, 3)} + '-' + ${user.getPhone().substring(3, 7)} + '-' + ${user.getPhone().substring(7, 11)}"></span>
+                        </div>
+                        <button class="small-button phoneChangeButton">수정</button>
+                    </div>
+                    <div class="info-item">
+                        <div class="text">
+                            <span class="label">회사 주소</span>
+                            <span class="value"
+                                  th:text="'[' + ${businessAddress.getPostalCode()} + '] ' + ${businessAddress.getAddressPrimary()} + (${businessAddress.getAddressSecondary() != null} ? (' ,' + ${businessAddress.getAddressSecondary()}) : '')"></span>
+                        </div>
+                        <button class="small-button companyAddress-open-button">수정</button>
                     </div>
                     <div class="info-item">
                         <div class="text">
@@ -506,8 +1003,7 @@
                 </div>
             </div>
         </div>
-        <div class="petInformation">
-            <span class="title">애완동물 관리</span>
+        <div class="petInformation" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
             <ul class="pet-grid">
                 <li class="pet-card add-card">
                     <span class="plus">+</span>
@@ -524,17 +1020,21 @@
                         <div class="pet-right">
                             <span class="pet-name">
                                 <span class="pet-name realName" th:text="${pet.getName()}"></span>
-                                <img th:src="${pet.getGender() == 'MALE'} ? '/user/assets/images/male.png' : '/user/assets/images/female.png'" class="gender" alt="">
+                                <img th:src="${pet.getGender() == 'MALE'} ? '/user/assets/images/male.png' : '/user/assets/images/female.png'"
+                                     class="gender" alt="">
                             </span>
                             <span class="species pet-info" th:text="'종류 : ' + ${pet.getSpecies()}"></span>
-                            <span class="birth pet-info" th:text="'나이 : ' + (${#temporals.year(#temporals.createNow())} - ${#temporals.year(pet.getBirthDate())}) + '살 ' + '(🍰 ' + ${#temporals.month(pet.getBirthDate())} + '월 ' + ${#temporals.day(pet.getBirthDate())} + '일)'"></span>
-                            <span class="weight pet-info" th:text="'몸무게 : ' + ${pet.getWeight()} + 'kg (' + (${pet.bodyType} == 'SLIM' ? '날씬해요' : (${pet.bodyType} == 'NORMAL' ? '적당해요' : (${pet.bodyType} == 'CHUBBY' ? '통통해요' : ''))) + ')'"></span>
+                            <span class="birth pet-info"
+                                  th:text="'나이 : ' + (${#temporals.year(#temporals.createNow())} - ${#temporals.year(pet.getBirthDate())}) + '살 ' + '(🍰 ' + ${#temporals.month(pet.getBirthDate())} + '월 ' + ${#temporals.day(pet.getBirthDate())} + '일)'"></span>
+                            <span class="weight pet-info"
+                                  th:text="'몸무게 : ' + ${pet.getWeight()} + 'kg (' + (${pet.bodyType} == 'SLIM' ? '날씬해요' : (${pet.bodyType} == 'NORMAL' ? '적당해요' : (${pet.bodyType} == 'CHUBBY' ? '통통해요' : ''))) + ')'"></span>
                             <span class="introduction pet-info" th:text="'한 줄 소개 : ' + ${pet.getIntroduction()}"></span>
                         </div>
                     </div>
                     <div class="pet-bottom">
                         <label class="remember">
-                            <input hidden class="checkbox primary-input" type="radio" name="primary" th:value="${pet.getPetId()}" th:checked="${pet.isPrimary}">
+                            <input hidden class="checkbox primary-input" type="radio" name="primary"
+                                   th:value="${pet.getPetId()}" th:checked="${pet.isPrimary}">
                             <span class="text"></span>
                         </label>
                         <span class="-flex-stretch"></span>
@@ -544,40 +1044,88 @@
                 </li>
             </ul>
         </div>
+        <div class="storeInformation" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
+            <ul class="store-grid">
+                <li class="store-card add-card">
+                    <span class="plus">+</span>
+                    <button type="button" class="text">가게 등록</button>
+                </li>
+                <li class="store-card" th:each="store : ${stores}" th:if="${store != null}" th:attr="data-store-id=${store.getStoreId()},
+                                 data-store-name=${store.getStoreName()},
+                                 data-store-phone=${store.getStorePhone()},
+                                 data-postal-code=${store.getPostalCode()},
+                                 data-address-primary=${store.getAddressPrimary()},
+                                 data-address-secondary=${store.getAddressSecondary()},
+                                 data-category=${store.getCategory()}">
+                    <div class="store-header">
+                        <span class="store-name" th:text="${store.storeName}">멍멍 동물병원</span>
+                        <span class="category hospital" th:text="
+                        ${store.category == 'hospital'} ? '병원' :
+                        (${store.category == 'cafe'} ? '카페' :
+                        (${store.category == 'salon'} ? '미용실' :
+                        (${store.category == 'school'} ? '유치원' :
+                        (${store.category == 'park'} ? '공원' :
+                        (${store.category == 'camp'} ? '캠핑장' : '')))))"></span>
+                    </div>
+                    <div class="store-body">
+                        <div class="info-row">
+                            <span class="title">주소</span>
+                            <span class="address"
+                                  th:text="'[' + ${store.postalCode} + '] ' + ${store.addressPrimary} + (${store.addressSecondary != null} ? (', ' + ${store.addressSecondary}) : '')"></span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="title">전화번호</span>
+                            <span class="phoneNumber" th:text="${store.storePhone}"></span>
+                        </div>
+                    </div>
+                    <div class="store-footer">
+                        <span class="-flex-stretch"></span>
+                        <button type="button" class="modify">수정</button>
+                        <button type="button" class="delete">삭제</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
         <div class="reservationInformation">
-            <span class="title">예약 조회</span>
             <ul class="reservation-grid">
-                <li class="reservation-card">
+                <li class="reservation-card" th:each="reservation : ${reservations}" th:if="${reservation != null}" th:attr="data-reservation-id = ${reservation.getReservationId()}">
                     <div class="card-header">
                         <div class="place-info">
-                            <span class="place">강남 동물병원</span>
-                            <span class="category">동물병원</span>
+                            <span class="place" th:text="${reservation.getStoreName()}">강남 동물병원</span>
+                            <span class="category" th:text="
+                        ${reservation.category == 'hospital'} ? '동물병원' :
+                        (${reservation.category == 'cafe'} ? '카페' :
+                        (${reservation.category == 'salon'} ? '미용실' :
+                        (${reservation.category == 'school'} ? '유치원' :
+                        (${reservation.category == 'park'} ? '공원' :
+                        (${reservation.category == 'camp'} ? '캠핑장' : '')))))">동물병원</span>
                         </div>
                         <span class="status complete"></span>
                     </div>
                     <div class="date-time">
                         <div class="date-box">
-                            <span class="day">18</span>
-                            <span class="month">FEB</span>
+                            <span class="day" th:text="${#temporals.format(reservation.getReservationDate(), 'dd')}">18</span>
+                            <span class="month" th:text="${#temporals.format(reservation.getReservationDate(), 'MMM', T(java.util.Locale).ENGLISH).toUpperCase()}">FEB</span>
                         </div>
                         <div class="time-info">
-                            <span class="date">2026.02.18 (화)</span>
-                            <span class="time">14:30</span>
+                            <span class="date" th:text="${#temporals.format(reservation.getReservationDate(), 'yyyy.MM.dd (E)', T(java.util.Locale).KOREAN)}">2026.02.18 (화)</span>
+                            <span class="time" th:text="${#temporals.format(reservation.getReservationTime(), 'HH:mm')}">14:30</span>
                         </div>
                     </div>
                     <div class="store-info">
                         <div class="row">
                             <span class="label">주소</span>
-                            <span class="value">서울시 강남구 테헤란로 123</span>
+                            <span class="value" th:text="${reservation.getAddressPrimary()} + (${reservation.getAddressSecondary() != null} ? (', ' + ${reservation.getAddressSecondary()}) : '')">서울시 강남구 테헤란로 123</span>
                         </div>
                         <div class="row">
                             <span class="label">전화번호</span>
-                            <span class="value">02-1234-5678</span>
+                            <span class="value" th:text="${reservation.getStorePhone()}">02-1234-5678</span>
                         </div>
                     </div>
                     <div class="request">
                         <span class="label">요청사항</span>
-                        <p class="text">
+                        <p class="text" th:text="${reservation.getRequestText()}">
                             강아지가 예민해서 최대한 조심히 진료 부탁드립니다.
                         </p>
                     </div>

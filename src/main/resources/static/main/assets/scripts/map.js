@@ -811,7 +811,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const reserveBtn = e.target.closest('.reserve-btn');
             if (reserveBtn) {
 
-                const isLoggedIn = /*[[${sessionUser != null}]]*/ false; // 서버에서 세션 전달
+                const isLoggedIn = /*[[${sessionUser != null}]]*/ true; // 서버에서 세션 전달
                 if (!isLoggedIn) {
                     alert('로그인 후 예약할 수 있습니다.');
                     return; // 로그인 안 되면 모달 안 열기
@@ -866,6 +866,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(payload),
                     });
+                    console.log(res)
 
                     if (res.ok) {
                         // 성공 시 text()로 받음

@@ -28,7 +28,7 @@ public class PetDto {
     private BigDecimal weight;
     private PetBodyType bodyType;
     private String imageUrl;
-    private Boolean isPrimary;
+    private Boolean isPrimary = false;
     private LocalDateTime createdAt;
     /*목표 유저, 즉 버튼 클릭 시 “팔로우 대상”의 ID를 저장하는 필드*/
     private Integer userId;

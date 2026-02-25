@@ -125,6 +125,7 @@ body:has(> .register-message.visible) > .cover {
   border: 0.0625rem solid $global-border-color;
   overflow: hidden;
   position: relative;
+  margin-top: 12.5rem;
 
   > .dialog {
     @include flex(column, stretch, center);
