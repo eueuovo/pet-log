@@ -288,6 +288,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// 뒤로가기 시
+window.addEventListener('pageshow', (e) => {
+    const newContainer = document.querySelector('.new-product .product');
+    const bestContainer = document.querySelector('.best-product .product');
+    if (newContainer) newContainer.innerHTML = '';
+    if (bestContainer) bestContainer.innerHTML = '';
+
+    const newRadios = document.querySelectorAll('input[name="new-category"]');
+    const allNewRadio = document.querySelector('input[name="new-category"][value="all"]');
+    const allBestRadio = document.querySelector('input[name="best-category"][value="all"]');
+    newRadios.forEach(radio => {
+        radio.checked = false;
+    })
+    if (allNewRadio) allNewRadio.checked = true;
+    if (allBestRadio) allBestRadio.checked = true;
+
+    loadNewProducts();
+    loadBestProducts();
+});
+
 // 프리뷰 이미지 클릭 이벤트
 document.addEventListener('DOMContentLoaded', function() {
     const previewContainers = document.querySelectorAll('.preview > .img-container');

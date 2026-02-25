@@ -2265,7 +2265,7 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
 
   > .petInformation,
   > .reservationInformation,
-  > .storeInformation {
+  > .storeInformation{
     @include flex(column, stretch, flex-start);
     display: none;
     pointer-events: none;
@@ -2598,6 +2598,177 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
   }
 }
 
+.myPage-wrapper {
+  .content {
+    > .paymentDetails {
+      display: none;
+      pointer-events: none;
+      padding: 2rem 3rem;
+      width: 100%;
+
+      &.visible {
+        @include flex(column, flex-start, center, 1rem);
+        pointer-events: auto;
+      }
+
+      .filter-wrapper {
+        .filter {
+          border: 0.0625rem solid $global-gray-text-color;
+          border-radius: 0.25rem;
+          padding: 0.3rem 0.5rem;
+        }
+      }
+
+      .payment-list{
+        @include flex(column, flex-start, center, 1rem);
+        width: 100%;
+
+        .payment-date{
+          @include flex(row, flex-start, center, 0.5rem);
+
+          .date{
+            font-size: 1.1rem;
+            font-weight: 500;
+          }
+
+          .all-count{
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: lighten($global-gray-text-color, 30%);
+            position: relative;
+            padding-left: 0.5rem;
+
+            &::before {
+              content: "";
+              position: absolute;
+              left: 0;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 0.0625rem;
+              height: 100%;
+              background-color: lighten($global-gray-text-color, 30%);
+            }
+          }
+        }
+      }
+
+      .order-detail{
+        @include flex(row, flex-start, center, 1rem);
+
+        .order-count{
+          color: lighten($global-gray-text-color, 30%);
+        }
+
+        .order-info{
+          font-weight: 500;
+          cursor: pointer;
+        }
+      }
+
+      .order-item-wrapper{
+        border: 0.0625rem solid lighten($global-gray-text-color, 40%);
+        border-radius: 0.25rem;
+        width: 100%;
+
+        .order-item{
+          @include flex(row, flex-start, flex-start, 1rem);
+          padding: 1rem;
+          width: 100%;
+          position: relative;
+
+          &::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            height: 0.0625rem;
+            background-color: lighten($global-gray-right-text-color, 45%);
+          }
+
+          &:last-child::after {
+            display: none;
+          }
+
+          .img-wrapper{
+            border: 0.0625rem solid lighten($global-gray-text-color, 40%);
+            border-radius: 0.25rem;
+            width: 7rem;
+            height: 7rem;
+          }
+
+          .product-info{
+            @include flex(column, flex-start, center, 0.5rem);
+            padding-top: 0.5rem;
+
+            .product-name{
+              font-size: 1rem;
+              font-weight: 600;
+            }
+
+            .product-option{
+              font-size: 0.9rem;
+              color: lighten($global-gray-text-color, 30%);
+            }
+
+            .product-price{
+              @include flex(row, flex-start, center, 0.5rem);
+
+              .discount-price{
+                font-size: 1rem;
+                font-weight: 500;
+                color: lighten($global-gray-text-color, 10%);
+              }
+
+              .prime-cost{
+                font-size: 1rem;
+                color: lighten($global-gray-text-color, 30%);
+                text-decoration: line-through;
+              }
+
+              .product-count{
+                font-size: 1rem;
+                color: lighten($global-gray-text-color, 10%);
+                font-weight: 500;
+                padding-left: 0.5rem;
+                position: relative;
+
+                &::before {
+                  content: "";
+                  position: absolute;
+                  left: 0;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  width: 0.0625rem;
+                  height: 100%;
+                  background-color: lighten($global-gray-text-color, 30%);
+                }
+              }
+            }
+          }
+
+          .review-btn{
+            position: absolute;
+            top: 35%;
+            right: 3%;
+            border: 0.0625rem solid $global-green-text-color;
+            border-radius: 0.25rem;
+            padding: 0.7rem 1.2rem;
+            color: $global-green-text-color;
+            cursor: pointer;
+
+            &:hover{
+              background-color: $global-green-background-color;
+              border: 0.0625rem solid $global-green-background-color;
+              color: #ffffff;
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 
 

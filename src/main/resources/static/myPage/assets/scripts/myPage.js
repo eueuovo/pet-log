@@ -9,13 +9,15 @@ const businessInformation = content.querySelector(':scope > .businessInformation
 const petInformation = content.querySelector(':scope > .petInformation');
 const reservationInformation = content.querySelector(':scope > .reservationInformation');
 const storeInformation = content.querySelector(':scope > .storeInformation');
+const paymentDetails = content.querySelector(':scope > .paymentDetails');
 
 const sections = [
     personalInformation,
     businessInformation,
     petInformation,
     storeInformation,
-    reservationInformation
+    reservationInformation,
+    paymentDetails
 ].filter(section => section !== null);
 
 // 메뉴 클릭 시
