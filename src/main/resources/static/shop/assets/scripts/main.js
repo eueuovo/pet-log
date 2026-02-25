@@ -460,7 +460,7 @@ function toggleHeart(productId, heartElement) {
                 showToast('즐겨찾기가 취소되었습니다.');
             }
         } else {
-            alert(result.message);
+            showToast(result.message);
         }
     };
 

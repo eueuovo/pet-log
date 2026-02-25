@@ -416,7 +416,7 @@ function addToCart() {
         } else if (result.alreadyExists) {
             showToast('이미 장바구니에 추가되어 있습니다.', '장바구니 바로가기', '/shop/cart');
         } else {
-            alert(result.message);
+            showToast(result.message);
         }
     };
 
@@ -695,8 +695,13 @@ stars.forEach(star => {
 });
 
 imageInput?.addEventListener('change', () => {
+    if (selectedFiles.length + imageInput.files.length > 3) {
+        showToast('이미지는 3장까지 첨부 가능합니다.');
+        imageInput.value = '';
+        return;
+    }
+
     Array.from(imageInput.files).forEach(file => {
-        if (selectedFiles.length >= 3) return;
         selectedFiles.push(file);
 
         const wrapper = document.createElement('div');
@@ -746,6 +751,13 @@ document.querySelector('.submit-review')?.addEventListener('click', () => {
                 showToast(isEdit ? '리뷰가 수정되었습니다.' : '리뷰가 등록되었습니다.');
                 editingReviewId = null;
                 closeModal();
+
+                // 새 등록일 때만 버튼 숨기기
+                if (!isEdit) {
+                    document.querySelector('.review-btn')?.style &&
+                    (document.querySelector('.review-btn').style.display = 'none');
+                }
+
                 document.querySelector('.review-tab').click();
                 fetch(`/shop/products/${getProductIdFromUrl()}/reviews?sort=best`)
                     .then(res => res.json())

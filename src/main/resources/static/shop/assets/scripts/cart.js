@@ -175,11 +175,11 @@ if (choiceDeleteBtn) {
                 checkEmptyCart();
                 updateCartSummary();
             } else {
-                alert(result.message || '삭제에 실패했습니다');
+                showToast('삭제에 실패했습니다.');
             }
         } catch (error) {
             console.error('삭제 오류:', error);
-            alert('삭제에 실패했습니다');
+            showToast('삭제에 실패했습니다.');
         }
     });
 }
@@ -218,11 +218,11 @@ if (allDeleteBtn) {
                 checkEmptyCart();
                 updateCartSummary();
             } else {
-                alert(result.message || '삭제에 실패했습니다');
+                showToast('삭제에 실패했습니다.');
             }
         } catch (error) {
             console.error('삭제 오류:', error);
-            alert('삭제에 실패했습니다');
+            showToast('삭제에 실패했습니다.');
         }
     });
 }
@@ -323,14 +323,14 @@ async function showOptionModal(cartItem, productId) {
         const result = await response.json();
 
         if (!result.success) {
-            alert('옵션을 불러오는데 실패했습니다');
+            showToast('옵션을 불러오는데 실패했습니다');
             return;
         }
 
         const options = result.options;
 
         if (!options || options.length === 0) {
-            alert('이 상품은 옵션이 없습니다');
+            showToast('이 상품은 옵션이 없습니다');
             return;
         }
 
@@ -404,16 +404,16 @@ async function showOptionModal(cartItem, productId) {
 
                     closeModal(modal);
                 } else {
-                    alert(result.message || '옵션 변경에 실패했습니다');
+                    showToast(result.message || '옵션 변경에 실패했습니다');
                 }
             } catch (error) {
                 console.error('옵션 변경 오류:', error);
-                alert('옵션 변경에 실패했습니다');
+                showToast('옵션 변경에 실패했습니다');
             }
         });
     } catch (error) {
         console.error('옵션 조회 오류:', error);
-        alert('옵션을 불러오는데 실패했습니다');
+        showToast('옵션을 불러오는데 실패했습니다');
     }
 }
 
@@ -430,7 +430,7 @@ if (paymentButton) {
         const checkedItems = document.querySelectorAll('.item-checkbox:checked');
 
         if (checkedItems.length === 0) {
-            alert('상품을 선택해주세요.');
+            showToast('상품을 선택해주세요.');
             return;
         }
 

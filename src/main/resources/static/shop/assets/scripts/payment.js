@@ -238,7 +238,7 @@ if (couponSelect) {
             const maxDiscount = selectedOption.dataset.maxDiscount ? parseInt(selectedOption.dataset.maxDiscount) : null;
 
             if (baseAmount < minOrder) {
-                alert(`이 쿠폰은 ${minOrder.toLocaleString()}원 이상 구매 시 사용 가능합니다.`);
+                showToast(`이 쿠폰은 ${minOrder.toLocaleString()}원 이상 구매 시 사용 가능합니다.`);
                 e.target.value = '';
                 couponDiscount = 0;
                 updatePaymentSummary();
@@ -406,27 +406,27 @@ if (paymentBtn) {
         const postalCode = document.querySelector('.postal-code').textContent;
 
         if (!ordererName) {
-            alert('주문자 이름을 입력해주세요.');
+            showToast('주문자 이름을 입력해주세요.');
             return;
         }
         if (!ordererPhone) {
-            alert('주문자 전화번호를 입력해주세요.');
+            showToast('주문자 전화번호를 입력해주세요.');
             return;
         }
         if (!receiverName) {
-            alert('받는 사람 이름을 입력해주세요.');
+            showToast('받는 사람 이름을 입력해주세요.');
             return;
         }
         if (!receiverPhone) {
-            alert('받는 사람 전화번호를 입력해주세요.');
+            showToast('받는 사람 전화번호를 입력해주세요.');
             return;
         }
         if (!postalCode) {
-            alert('배송지 주소를 입력해주세요.');
+            showToast('배송지 주소를 입력해주세요.');
             return;
         }
         if (!selectedPaymentMethod) {
-            alert('결제 수단을 선택해주세요.');
+            showToast('결제 수단을 선택해주세요.');
             return;
         }
 
@@ -435,7 +435,7 @@ if (paymentBtn) {
         if (finalAmount < 0) finalAmount = 0;
 
         if (finalAmount === 0) {
-            alert('결제 금액이 0원입니다.');
+            showToast('결제 금액이 0원입니다.');
             return;
         }
 
@@ -444,7 +444,7 @@ if (paymentBtn) {
 
         // TossPayments가 로드되었는지 확인
         if (typeof TossPayments === 'undefined') {
-            alert('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+            showToast('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
             return;
         }
 
@@ -493,7 +493,7 @@ if (paymentBtn) {
         });
 
         if (!saveRes.ok) {
-            alert('주문 정보 저장에 실패했습니다. 다시 시도해주세요.');
+            showToast('주문 정보 저장에 실패했습니다. 다시 시도해주세요.');
             return;
         }
 
@@ -513,11 +513,11 @@ if (paymentBtn) {
             console.error('결제 에러:', error);
 
             if (error.code === 'USER_CANCEL') {
-                alert('결제를 취소하셨습니다.');
+                showToast('결제를 취소하셨습니다.');
             } else if (error.code === 'INVALID_CARD_COMPANY') {
-                alert('유효하지 않은 카드사입니다.');
+                showToast('유효하지 않은 카드사입니다.');
             } else {
-                alert('결제 중 오류가 발생했습니다.\n' + (error.message || '다시 시도해주세요.'));
+                showToast('결제 중 오류가 발생했습니다.\n' + (error.message || '다시 시도해주세요.'));
             }
         }
     });
