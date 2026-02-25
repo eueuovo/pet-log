@@ -28,7 +28,6 @@
         <span class="label">글쓰기</span>
     </button>
 
-
     <section class="profile-header">
         <div class="profile-avatar">
             <img th:src="${profile.profileImageUrl != null ? profile.profileImageUrl : '/feed/images/explore/user.png'}"
@@ -108,7 +107,6 @@
 
     </section>
 </main>
-
-
+<div th:replace="~{fragments/chat :: chatModal}"></div>
 </body>
 </html>

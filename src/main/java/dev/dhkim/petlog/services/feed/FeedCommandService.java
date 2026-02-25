@@ -1,5 +1,6 @@
 package dev.dhkim.petlog.services.feed;
 
+import dev.dhkim.petlog.dto.feed.FeedDto;
 import dev.dhkim.petlog.entities.feed.FeedEntity;
 import dev.dhkim.petlog.entities.feed.FeedMediaEntity;
 import dev.dhkim.petlog.enums.feed.MediaType;
@@ -32,15 +33,15 @@ public class FeedCommandService {
     // 글 작성하기 눌렀을 때 피드 및 피드 미디어 추가
     @Transactional
     public Result createFeed(int userId,
-                             List<MultipartFile> files,
-                             List<String> types,
-                             List<Integer> orders,
                              String title,
-                             String description
-    ) {
+                             String description,
+                             List<MultipartFile> files,
+                             List<Integer> newOrders) {
+
         if (files == null || files.isEmpty()) return CommonResult.FAILURE;
-        if (types == null || orders == null) return CommonResult.FAILURE;
-        if (files.size() != types.size() || files.size() != orders.size()) return CommonResult.FAILURE;
+        if (newOrders == null || files.size() != newOrders.size()) return CommonResult.FAILURE;
+        if (title == null || title.isBlank()) return CommonResult.FAILURE;
+        if (description == null || description.isBlank()) return CommonResult.FAILURE;
 
         FeedEntity feed = new FeedEntity();
         feed.setUserId(userId);
@@ -50,47 +51,20 @@ public class FeedCommandService {
         feed.setCommentCount(0);
         feed.setCreatedAt(LocalDateTime.now());
 
-        int feedInsertResult = feedMapper.insertFeed(feed);
-        if (feedInsertResult != 1)
+        int insertedFeed = feedMapper.insertFeed(feed);
+        if (insertedFeed != 1) {
             throw new RuntimeException("피드 저장 실패");
+        }
         int feedId = feed.getId();
 
-        List<String> createdPaths = new ArrayList<>(); // savePath + thumbnailPath(영상일 때)
-        List<FeedMediaEntity> mediaList = new ArrayList<>();
+        List<String> createdPaths = new ArrayList<>();
 
         try {
-            for (int i = 0; i < files.size(); i++) {
-                MultipartFile file = files.get(i);
-                String type = types.get(i);
-                Integer order = orders.get(i);
-                String savePath = fileStorageService.save(file, "feed");
+            List<FeedMediaEntity> mediaList =
+                    buildMediaEntities(feedId, files, newOrders, createdPaths);
 
-                createdPaths.add(savePath);
-
-                String thumbnailPath = "video".equalsIgnoreCase(type)
-                        ? feedMediaService.generateThumbnail(savePath, createdPaths) // 내부에서 썸네일 경로도 createdPaths에 추가
-                        : savePath;
-
-                FeedMediaEntity media = new FeedMediaEntity();
-                media.setFeedId(feedId);
-                media.setMediaUrl(savePath);
-                media.setThumbnailUrl(thumbnailPath);
-                media.setMediaType(
-                        "video".equalsIgnoreCase(type)
-                                ? MediaType.VIDEO
-                                : MediaType.IMAGE
-                );
-                media.setSortOrder(order);
-                media.setSource(Source.USER_UPLOAD);
-
-                mediaList.add(media);
-            }
-            // 3) DB 저장 (성공 개수 정확히 체크)
-            int inserted = feedMediaMapper.insertFeedMediaList(mediaList);
-
-            // mediaList.size() 만큼 들어갔는지 확인 (부분 성공을 실패로 취급)
-            if (inserted != mediaList.size()) {
-                // DB는 @Transactional로 롤백되지만, 파일은 수동 삭제 필요
+            int insertedMedia = feedMediaMapper.insertFeedMediaList(mediaList);
+            if (insertedMedia != mediaList.size()) {
                 feedMediaService.deleteCreatedFilesQuietly(createdPaths);
                 throw new RuntimeException("미디어 저장 실패");
             }
@@ -98,9 +72,140 @@ public class FeedCommandService {
             return CommonResult.SUCCESS;
 
         } catch (RuntimeException e) {
-            // 예외 나면 DB 롤백 + 파일 수동 삭제
             feedMediaService.deleteCreatedFilesQuietly(createdPaths);
-            throw e; // 트랜잭션 롤백 유지
+            throw e;
         }
+    }
+
+    // 피드 업데이트
+    @Transactional
+    public Result updateFeed(int feedId,
+                             int userId,
+                             String title,
+                             String description,
+                             List<MultipartFile> files,
+                             List<Integer> newOrders,
+                             List<Integer> keepMediaIds,
+                             List<Integer> keepOrders) {
+
+        FeedDto feed = feedMapper.selectFeedById(feedId);
+        if (feed == null || feed.getUserId() != userId) {
+            return CommonResult.FAILURE;
+        }
+
+        if (title == null || title.isBlank()) return CommonResult.FAILURE;
+        if (description == null || description.isBlank()) return CommonResult.FAILURE;
+
+        // 기본 정보 수정
+        feedMapper.updateFeed(feedId, title, description);
+
+        // 기존 미디어 삭제 정리
+        if (keepMediaIds == null) keepMediaIds = List.of();
+        feedMediaMapper.deleteNotIn(feedId, keepMediaIds);
+
+        // 기존 미디어 sort_order 업데이트
+        if (keepMediaIds.size() > 0) {
+            if (keepOrders == null || keepOrders.size() != keepMediaIds.size()) {
+                return CommonResult.FAILURE;
+            }
+
+            List<FeedMediaEntity> updates = new ArrayList<>();
+            for (int i = 0; i < keepMediaIds.size(); i++) {
+                FeedMediaEntity m = new FeedMediaEntity();
+                m.setId(keepMediaIds.get(i));      // feed_media.id
+                m.setSortOrder(keepOrders.get(i)); // 최종 순서
+                updates.add(m);
+            }
+            // ※ 아래 mapper 필요: updateSortOrders
+            int updated = feedMediaMapper.updateSortOrders(updates);
+            if (updated != updates.size()) {
+                throw new RuntimeException("기존 미디어 순서 업데이트 실패");
+            }
+        }
+
+        // 신규 파일 insert (썸네일 포함)
+        if (files == null || files.isEmpty()) {
+            return CommonResult.SUCCESS;
+        }
+        if (newOrders == null || newOrders.size() != files.size()) {
+            return CommonResult.FAILURE;
+        }
+
+        List<String> createdPaths = new ArrayList<>();
+        try {
+            List<FeedMediaEntity> newMediaList =
+                    buildMediaEntities(feedId, files, newOrders, createdPaths);
+
+            int insertedMedia = feedMediaMapper.insertFeedMediaList(newMediaList);
+            if (insertedMedia != newMediaList.size()) {
+                feedMediaService.deleteCreatedFilesQuietly(createdPaths);
+                throw new RuntimeException("신규 미디어 저장 실패");
+            }
+
+            return CommonResult.SUCCESS;
+
+        } catch (RuntimeException e) {
+            feedMediaService.deleteCreatedFilesQuietly(createdPaths);
+            throw e;
+        }
+    }
+
+    // 피드 삭제
+    public Result deleteFeed(int feedId, int userId) {
+        FeedDto feed = feedMapper.selectFeedById(feedId);
+        if (feed == null) {
+            return CommonResult.FAILURE;
+        }
+        if(feed.getUserId() != userId) {
+            return CommonResult.FAILURE;
+        }
+
+        return feedMapper.deleteFeed(feedId) > 0
+                ? CommonResult.SUCCESS
+                : CommonResult.FAILURE;
+    }
+
+    private List<FeedMediaEntity> buildMediaEntities(
+            int feedId,
+            List<MultipartFile> files,
+            List<Integer> orders,
+            List<String> createdPaths
+    ) {
+
+        List<FeedMediaEntity> mediaList = new ArrayList<>();
+
+        for (int i = 0; i < files.size(); i++) {
+
+            MultipartFile file = files.get(i);
+            Integer order = orders.get(i);
+
+            String contentType = file.getContentType();
+            if (contentType == null) {
+                throw new RuntimeException("파일 타입을 확인할 수 없습니다.");
+            }
+
+            MediaType mediaType = contentType.startsWith("image")
+                    ? MediaType.IMAGE
+                    : MediaType.VIDEO;
+
+            String savePath = fileStorageService.save(file, "feed");
+            createdPaths.add(savePath);
+
+            String thumbnailPath = mediaType == MediaType.VIDEO
+                    ? feedMediaService.generateThumbnail(savePath, createdPaths)
+                    : savePath;
+
+            FeedMediaEntity media = new FeedMediaEntity();
+            media.setFeedId(feedId);
+            media.setMediaUrl(savePath);
+            media.setThumbnailUrl(thumbnailPath);
+            media.setMediaType(mediaType);
+            media.setSortOrder(order);
+            media.setSource(Source.USER_UPLOAD);
+
+            mediaList.add(media);
+        }
+
+        return mediaList;
     }
 }

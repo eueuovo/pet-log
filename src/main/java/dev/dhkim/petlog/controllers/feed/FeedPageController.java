@@ -1,6 +1,9 @@
 package dev.dhkim.petlog.controllers.feed;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.dhkim.petlog.dto.feed.FeedDetailDto;
+import dev.dhkim.petlog.dto.feed.FeedDto;
 import dev.dhkim.petlog.dto.feed.ProfileDto;
 import dev.dhkim.petlog.dto.user.SessionUser;
 import dev.dhkim.petlog.services.feed.FeedProfileService;
@@ -32,7 +35,7 @@ public class FeedPageController {
         return "/feed/explore";
     }
 
-    // 상세 피드
+    // 상세 피드 (우측 페이지)
     @RequestMapping(value="/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getDetail(@PathVariable(value="id") int feedId,
                             @SessionAttribute(value="sessionUser", required = false) SessionUser sessionUser,
@@ -62,12 +65,33 @@ public class FeedPageController {
         return "/feed/profile";
     }
 
-    // 피드 작성하기
+    // 피드 작성하기 페이지
     @RequestMapping(value="/create", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String getCreate(@SessionAttribute(value="sessionUser", required = false) SessionUser sessionUser) {
+    public String getCreate(@SessionAttribute(value="sessionUser", required = false) SessionUser sessionUser,
+                            Model model) {
         if (sessionUser == null) {
             return "redirect:/user/login";
         }
+        model.addAttribute("mode", "create");
         return "/feed/create";
+    }
+
+    // 피드 수정하기 페이지
+    @RequestMapping(value="/{feedId}/edit", method = RequestMethod.GET)
+    public String getEdit(@PathVariable int feedId,
+                          @SessionAttribute(value="sessionUser", required = false) SessionUser sessionUser,
+                          Model model) {
+        if (sessionUser == null) {
+            return "redirect:/user/login";
+        }
+        Integer userId = sessionUser.getUserId();
+
+        FeedDto feed = feedQueryService.getFeedForEdit(feedId, userId);
+
+        model.addAttribute("mode", "edit");
+        model.addAttribute("feed", feed);
+        model.addAttribute("mediaList", feed.getFeedMediaDtos());
+
+        return "/feed/create"; //create 페이지 재사용
     }
 }

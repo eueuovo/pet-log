@@ -222,8 +222,9 @@
 .create-feed {
   position: fixed;
   right: 1.25rem;
-  bottom: 2.5rem;
-  padding: 0.7rem 1.4rem;
+  bottom: 6.5rem;
+  width: 5rem;
+  height: 3.5rem;
   background-color: darkorange;
   color: #FFFFFF;
   font-weight: 600;
@@ -232,7 +233,7 @@
   cursor: pointer;
   z-index: 5;
   box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.15);
-  transition: all 0.25s ease;
+  transition: width, height 0.25s ease;
   /* + 아이콘 */
 }
 .create-feed > .plus {
@@ -250,7 +251,8 @@
   transition: opacity 0.2s ease, width 0.2s ease;
 }
 .create-feed.compact {
-  padding: 0.7rem 1.1rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 50%;
 }
 .create-feed.compact > .plus {
@@ -261,6 +263,9 @@
   opacity: 0;
   width: 0;
   overflow: hidden;
+}
+.create-feed:hover {
+  background-color: rgb(255, 151.5, 25.5);
 }
 
 /*# sourceMappingURL=common.css.map */

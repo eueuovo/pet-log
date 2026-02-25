@@ -8,6 +8,7 @@
             common.classList.remove('compact');
         }
     });
+
 // 글쓰기 버튼 클릭 시 이동 이벤트
     common.addEventListener('click', async () => {
         const res = await fetch('/api/feed/create-check', {

@@ -73,6 +73,21 @@
 }
 
 .detail-header {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  justify-content: center;
+}
+.detail-header > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.detail-header > .-flex-stretch {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.detail-header {
   width: 100%;
   margin-bottom: 0.75rem;
   padding-bottom: 0.75rem;
@@ -93,6 +108,9 @@
 .detail-user > .-flex-stretch {
   flex-grow: 1;
   flex-shrink: 1;
+}
+.detail-user {
+  flex: 1;
 }
 .detail-user .avatar {
   width: 2.6rem;
@@ -123,6 +141,80 @@
 .detail-user .user-meta .place {
   font-size: 0.75rem;
   color: #565656;
+}
+
+.more-wrap {
+  position: relative;
+}
+.more-wrap .more-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999rem;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+.more-wrap .more-btn svg {
+  width: 28px;
+  height: 28px;
+  color: #555555;
+  transition: color 0.15s ease;
+  border-radius: 999rem;
+}
+.more-wrap .more-btn svg:hover {
+  color: #000000;
+}
+.more-wrap .more-btn:active {
+  transform: scale(0.95);
+}
+.more-wrap .more-menu {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  justify-content: flex-start;
+}
+.more-wrap .more-menu > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.more-wrap .more-menu > .-flex-stretch {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.more-wrap .more-menu {
+  position: absolute;
+  top: 35px;
+  right: 5px;
+  min-width: 90px;
+  padding: 8px 0;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 25;
+}
+.more-wrap .more-menu.hidden {
+  display: none;
+}
+.more-wrap .more-menu button {
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+.more-wrap .more-menu button:hover {
+  background: #f3f3f3;
+}
+.more-wrap .more-menu .more-edit {
+  color: #333;
+}
+.more-wrap .more-menu .more-delete {
+  color: #e53935;
+}
+.more-wrap .more-menu .more-delete:hover {
+  background: rgba(229, 57, 53, 0.08);
 }
 
 .detail-content {

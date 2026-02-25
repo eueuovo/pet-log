@@ -40,7 +40,7 @@ public class FeedApiController {
         return feedQueryService.getFeeds(sort, lastFeedId, lastLikeCount, lastCreatedAt, size, userId);
     }
 
-    // 상세페이지(/feed/detail) 로딩
+    // 상세페이지(/feed/detail) 좌측페이지 로딩
     @RequestMapping(value = "/{id}/related", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FeedDto> getRelatedFeeds(@PathVariable(value = "id") int feedId,
                                          @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
@@ -96,17 +96,48 @@ public class FeedApiController {
     // 피드 생성 (게시하기)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> postFeeds(@SessionAttribute(value = "sessionUser", required = false)SessionUser sessionUser,
-                                         @RequestParam("files") List<MultipartFile> files,
-                                         @RequestParam("types") List<String> types,
-                                         @RequestParam("orders") List<Integer> orders,
                                          @RequestParam String title,
-                                         @RequestParam String description
+                                         @RequestParam String description,
+                                         @RequestParam(value="files", required = false) List<MultipartFile> files,
+                                         @RequestParam(value="newOrders", required = false) List<Integer> orders
     ) {
         if (sessionUser == null) {
             return Map.of("result", "LOGIN_REQUIRED");
         }
         Integer userId = sessionUser.getUserId();
-        Result result = feedCommandService.createFeed(userId, files, types, orders, title, description);
+        Result result = feedCommandService.createFeed(userId, title, description, files, orders);
+        return Map.of("result", result);
+    }
+
+    // 피드 수정
+    @RequestMapping(value="/{feedId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> updateFeed(@PathVariable int feedId,
+                                          @RequestParam String title,
+                                          @RequestParam String description,
+                                          @RequestParam(value="files", required = false) List<MultipartFile> files,
+                                          @RequestParam(value="newOrders", required = false) List<Integer> newOrders,
+                                          @RequestParam(value="keepMediaIds", required = false) List<Integer> keepMediaIds,
+                                          @RequestParam(value="keepOrders", required = false) List<Integer> keepOrders,
+                                          @SessionAttribute(value="sessionUser", required = false) SessionUser sessionUser
+    ) {
+        if (sessionUser == null) {
+            return Map.of("result", "LOGIN_REQUIRED");
+        }
+        Integer userId = sessionUser.getUserId();
+        Result result = feedCommandService.updateFeed(feedId, userId, title, description, files, newOrders, keepMediaIds, keepOrders);
+
+        return Map.of("result", result);
+    }
+
+    // 피드 삭제
+    @RequestMapping(value=("/{feedId}"), method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> deleteFeed(@PathVariable int feedId,
+                                          @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        if (sessionUser == null) {
+            return Map.of("result", "LOGIN_REQUIRED");
+        }
+        Integer userId = sessionUser.getUserId();
+        Result result = feedCommandService.deleteFeed(feedId, userId);
         return Map.of("result", result);
     }
 
