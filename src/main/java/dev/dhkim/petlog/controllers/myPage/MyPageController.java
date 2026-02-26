@@ -31,6 +31,7 @@ public class MyPageController {
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getMyPage(ModelAndView modelAndView,
+                                  @RequestParam(defaultValue = "1month") String period,
                                   @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
         if (sessionUser == null) {
             modelAndView.setViewName("/user/login");
@@ -61,7 +62,7 @@ public class MyPageController {
             modelAndView.addObject("deliveryPrimaryAddress", deliveryAddress.getRight());
             modelAndView.addObject("reservations", reservations.getRight());
 
-            List<Map<String, Object>> orderItems = myPageService.getOrderItems(sessionUser.getUserId());
+            List<Map<String, Object>> orderItems = myPageService.getOrderItems(sessionUser.getUserId(), period);
             orderItems.forEach(item -> {
                 boolean canWrite = reviewMapper.checkCanWriteReview(
                         sessionUser.getUserId(),
@@ -86,9 +87,9 @@ public class MyPageController {
                                     Collectors.toList()
                             )
                     ));
-
             modelAndView.addObject("orderItems", orderItems);
             modelAndView.addObject("groupedOrders", groupedOrders);
+            modelAndView.addObject("currentPeriod", period);
         } else {
             Pair<MyPageResult, AddressEntity> businessAddress = this.myPageService.getBusinessAddress(sessionUser.getUserId());
             modelAndView.addObject("businessAddress", businessAddress.getRight());

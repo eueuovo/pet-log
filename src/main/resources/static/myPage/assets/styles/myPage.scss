@@ -2631,10 +2631,21 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
       }
 
       .filter-wrapper {
-        .filter {
-          border: 0.0625rem solid $global-gray-text-color;
-          border-radius: 0.25rem;
-          padding: 0.3rem 0.5rem;
+        @include flex(row, center, center, 1rem);
+
+        .filter-label{
+          .filter {
+            border: 0.0625rem solid $global-gray-text-color;
+            border-radius: 0.25rem;
+            padding: 0.3rem 0.5rem;
+          }
+        }
+
+        .my-review-filter{
+          font-size: 1rem;
+          font-weight: 500;
+          color: $global-green-text-color;
+          cursor: pointer;
         }
       }
 

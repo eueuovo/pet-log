@@ -43,4 +43,6 @@ public interface ReviewMapper {
     void deleteReviewImage(@Param("reviewId") Integer reviewId, @Param("imageUrl") String imageUrl);
 
     Map<String, Object> selectReviewById(int reviewId);
+
+    List<Map<String, Object>> selectMyReviews(@Param("userId") Integer userId);
 }

@@ -1137,15 +1137,18 @@
             </ul>
         </div>
         <div class="paymentDetails">
-            <label class="filter-wrapper">
-                <select class="filter">
-                    <option value="1month">1개월</option>
-                    <option value="3month">3개월</option>
-                    <option value="6month">6개월</option>
-                    <option value="1year">1년</option>
-                    <option value="all">전체(최대 2년)</option>
-                </select>
-            </label>
+            <div class="filter-wrapper">
+                <label class="filter-label">
+                    <select class="filter">
+                        <option value="1month">1개월</option>
+                        <option value="3month">3개월</option>
+                        <option value="6month">6개월</option>
+                        <option value="1year">1년</option>
+                        <option value="all">전체(최대 2년)</option>
+                    </select>
+                </label>
+                <div class="my-review-filter">리뷰내역</div>
+            </div>
             <div class="payment-list">
                 <th:block th:each="dateEntry : ${groupedOrders}">
                     <div class="payment-date">

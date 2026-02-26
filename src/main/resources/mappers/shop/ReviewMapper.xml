@@ -108,4 +108,15 @@
         FROM petlog.review
         WHERE id = #{reviewId}
     </select>
+
+    <!-- 내가 쓴 리뷰 조회 -->
+    <select id="selectMyReviews" resultType="map">
+        SELECT r.id, r.product_id, r.rating, r.content, r.created_at,
+               p.name AS productName, pi.image_url AS productImageUrl
+        FROM `petlog`.review r
+                 JOIN `petlog`.product p ON r.product_id = p.id
+                 LEFT JOIN `petlog`.product_image pi ON pi.product_id = p.id AND pi.is_thumbnail = true
+        WHERE r.user_id = #{userId}
+        ORDER BY r.created_at DESC
+    </select>
 </mapper>

@@ -2960,7 +2960,7 @@ if (petInformation) {
 // endregion
 
 
-// ========== 리뷰 모달 ==========
+// 리뷰 모달
 const overlay = document.querySelector('.review-modal-overlay');
 const modalClose = document.querySelector('.modal-close');
 const stars = document.querySelectorAll('.star-input');
@@ -2974,6 +2974,7 @@ const editActionBtns = document.querySelector('.edit-action-btns');
 const modalTitle = document.querySelector('.modal-title');
 const imageUploadLabel = document.querySelector('.image-upload-label');
 const reviewContent = document.querySelector('.review-content');
+const imageText = document.querySelector('.image-text');
 
 let selectedRating = 0;
 let selectedFiles = [];
@@ -3001,10 +3002,11 @@ overlay?.addEventListener('click', (e) => {
     }
 });
 
-// ===== 모드 전환 함수 =====
+// 모드 전환 함수
 function setWriteMode() {
     modalTitle.textContent = '리뷰 작성';
     reviewContent.disabled = false;
+    imageText.style.display = 'block';
     imageUploadLabel.style.display = 'block';
     submitReviewBtn.style.display = 'inline-block';
     editReviewBtn.style.display = 'none';
@@ -3024,6 +3026,7 @@ function setWriteMode() {
 function setReadMode() {
     modalTitle.textContent = '내 리뷰';
     reviewContent.disabled = true;
+    imageText.style.display = originalImages.length > 0 ? 'block' : 'none';
     imageUploadLabel.style.display = 'none';
     submitReviewBtn.style.display = 'none';
     editReviewBtn.style.display = 'inline-block';
@@ -3035,6 +3038,7 @@ function setReadMode() {
 function setEditMode() {
     modalTitle.textContent = '리뷰 수정';
     reviewContent.disabled = false;
+    imageText.style.display = 'block';
     imageUploadLabel.style.display = 'block';
     submitReviewBtn.style.display = 'none';
     editReviewBtn.style.display = 'none';
@@ -3058,9 +3062,10 @@ stars.forEach(star => {
     });
 });
 
-// ===== 이미지 첨부 =====
+// 이미지 첨부
 imageInput?.addEventListener('change', () => {
-    if (selectedFiles.length + imageInput.files.length > 3) {
+    const existingCount = originalImages.length + selectedFiles.length;
+    if (existingCount + imageInput.files.length > 3) {
         showToast('이미지는 3장까지 첨부 가능합니다.');
         imageInput.value = '';
         return;
@@ -3083,6 +3088,17 @@ imageInput?.addEventListener('change', () => {
         previewImages.appendChild(wrapper);
     });
     imageInput.value = '';
+});
+
+const filterSelect = filterSelect?.addEventListener('change', () => {
+    const period = filterSelect.value;
+    const menuIndex = getCurrentMenuIndex();
+    location.href = `/my?menu=${menuIndex}&period=${period}`;
+});
+
+document.querySelector('.my-review-filter')?.addEventListener('click', () => {
+    const menuIndex = getCurrentMenuIndex();
+    location.href = `/my?menu=${menuIndex}&tab=review`;
 });
 
 // ===== 리뷰 남기기 버튼 (마이페이지) =====

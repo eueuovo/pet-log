@@ -589,8 +589,8 @@ public class MyPageService {
     }
 
     // 리뷰 남기기
-    public List<Map<String, Object>> getOrderItems(Integer userId) {
-        return myPageMapper.selectOrderItems(userId);
+    public List<Map<String, Object>> getOrderItems(Integer userId, String period) {
+        return myPageMapper.selectOrderItems(userId, period);
     }
 
     // 주문 내역
