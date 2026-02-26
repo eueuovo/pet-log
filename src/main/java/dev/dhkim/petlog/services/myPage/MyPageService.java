@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -585,5 +586,15 @@ public class MyPageService {
             return Pair.of(MyPageResult.FAILURE, null);
         }
         return Pair.of(MyPageResult.SUCCESS, dbBusinessUser);
+    }
+
+    // 리뷰 남기기
+    public List<Map<String, Object>> getOrderItems(Integer userId) {
+        return myPageMapper.selectOrderItems(userId);
+    }
+
+    // 주문 내역
+    public Map<String, Object> getOrderDetail(int orderId, int userId) {
+        return myPageMapper.selectOrderDetail(orderId, userId);
     }
 }

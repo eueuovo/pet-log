@@ -102,4 +102,10 @@
         DELETE FROM petlog.review_image
         WHERE review_id = #{reviewId} AND image_url = #{imageUrl}
     </delete>
+
+    <select id="selectReviewById" resultType="map">
+        SELECT id, rating, content, user_id AS userId, created_at AS createdAt
+        FROM petlog.review
+        WHERE id = #{reviewId}
+    </select>
 </mapper>
