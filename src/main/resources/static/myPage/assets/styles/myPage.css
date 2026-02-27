@@ -5683,6 +5683,7 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
 }
 .content {
   min-width: 0;
+  overflow: hidden;
   /* ----------------- 내 정보 관리 --------------- */
 }
 .content > .personalInformation {
@@ -5704,12 +5705,24 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
   pointer-events: none;
   display: none;
   width: 100%;
-  max-width: 100rem;
   padding: 2rem;
+  overflow-y: auto;
 }
 .content > .personalInformation.visible {
   display: flex;
   pointer-events: auto;
+  flex: 1;
+  min-height: 0;
+}
+.content > .personalInformation::-webkit-scrollbar {
+  width: 6px;
+}
+.content > .personalInformation::-webkit-scrollbar-thumb {
+  background-color: #d6d6d6;
+  border-radius: 999px;
+}
+.content > .personalInformation::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 .content > .personalInformation .info-card {
   align-items: stretch;
@@ -5731,7 +5744,7 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
   border-radius: 1rem;
   box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.05);
   padding: 1rem;
-  height: 100%;
+  flex: 1;
 }
 .content > .personalInformation {
   /* 프로필 영역 */
@@ -6133,12 +6146,25 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
   pointer-events: none;
   display: none;
   width: 100%;
-  max-width: 100rem;
   padding: 2rem;
+  min-height: 0;
+  overflow-y: auto;
 }
 .content > .businessInformation.visible {
   display: flex;
   pointer-events: auto;
+  flex: 1;
+  min-height: 0;
+}
+.content > .businessInformation::-webkit-scrollbar {
+  width: 6px;
+}
+.content > .businessInformation::-webkit-scrollbar-thumb {
+  background-color: #d6d6d6;
+  border-radius: 999px;
+}
+.content > .businessInformation::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 .content > .businessInformation .info-card {
   align-items: stretch;
@@ -6160,7 +6186,7 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
   border-radius: 1rem;
   box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.05);
   padding: 1rem;
-  height: 100%;
+  flex: 1;
 }
 .content > .businessInformation {
   /* 프로필 영역 */
@@ -6677,14 +6703,33 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
   display: none;
   pointer-events: none;
   width: 100%;
-  height: 100%;
   padding: 2rem;
+  overflow-y: auto;
+  min-height: 0;
 }
 .content > .petInformation.visible,
 .content > .reservationInformation.visible,
 .content > .storeInformation.visible {
   display: block;
   pointer-events: auto;
+  flex: 1;
+  min-height: 0;
+}
+.content > .petInformation::-webkit-scrollbar,
+.content > .reservationInformation::-webkit-scrollbar,
+.content > .storeInformation::-webkit-scrollbar {
+  width: 6px;
+}
+.content > .petInformation::-webkit-scrollbar-thumb,
+.content > .reservationInformation::-webkit-scrollbar-thumb,
+.content > .storeInformation::-webkit-scrollbar-thumb {
+  background-color: #d6d6d6;
+  border-radius: 999px;
+}
+.content > .petInformation::-webkit-scrollbar-track,
+.content > .reservationInformation::-webkit-scrollbar-track,
+.content > .storeInformation::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 .content > .petInformation > .title,
 .content > .reservationInformation > .title,
@@ -8793,6 +8838,7 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
 }
 @media (max-width: 880px) {
   .pet-grid,
+  .reservation-grid,
   .store-grid {
     grid-template-columns: repeat(1, 1fr) !important;
   }
