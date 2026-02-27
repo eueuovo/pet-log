@@ -79,7 +79,7 @@
     <select id="checkCanWriteReview" resultType="boolean">
         SELECT (
                    SELECT COUNT(*) FROM petlog.order_item oi
-                                            JOIN petlog.`order` o ON oi.order_id = o.id
+                   JOIN petlog.`order` o ON oi.order_id = o.id
                    WHERE o.user_id = #{userId}
                      AND oi.product_id = #{productId}
                      AND o.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)

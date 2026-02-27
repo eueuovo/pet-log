@@ -3091,14 +3091,52 @@ imageInput?.addEventListener('change', () => {
 });
 
 const filterSelect = document.querySelector('.filter');
+
+const currentPeriod = urlParams.get('period');
+if (currentPeriod && filterSelect) {
+    filterSelect.value = currentPeriod;
+    // period 파라미터를 URL에서 제거 (새로고침 시 초기화되도록)
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('period');
+    window.history.replaceState(null, '', cleanUrl);
+}
+
 filterSelect?.addEventListener('change', () => {
     const period = filterSelect.value;
-    location.href = `/my?menu=4&period=${period}`;
+    const menuIndex = sections.indexOf(paymentDetails);
+    // 리뷰 필터 초기화 후 페이지 이동
+    document.querySelectorAll('.order-item, .order-item-wrapper, .order-detail, .payment-date')
+        .forEach(el => el.style.display = '');
+    location.href = `/my?menu=${menuIndex}&period=${period}`;
 });
 
-// 리뷰내역 버튼
 document.querySelector('.my-review-filter')?.addEventListener('click', () => {
-    location.href = '/my?menu=4&tab=review';
+    // order-item 필터링 (내가 쓴 리뷰 있는 것만)
+    document.querySelectorAll('.order-item').forEach(item => {
+        item.style.display = item.querySelector('.my-review-btn') ? '' : 'none';
+    });
+
+    // 보이는 order-item이 없는 order-item-wrapper와 그 앞 order-detail 숨기기
+    document.querySelectorAll('.order-item-wrapper').forEach(wrapper => {
+        const hasVisible = [...wrapper.querySelectorAll('.order-item')]
+            .some(item => item.style.display !== 'none');
+        wrapper.style.display = hasVisible ? '' : 'none';
+        const orderDetail = wrapper.previousElementSibling;
+        if (orderDetail?.classList.contains('order-detail')) {
+            orderDetail.style.display = hasVisible ? '' : 'none';
+        }
+    });
+
+    // 보이는 항목 없는 날짜 그룹 숨기기
+    document.querySelectorAll('.payment-date').forEach(dateEl => {
+        let next = dateEl.nextElementSibling;
+        let hasVisible = false;
+        while (next && !next.classList.contains('payment-date')) {
+            if (next.style.display !== 'none') hasVisible = true;
+            next = next.nextElementSibling;
+        }
+        dateEl.style.display = hasVisible ? '' : 'none';
+    });
 });
 
 // ===== 리뷰 남기기 버튼 (마이페이지) =====

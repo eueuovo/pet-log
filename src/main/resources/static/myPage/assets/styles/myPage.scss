@@ -2822,6 +2822,17 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
               color: #ffffff;
             }
           }
+
+          .completed{
+            position: absolute;
+            top: 35%;
+            right: 3%;
+            background-color: darken($global-gray-background-color, 10%);
+            border: 0.0625rem solid darken($global-gray-background-color, 10%);
+            border-radius: 0.25rem;
+            padding: 0.7rem 1.2rem;
+            color: darken($global-gray-text-color, 20%);
+          }
         }
       }
     }

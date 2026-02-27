@@ -1178,17 +1178,20 @@
                                         <span class="product-count" th:text="${item['quantity']} + '개'"></span>
                                     </div>
                                 </div>
+                                <!-- 리뷰 작성 가능 (리뷰 없을 때만) -->
                                 <button class="review-btn"
-                                        th:if="${item['canWriteReview']}"
+                                        th:if="${item['canWriteReview'] and item['reviewId'] == null}"
                                         th:data-product-id="${item['productId']}"
                                         th:data-order-item-id="${item['id']}">리뷰 남기기</button>
+
+                                <!-- 리뷰 작성 완료 -->
                                 <button class="my-review-btn"
                                         th:if="${item['reviewId'] != null}"
-                                        th:unless="${item['canWriteReview']}"
                                         th:data-review-id="${item['reviewId']}"
                                         th:data-product-id="${item['productId']}">내가 쓴 리뷰</button>
-                                <span th:unless="${item['canWriteReview']}"
-                                      th:if="${item['reviewId'] == null}">리뷰 완료</span>
+
+                                <!-- 30일 지나고 리뷰도 없음 -->
+                                <span class="completed" th:if="${!item['canWriteReview'] and item['reviewId'] == null}">구매 완료</span>
                             </div>
                         </div>
                     </th:block>
