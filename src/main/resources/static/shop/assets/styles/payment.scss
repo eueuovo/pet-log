@@ -359,6 +359,10 @@ body:has(.message.visible) .modal-cover {
                 border-radius: 0.2rem;
                 color: #ffffff;
                 cursor: pointer;
+
+                &:hover {
+                  background-color: darken($global-green-background-color, 5%);
+                }
               }
 
               > .postal-code {
@@ -544,6 +548,10 @@ body:has(.message.visible) .modal-cover {
               border-radius: 0.2rem;
               color: #ffffff;
               cursor: pointer;
+
+              &:hover {
+                background-color: darken($global-green-background-color, 5%);
+              }
             }
           }
 
@@ -622,7 +630,7 @@ body:has(.message.visible) .modal-cover {
     @include flex(column, center, center, 1rem);
     width: 17rem;
     position: sticky;
-    top: 1rem;
+    top: 7rem;
     height: fit-content;
     align-self: flex-start;
 
@@ -664,8 +672,11 @@ body:has(.message.visible) .modal-cover {
       background-color: $global-green-background-color;
       color: #ffffff;
       border-radius: 0.35rem;
-      border: 0.0625rem solid darken($global-green-background-color, 10%);
       cursor: pointer;
+
+      &:hover {
+        background-color: darken($global-green-background-color, 5%);
+      }
     }
   }
 
@@ -680,6 +691,7 @@ body:has(.message.visible) .modal-cover {
     > .summary-wrapper{
       position: static;
       width: 100%;
+
 
       > .summary{
         background-color: transparent;

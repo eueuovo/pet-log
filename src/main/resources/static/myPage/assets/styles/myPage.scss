@@ -5072,12 +5072,10 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
       }
 
       &.visible {
-        display: flex;
-        @include flex(column, flex-start, flex-start, 1rem);
+        @include flex(column, flex-start, flex-start, 0.5rem);
         pointer-events: auto;
         flex: 1;
         min-height: 0;
-
         padding: 2rem 3rem;
       }
 
@@ -5103,6 +5101,45 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
       .payment-list{
         @include flex(column, flex-start, center, 1rem);
         width: 100%;
+
+        .empty-orders {
+          width: 100%;
+          flex: 1;
+          text-align: center;
+          color: $global-gray-text-color;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+
+          .empty-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: $global-black-text-color;
+          }
+
+          .empty-sub {
+            font-size: 0.95rem;
+            color: $global-gray-text-color;
+          }
+
+          .empty-shop-link {
+            margin-top: 0.5rem;
+            padding: 0.6rem 1.5rem;
+            background-color: $global-green-background-color;
+            color: #ffffff;
+            border-radius: 0.35rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+
+            &:hover {
+              background-color: darken($global-green-background-color, 5%);
+            }
+          }
+        }
+
 
         .payment-date{
           @include flex(row, flex-start, center, 0.5rem);

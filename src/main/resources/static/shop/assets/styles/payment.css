@@ -424,6 +424,8 @@ body:has(.message.visible) .modal-cover {
                 border-radius: 0.2rem;
                 color: #ffffff;
                 cursor: pointer; }
+                #payment > .info-wrapper > .delivery-info > .address-info > .address-wrapper > .header-wrapper > .field > .search-btn:hover {
+                  background-color: #77c486; }
               #payment > .info-wrapper > .delivery-info > .address-info > .address-wrapper > .header-wrapper > .field > .postal-code {
                 align-items: stretch;
                 display: flex;
@@ -660,6 +662,8 @@ body:has(.message.visible) .modal-cover {
               border-radius: 0.2rem;
               color: #ffffff;
               cursor: pointer; }
+              #payment > .info-wrapper > .discount > .point > .point-wrapper > .point-input > .button:hover {
+                background-color: #77c486; }
           #payment > .info-wrapper > .discount > .point > .point-wrapper > .remain {
             align-items: center;
             display: flex;
@@ -755,7 +759,7 @@ body:has(.message.visible) .modal-cover {
     justify-content: center;
     width: 17rem;
     position: sticky;
-    top: 1rem;
+    top: 7rem;
     height: fit-content;
     align-self: flex-start; }
     #payment > .summary-wrapper > * {
@@ -816,7 +820,6 @@ body:has(.message.visible) .modal-cover {
       background-color: #89CC96;
       color: #ffffff;
       border-radius: 0.35rem;
-      border: 0.0625rem solid #65bd76;
       cursor: pointer; }
       #payment > .summary-wrapper > .payment > * {
         flex-grow: 0;
@@ -824,6 +827,8 @@ body:has(.message.visible) .modal-cover {
       #payment > .summary-wrapper > .payment > .-flex-stretch {
         flex-grow: 1;
         flex-shrink: 1; }
+      #payment > .summary-wrapper > .payment:hover {
+        background-color: #77c486; }
   @media (max-width: 930px) {
     #payment {
       align-items: flex-start;

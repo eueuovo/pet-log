@@ -1154,66 +1154,73 @@
             </ul>
         </div>
         <div class="paymentDetails">
-            <div class="filter-wrapper">
-                <label class="filter-label">
-                    <select class="filter">
-                        <option value="1month">1개월</option>
-                        <option value="3month">3개월</option>
-                        <option value="6month">6개월</option>
-                        <option value="1year">1년</option>
-                        <option value="all">전체(최대 2년)</option>
-                    </select>
-                </label>
-                <div class="my-review-filter">리뷰내역</div>
-            </div>
-            <div class="payment-list">
-                <th:block th:each="dateEntry : ${groupedOrders}">
-                    <div class="payment-date">
-                        <span class="date" th:text="${#temporals.format(dateEntry.key, 'yyyy.MM.dd')}"></span>
-                        <span class="all-count" th:text="'총 주문 ' + ${dateEntry.value.size()} + '건'"></span>
+            <th:block th:if="${groupedOrders == null or groupedOrders.isEmpty()}">
+                <div class="payment-list">
+                    <div class="empty-orders">
+                        <span class="empty-title">아직 주문내역이 없어요.</span>
+                        <span class="empty-sub">우리 아이를 위한 선물을 찾아보세요 🐾</span>
+                        <a href="/shop" class="empty-shop-link">쇼핑몰 바로가기</a>
                     </div>
-                    <th:block th:each="orderEntry : ${dateEntry.value}">
-                        <div class="order-detail" th:attr="data-order-id=${orderEntry.key}">
-                            <span class="order-count" th:text="${orderEntry.value.size()} + '건'"></span>
-                            <span class="order-info">주문상세 &gt;</span>
+                </div>
+            </th:block>
+
+            <th:block th:if="${groupedOrders != null and !groupedOrders.isEmpty()}">
+                <div class="filter-wrapper">
+                    <label class="filter-label">
+                        <select class="filter">
+                            <option value="1month">1개월</option>
+                            <option value="3month">3개월</option>
+                            <option value="6month">6개월</option>
+                            <option value="1year">1년</option>
+                            <option value="all">전체(최대 2년)</option>
+                        </select>
+                    </label>
+                    <div class="my-review-filter">리뷰내역</div>
+                </div>
+                <div class="payment-list">
+                    <th:block th:each="dateEntry : ${groupedOrders}">
+                        <div class="payment-date">
+                            <span class="date" th:text="${#temporals.format(dateEntry.key, 'yyyy.MM.dd')}"></span>
+                            <span class="all-count" th:text="'총 주문 ' + ${dateEntry.value.size()} + '건'"></span>
                         </div>
-                        <div class="order-item-wrapper">
-                            <div class="order-item" th:each="item : ${orderEntry.value}">
-                                <div class="img-wrapper">
-                                    <a th:href="@{/shop/product/{id}(id=${item['productId']})}">
-                                        <img th:src="${item['productImageUrl']}" alt="상품이미지">
-                                    </a>
-                                </div>
-                                <div class="product-info">
-                                    <a th:href="@{/shop/product/{id}(id=${item['productId']})}">
-                                        <div class="product-name" th:text="${item['productName']}"></div>
-                                    </a>
-                                    <div class="product-option" th:if="${item['optionName'] != null}" th:text="${item['optionName']}"></div>
-                                    <div class="product-price">
-                                        <span class="discount-price" th:text="${#numbers.formatInteger(item['price'], 0, 'COMMA')} + '원'"></span>
-                                        <span class="prime-cost" th:text="${#numbers.formatInteger(item['originalPrice'], 0, 'COMMA')} + '원'"></span>
-                                        <span class="product-count" th:text="${item['quantity']} + '개'"></span>
-                                    </div>
-                                </div>
-                                <!-- 리뷰 작성 가능 (리뷰 없을 때만) -->
-                                <button class="review-btn"
-                                        th:if="${item['canWriteReview'] and item['reviewId'] == null}"
-                                        th:data-product-id="${item['productId']}"
-                                        th:data-order-item-id="${item['orderItemId']}">리뷰 남기기</button>
-
-                                <!-- 리뷰 작성 완료 -->
-                                <button class="my-review-btn"
-                                        th:if="${item['reviewId'] != null}"
-                                        th:data-review-id="${item['reviewId']}"
-                                        th:data-product-id="${item['productId']}">내가 쓴 리뷰</button>
-
-                                <!-- 30일 지나고 리뷰도 없음 -->
-                                <span class="completed" th:if="${!item['canWriteReview'] and item['reviewId'] == null}">구매 완료</span>
+                        <th:block th:each="orderEntry : ${dateEntry.value}">
+                            <div class="order-detail" th:attr="data-order-id=${orderEntry.key}">
+                                <span class="order-count" th:text="${orderEntry.value.size()} + '건'"></span>
+                                <span class="order-info">주문상세 &gt;</span>
                             </div>
-                        </div>
+                            <div class="order-item-wrapper">
+                                <div class="order-item" th:each="item : ${orderEntry.value}">
+                                    <div class="img-wrapper">
+                                        <a th:href="@{/shop/product/{id}(id=${item['productId']})}">
+                                            <img th:src="${item['productImageUrl']}" alt="상품이미지">
+                                        </a>
+                                    </div>
+                                    <div class="product-info">
+                                        <a th:href="@{/shop/product/{id}(id=${item['productId']})}">
+                                            <div class="product-name" th:text="${item['productName']}"></div>
+                                        </a>
+                                        <div class="product-option" th:if="${item['optionName'] != null}" th:text="${item['optionName']}"></div>
+                                        <div class="product-price">
+                                            <span class="discount-price" th:text="${#numbers.formatInteger(item['price'], 0, 'COMMA')} + '원'"></span>
+                                            <span class="prime-cost" th:text="${#numbers.formatInteger(item['originalPrice'], 0, 'COMMA')} + '원'"></span>
+                                            <span class="product-count" th:text="${item['quantity']} + '개'"></span>
+                                        </div>
+                                    </div>
+                                    <button class="review-btn"
+                                            th:if="${item['canWriteReview'] and item['reviewId'] == null}"
+                                            th:data-product-id="${item['productId']}"
+                                            th:data-order-item-id="${item['orderItemId']}">리뷰 남기기</button>
+                                    <button class="my-review-btn"
+                                            th:if="${item['reviewId'] != null}"
+                                            th:data-review-id="${item['reviewId']}"
+                                            th:data-product-id="${item['productId']}">내가 쓴 리뷰</button>
+                                    <span class="completed" th:if="${!item['canWriteReview'] and item['reviewId'] == null}">구매 완료</span>
+                                </div>
+                            </div>
+                        </th:block>
                     </th:block>
-                </th:block>
-            </div>
+                </div>
+            </th:block>
         </div>
     </div>
 </div>

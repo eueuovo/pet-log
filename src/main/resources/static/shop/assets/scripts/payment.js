@@ -923,6 +923,10 @@ if (transferBtn) {
 
 // 결제 버튼 클릭
 const paymentBtn = document.querySelector('.payment');
+const urlParams = new URLSearchParams(window.location.search);
+const cartIdsParam = urlParams.get('cartIds');
+const cartIds = cartIdsParam ? cartIdsParam.split(',').map(Number) : [];
+
 if (paymentBtn) {
     paymentBtn.addEventListener('click', async () => {
 
@@ -1016,7 +1020,8 @@ if (paymentBtn) {
                 usedPoint: pointDiscount,
                 userCouponId: userCouponId || null,
                 deliveryFee,
-                items
+                items,
+                cartIds
             })
         });
 
