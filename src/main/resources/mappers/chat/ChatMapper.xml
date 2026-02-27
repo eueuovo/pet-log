@@ -99,7 +99,7 @@
                           AND `t3`.`user_id` != #{userId}
                  JOIN `petlog`.`personal_user` `t4`
                       ON `t4`.`user_id` = `t3`.`user_id`
-                 LEFT JOIN `chat_message` `t5`
+                 LEFT JOIN `petlog`.`chat_message` `t5`
                            ON `t5`.`room_id` = `t1`.`id`
                                AND `t5`.`id` > IFNULL(`t2`.`last_read_message_id`, 0)
                                AND `t5`.`sender_id` != #{userId}

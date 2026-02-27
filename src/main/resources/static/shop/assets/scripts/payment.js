@@ -33,9 +33,10 @@ if (messageSelect) {
 }
 
 // 주소 검색
+const cover = document.querySelector('.cover');
+const addressCover = document.querySelector('.address-cover');
 const button = document.querySelector('.search-btn');
 if (button) {
-    const cover = document.querySelector('.cover');
     const addressWrapper = document.getElementById('address-wrapper');
     const addressContainer = document.getElementById('address-container');
     const postalCode = document.querySelector('.postal-code');
@@ -43,7 +44,7 @@ if (button) {
     const detailAddress = document.querySelector('.detail');
 
     button.addEventListener('click', () => {
-        cover.style.display = 'block';
+        addressCover.style.display = 'block';
         addressWrapper.classList.add('visible');
         new daum.Postcode({
             width: '400px',
@@ -52,7 +53,7 @@ if (button) {
                 postalCode.textContent = data.zonecode;
                 aboutAddress.textContent = data.roadAddress || data.jibunAddress;
 
-                cover.style.display = 'none';
+                addressCover.style.display = 'none';
                 addressWrapper.classList.remove('visible');
 
                 detailAddress.focus();
@@ -63,7 +64,7 @@ if (button) {
     const closeBtn = document.querySelector('#address-wrapper .button');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
-            cover.style.display = 'none';
+            addressCover.style.display = 'none';
             addressWrapper.classList.remove('visible');
         });
     }
@@ -83,7 +84,7 @@ let pointDiscount = 0;
 
 // 페이지 로드 시 실행 (통합)
 document.addEventListener('DOMContentLoaded', () => {
-    // 기본배송지 자동 입력
+    // 기본배송지 자동 입력 (마이페이지 주소 가져오기)
     const defaultDeliveryItem = document.querySelector('.delivery-item .default-badge')?.closest('.delivery-item');
 
     if (defaultDeliveryItem) {
@@ -94,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const detailAddr = defaultDeliveryItem.querySelector('.detail-addr').textContent;
         const phone = defaultDeliveryItem.querySelector('.phone').textContent;
 
-        document.querySelector('.delivery-name .input').value = deliveryName;
         document.querySelector('.orderer-name .input').value = recipient;
         document.querySelector('.postal-code').textContent = postal.replace(/\[|\]/g, '');
         document.querySelector('.about-address').textContent = addr;
@@ -120,17 +120,44 @@ document.addEventListener('DOMContentLoaded', () => {
         deliveryFee = parseInt(deliveryFeeEl.textContent.replace(/[^0-9]/g, ''));
     }
 
+    const pasteBtn = document.querySelector('.delivery-header .paste');
+    if (pasteBtn) {
+        pasteBtn.addEventListener('click', () => {
+            const ordererName = document.querySelector('.name-wrapper .input').value;
+            const ordererPhonePrefix = document.querySelector('.phone-wrapper .num-select').value;
+            const ordererPhoneNum = document.querySelector('.phone-wrapper .input').value;
+
+            document.querySelector('.orderer-name .input').value = ordererName;
+            document.querySelector('.phone-num .num-select').value = ordererPhonePrefix;
+            document.querySelector('.phone-num .input').value = ordererPhoneNum;
+        });
+    }
+
+    if (couponSelect) {
+        Array.from(couponSelect.options).forEach(option => {
+            const minOrder = parseInt(option.dataset.minOrder || 0);
+            if (minOrder > 0 && baseAmount < minOrder) {
+                option.text = '(사용불가) ' + option.text;
+                option.disabled = true;
+            }
+        });
+    }
+
     updatePaymentSummary();
 });
 
 if (changeBtn && deliveryModal) {
     changeBtn.addEventListener('click', () => {
         deliveryModal.classList.add('visible');
+        cover.style.opacity = '1';
+        cover.style.pointerEvents = 'auto';
         document.body.style.overflow = 'hidden';
     });
 
     const closeModal = () => {
         deliveryModal.classList.remove('visible');
+        cover.style.opacity = '0';
+        cover.style.pointerEvents = 'none';
         document.body.style.overflow = '';
     };
 
@@ -150,25 +177,23 @@ if (changeBtn && deliveryModal) {
             e.stopPropagation();
             const item = e.target.closest('.delivery-item');
 
-            const deliveryName = item.querySelector('.delivery-name').textContent;
-            const recipient = item.querySelector('.recipient').textContent;
             const postal = item.querySelector('.postal').textContent;
             const addr = item.querySelector('.addr').textContent;
             const detailAddr = item.querySelector('.detail-addr').textContent;
-            const phone = item.querySelector('.phone').textContent;
 
-            document.querySelector('.delivery-name .input').value = deliveryName;
-            document.querySelector('.orderer-name .input').value = recipient;
             document.querySelector('.postal-code').textContent = postal.replace(/\[|\]/g, '');
             document.querySelector('.about-address').textContent = addr;
             document.querySelector('.detail-address .detail').value = detailAddr;
 
+            const recipient = item.querySelector('.recipient').textContent;
+            const phone = item.querySelector('.phone').textContent;
+
+            document.querySelector('.orderer-name .input').value = recipient;
+
             const phoneParts = phone.split('-');
             if (phoneParts.length === 3) {
-                const phoneSelect = document.querySelector('.phone-num .num-select');
-                const phoneInput = document.querySelector('.phone-num .input');
-                phoneSelect.value = phoneParts[0];
-                phoneInput.value = phoneParts[1] + phoneParts[2];
+                document.querySelector('.phone-num .num-select').value = phoneParts[0];
+                document.querySelector('.phone-num .input').value = phoneParts[1] + phoneParts[2];
             }
 
             closeModal();
@@ -186,7 +211,6 @@ if (changeBtn && deliveryModal) {
                 item.remove();
 
                 if (isDefault) {
-                    document.querySelector('.delivery-name .input').value = '';
                     document.querySelector('.orderer-name .input').value = '';
                     document.querySelector('.postal-code').textContent = '';
                     document.querySelector('.about-address').textContent = '';
@@ -214,7 +238,7 @@ if (couponSelect) {
             const maxDiscount = selectedOption.dataset.maxDiscount ? parseInt(selectedOption.dataset.maxDiscount) : null;
 
             if (baseAmount < minOrder) {
-                alert(`이 쿠폰은 ${minOrder.toLocaleString()}원 이상 구매 시 사용 가능합니다.`);
+                showToast(`이 쿠폰은 ${minOrder.toLocaleString()}원 이상 구매 시 사용 가능합니다.`);
                 e.target.value = '';
                 couponDiscount = 0;
                 updatePaymentSummary();
@@ -289,8 +313,8 @@ if (pointAllButton) {
     pointAllButton.addEventListener('click', () => {
         if (pointInput) {
             pointInput.value = availablePoint.toLocaleString();
-            // pointDiscount = availablePoint;
-            showPointToast(availablePoint);  // 토스트
+            pointDiscount = availablePoint;
+            showPointToast(availablePoint);
             updatePaymentSummary();
         }
     });
@@ -382,27 +406,27 @@ if (paymentBtn) {
         const postalCode = document.querySelector('.postal-code').textContent;
 
         if (!ordererName) {
-            alert('주문자 이름을 입력해주세요.');
+            showToast('주문자 이름을 입력해주세요.');
             return;
         }
         if (!ordererPhone) {
-            alert('주문자 전화번호를 입력해주세요.');
+            showToast('주문자 전화번호를 입력해주세요.');
             return;
         }
         if (!receiverName) {
-            alert('받는 사람 이름을 입력해주세요.');
+            showToast('받는 사람 이름을 입력해주세요.');
             return;
         }
         if (!receiverPhone) {
-            alert('받는 사람 전화번호를 입력해주세요.');
+            showToast('받는 사람 전화번호를 입력해주세요.');
             return;
         }
         if (!postalCode) {
-            alert('배송지 주소를 입력해주세요.');
+            showToast('배송지 주소를 입력해주세요.');
             return;
         }
         if (!selectedPaymentMethod) {
-            alert('결제 수단을 선택해주세요.');
+            showToast('결제 수단을 선택해주세요.');
             return;
         }
 
@@ -411,7 +435,7 @@ if (paymentBtn) {
         if (finalAmount < 0) finalAmount = 0;
 
         if (finalAmount === 0) {
-            alert('결제 금액이 0원입니다.');
+            showToast('결제 금액이 0원입니다.');
             return;
         }
 
@@ -420,7 +444,7 @@ if (paymentBtn) {
 
         // TossPayments가 로드되었는지 확인
         if (typeof TossPayments === 'undefined') {
-            alert('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+            showToast('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
             return;
         }
 
@@ -428,6 +452,51 @@ if (paymentBtn) {
 
         // 주문 ID 생성
         const orderId = 'ORDER_' + new Date().getTime();
+
+        // 주문 정보 세션에 저장
+        const addressPrimary = document.querySelector('.about-address').textContent;
+        const addressSecondary = document.querySelector('.detail-address .detail').value;
+        const deliveryRequest = document.querySelector('.delivery-message .direct')?.value ||
+            document.querySelector('.message-label')?.options[document.querySelector('.message-label')?.selectedIndex]?.textContent || '';
+        const ordererPhoneSelect = document.querySelector('.phone-wrapper .num-select').value;
+        const receiverPhoneSelect = document.querySelector('.phone-num .num-select').value;
+        const userCouponId = couponSelect?.value || null;
+
+        // 주문 상품 목록 수집
+        const items = Array.from(document.querySelectorAll('.product-wrapper')).map(wrapper => ({
+            productId: parseInt(wrapper.dataset.productId),
+            optionId: wrapper.dataset.optionId ? parseInt(wrapper.dataset.optionId) : null,
+            quantity: parseInt(wrapper.dataset.quantity),
+            price: Math.floor(parseFloat(wrapper.dataset.price))
+        }));
+
+        const saveRes = await fetch('/shop/payment/prepare', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ordererName,
+                ordererEmail: '',
+                ordererPhone: ordererPhoneSelect + ordererPhone,
+                receiverName,
+                receiverPhone: receiverPhoneSelect + receiverPhone,
+                postalCode,
+                addressPrimary,
+                addressSecondary,
+                deliveryRequest,
+                paymentMethod: selectedPaymentMethod,
+                couponDiscount,
+                usedPoint: pointDiscount,
+                userCouponId: userCouponId || null,
+                deliveryFee,
+                items
+            })
+        });
+
+        if (!saveRes.ok) {
+            showToast('주문 정보 저장에 실패했습니다. 다시 시도해주세요.');
+            return;
+        }
+
         const orderName = '펫로그 상품 주문';
 
         try {
@@ -444,11 +513,11 @@ if (paymentBtn) {
             console.error('결제 에러:', error);
 
             if (error.code === 'USER_CANCEL') {
-                alert('결제를 취소하셨습니다.');
+                showToast('결제를 취소하셨습니다.');
             } else if (error.code === 'INVALID_CARD_COMPANY') {
-                alert('유효하지 않은 카드사입니다.');
+                showToast('유효하지 않은 카드사입니다.');
             } else {
-                alert('결제 중 오류가 발생했습니다.\n' + (error.message || '다시 시도해주세요.'));
+                showToast('결제 중 오류가 발생했습니다.\n' + (error.message || '다시 시도해주세요.'));
             }
         }
     });

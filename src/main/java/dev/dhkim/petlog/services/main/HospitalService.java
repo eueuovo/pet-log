@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.dhkim.petlog.dto.main.HospitalDto;
 import dev.dhkim.petlog.entities.main.HospitalEntity;
 import dev.dhkim.petlog.mappers.main.HospitalMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+//카카오 서비스 키
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +25,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class HospitalService {
+
+    @Value("${kakao.rest.key}")
+    private String kakaoRestKey;
     private final HospitalMapper hospitalMapper;
     //공공데이터 API 자체를 호출할 수 없음
     private final RestTemplate restTemplate = new RestTemplate();
     //json 문자 -> 자바로 파싱
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private static final int NUM_OF_ROWS = 10;
+    private static final int NUM_OF_ROWS = 100;
 
-    private static final String SERVICE_KEY = "d7e0beb3d81a4064f3ed977303249c76aa7241b310eb6acafcd84e66bda26176";
+    @Value("${public-data.service.key}")
+    private String serviceKey;
+
+    @PostConstruct
+    public void checkKey() {
+        // 서버 실행 시 콘솔창에 키가 출력됩니다.
+        System.out.println("✅ 환경 변수 로드 성공: " + serviceKey);
+    }
     /*
      */
 
@@ -135,7 +148,7 @@ public class HospitalService {
      */
     private String buildUrl(int pageNo) {
         return "https://apis.data.go.kr/1741000/animal_hospitals/info"
-                + "?serviceKey=" + SERVICE_KEY
+                + "?serviceKey=" + serviceKey
                 + "&pageNo=" + pageNo
                 + "&numOfRows=" + NUM_OF_ROWS
                 + "&returnType=json";
@@ -160,7 +173,7 @@ public class HospitalService {
                 + "&output_coord=WGS84";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "KakaoAK " + "a4993f28bfdc1e9149e84e29a51993c0"); // REST API Key
+        headers.set("Authorization", "KakaoAK " + kakaoRestKey);// REST API Key
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<JsonNode> response =

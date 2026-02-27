@@ -17,7 +17,7 @@
   width: 100%;
   height: 100%;
   padding: 1rem max(1rem, (100vw - 1000px) / 2);
-  margin: 1rem 0 2rem 0;
+  margin: 5rem 0 2rem 0;
 }
 #cart > .list-wrapper {
   align-items: flex-start;

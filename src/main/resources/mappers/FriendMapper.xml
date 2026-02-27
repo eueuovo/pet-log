@@ -15,21 +15,18 @@
         SET
             address_primary = #{addressPrimary},
             address_secondary = #{addressSecondary},
-            is_default = #{isDefault},
             lat = #{lat},
             lng = #{lng},
-            receiver_name = #{receiverName},
-            phone = #{phone},
             postal_code = #{postalCode}
         WHERE address_id = #{addressId}
     </update>
 
     <insert id="insertAddress" parameterType="dev.dhkim.petlog.entities.user.AddressEntity">
         INSERT INTO `petlog`.`address`(
-            user_id, receiver_name, phone, postal_code, address_primary, address_secondary, lat, lng, is_default, created_at
+            user_id, address_type, postal_code, address_primary, address_secondary, lat, lng, created_at
         )
         VALUES(
-                  #{userId}, #{receiverName}, #{phone}, #{postalCode}, #{addressPrimary}, #{addressSecondary}, #{lat}, #{lng}, #{isDefault}, NOW()
+                  #{userId}, #{addressType}, #{postalCode}, #{addressPrimary}, #{addressSecondary}, #{lat}, #{lng}, NOW()
               )
     </insert>
     <select id="selectFriendsByUserId" parameterType="int" resultType="dev.dhkim.petlog.dto.user.PetDto">
@@ -46,25 +43,21 @@
     </select>
 
     <select id="findDefaultByUserId" resultType="dev.dhkim.petlog.entities.user.AddressEntity" parameterType="int">
-        SELECT
-            address_id AS addressId,
-            user_id AS userId,
-            receiver_name AS receiverName,
-            phone,
-            postal_code AS postalCode,
-            address_primary AS addressPrimary,
-            address_secondary AS addressSecondary,
-            lat AS lat,
-            lng AS lng,
-            is_default AS isDefault
+        SELECT address_id        AS addressId,
+               user_id           AS userId,
+               address_type      AS addressType,
+               postal_code       AS postalCode,
+               address_primary   AS addressPrimary,
+               address_secondary AS addressSecondary,
+               lat               AS lat,
+               lng               AS lng
         FROM `petlog`.`address`
-        WHERE user_id = #{userId} AND is_default = 1
+        WHERE user_id = #{userId}
         LIMIT 1
     </select>
 
     <select id="selectNearbyFriends"
-            resultType="dev.dhkim.petlog.dto.user.PetDto"
-            parameterType="map">
+            resultType="dev.dhkim.petlog.dto.user.PetDto">
 
         SELECT
         p.pet_id AS petId,
@@ -78,50 +71,56 @@
         a.lat AS lat,
         a.lng AS lng,
 
-        --  여기 추가
         CASE
         WHEN f.id IS NOT NULL THEN true
         ELSE false
         END AS isFollowing,
 
-        (6371 * acos(
+        (
+        6371 * acos(
+        LEAST(1.0,
         cos(radians(#{lat})) * cos(radians(a.lat)) *
         cos(radians(a.lng) - radians(#{lng})) +
         sin(radians(#{lat})) * sin(radians(a.lat))
-        )) AS distance
+        )
+        )
+        ) AS distanceKm
 
-        FROM `petlog`.`pets` p
-
-        JOIN `petlog`.`address` a
+        FROM petlog.pets p
+        JOIN petlog.address a
         ON p.user_id = a.user_id
 
-        --  여기 추가
-        LEFT JOIN `petlog`.`follows` f
+        LEFT JOIN petlog.follows f
         ON f.following_user_id = #{userId}
         AND f.followed_user_id = p.user_id
 
         WHERE p.user_id != #{userId}
+        AND a.lat IS NOT NULL
+        AND a.lng IS NOT NULL
+        AND (
+        6371 * acos(
+        LEAST(1.0,
+        cos(radians(#{lat})) * cos(radians(a.lat)) *
+        cos(radians(a.lng) - radians(#{lng})) +
+        sin(radians(#{lat})) * sin(radians(a.lat))
+        )
+        )
+        ) &lt;=#{radiusKm}
 
-        HAVING distance &lt;= 1.5
-
-        ORDER BY distance ASC
+        ORDER BY distanceKm ASC
 
     </select>
-
     <select id="selectAllOtherUsersAddresses" resultType="dev.dhkim.petlog.entities.user.AddressEntity" parameterType="int">
         SELECT
             address_id AS addressId,
             user_id AS userId,
-            receiver_name AS receiverName,
-            phone,
             postal_code AS postalCode,
             address_primary AS addressPrimary,
             address_secondary AS addressSecondary,
             lat AS lat,
-            lng AS lng,
-            is_default AS isDefault
+            lng AS lng
         FROM `petlog`.`address`
-        WHERE user_id != #{excludeUserId} AND is_default = 1
+        WHERE user_id != #{excludeUserId}
     </select>
 
 

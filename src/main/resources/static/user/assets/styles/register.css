@@ -323,7 +323,7 @@ body:has(> .address-wrapper.visible) > .cover {
 }
 .register-container {
   min-height: calc(100vh - 5rem);
-  padding: 3rem 0;
+  margin-top: 5rem;
 }
 .register-container > .register-first {
   width: 100%;

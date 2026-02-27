@@ -4,6 +4,7 @@ import dev.dhkim.petlog.dto.user.AddressDto;
 import dev.dhkim.petlog.dto.user.PetDto;
 import dev.dhkim.petlog.dto.user.RegisterDto;
 import dev.dhkim.petlog.dto.user.StoreDto;
+import dev.dhkim.petlog.entities.user.DeliveryAddressEntity;
 import dev.dhkim.petlog.enums.user.EmailVerificationType;
 import dev.dhkim.petlog.enums.user.PetBodyType;
 import dev.dhkim.petlog.enums.user.PetGenderType;
@@ -31,6 +32,7 @@ public class UserValidator {
     // 사업자 validate
     public static final String COMPANY_NAME_REGEX = "^[\\da-zA-Z가-힣]+$";
     public static final String BUSINESS_NUMBER_REGEX = "^[0-9]+$";
+
 
     // 이메일 인증 validate
     public static final String CODE_REGEX = "^[0-9]+$";
@@ -119,12 +121,14 @@ public class UserValidator {
                 code.matches(CODE_REGEX);
     }
 
-    // 개인,사업자등록상 주소 배송지명 검증
-    public static boolean validateMemberReceiverName(String receiverName) {
-        if (receiverName == null) {
-            return true;
-        }
-        return ValidatorUtils.isLengthInBetween(receiverName, 0, 50);
+    // 개인 회원의 배송지명 검증
+    public static boolean validateDeliveryName(String deliveryName) {
+        return ValidatorUtils.isLengthInBetween(deliveryName, 1, 10);
+    }
+
+    // 개인 회원의 받는사람 이름 검증
+    public static boolean validateReceiverName(String receiverName) {
+        return ValidatorUtils.isLengthInBetween(receiverName, 1, 10);
     }
 
     // 개인,사업자등록상 주소 우편번호 검증
@@ -140,6 +144,9 @@ public class UserValidator {
 
     // 개인,사업자등록상 주소 상세주소 검증
     public static boolean validateMemberAddressSecondary(String addressSecondary) {
+        if (addressSecondary == null) {
+            return true;
+        }
         return ValidatorUtils.isLengthInBetween(addressSecondary, 0, 100);
     }
 
@@ -162,6 +169,9 @@ public class UserValidator {
 
     // 가게 상세주소 검증
     public static boolean validateStoreAddressSecondary(String addressSecondary) {
+        if (addressSecondary == null) {
+            return true;
+        }
         return ValidatorUtils.isLengthInBetween(addressSecondary, 0, 100);
     }
 
@@ -172,8 +182,10 @@ public class UserValidator {
 
     // 가게 전화번호 검증
     public static boolean validateStorePhone(String phone) {
-        return ValidatorUtils.isLengthInBetween(phone, 8, 11) &&
-                phone.matches(PHONE_REGEX);
+        if (phone == null) {
+            return false;
+        }
+        return phone.matches("^(02\\d{3,4}\\d{4}|010\\d{4}\\d{4}|0[3-9]\\d\\d{3,4}\\d{4})$");
     }
 
 
@@ -267,7 +279,16 @@ public class UserValidator {
                 validateMemberAddressPrimary(address.getAddressPrimary());
     }
 
-    // 가게 정보 검증
+    // 배송지 정보 검증
+    public static boolean validateDeliveryAddress(DeliveryAddressEntity deliveryAddress) {
+        return validateDeliveryName(deliveryAddress.getDeliveryName()) &&
+                validateReceiverName(deliveryAddress.getDeliveryName()) &&
+                validateMemberPostalCode(deliveryAddress.getPostalCode()) &&
+                validateMemberAddressPrimary(deliveryAddress.getAddressPrimary()) &&
+                validateMemberAddressSecondary(deliveryAddress.getAddressSecondary());
+    }
+
+    // 회원가입때 가게 정보 검증
     public static boolean validateStore(StoreDto store) {
         if (store == null) {
             return true;
@@ -275,6 +296,20 @@ public class UserValidator {
         if (store.getStoreName() == null || store.getStoreName().isBlank()) {
             return true;
         }
+        return validateStoreName(store.getStoreName()) &&
+                validateStorePostalCode(store.getPostalCode()) &&
+                validateStoreAddressPrimary(store.getAddressPrimary()) &&
+                validateStoreAddressSecondary(store.getAddressSecondary()) &&
+                validateStoreCategory(store.getCategory()) &&
+                validateStorePhone(store.getStorePhone());
+    }
+
+    // 마이페이지 가게등록 검증
+    public static boolean validateStoreForRegistration(StoreDto store) {
+        if (store == null) {
+            return false;
+        }
+
         return validateStoreName(store.getStoreName()) &&
                 validateStorePostalCode(store.getPostalCode()) &&
                 validateStoreAddressPrimary(store.getAddressPrimary()) &&

@@ -91,12 +91,19 @@ $title.classList.add('title');
 $text.classList.add('text');
 $title.innerText = "알림";
 registerMessage.prepend($title, $text);
-function showMessage(text) {
+let onMessageClose = null;
+function showMessage(text, callback = null) {
     registerMessage.classList.add('visible');
     $text.innerText = text;
+    onMessageClose = callback;
 }
+
 warningButton.addEventListener('click', () => {
     registerMessage.classList.remove('visible');
+    if (onMessageClose) {
+        onMessageClose();
+        onMessageClose = null;
+    }
 });
 
 const checkMessage = document.getElementById('checkMessage');
@@ -244,6 +251,8 @@ $registerThirdSteps.forEach(step => {
 // 세번째 단계에서 다음버튼을 눌렀을 때 정보 미입력 시 경고모달 띄우기
 const ThirdPersonalNextButton = $registerThirdPersonalStep.querySelector(':scope > .button-wrapper > .next');
 const ThirdPersonalInputs = $registerThirdPersonalStep.querySelectorAll('.input');
+const ThirdPersonalLoginIdInput = $registerThirdPersonalStep.querySelector('.id.input');
+const ThirdPersonalNameInput = $registerThirdPersonalStep.querySelector('.name.input');
 const ThirdPersonalPasswordInput = $registerThirdPersonalStep.querySelector(':scope > .passwordLabel > .password');
 const ThirdPersonalPasswordCheckInput = $registerThirdPersonalStep.querySelector(':scope > .passwordCheckLabel > .passwordCheck');
 ThirdPersonalNextButton.addEventListener('click', () => {
@@ -262,6 +271,18 @@ ThirdPersonalNextButton.addEventListener('click', () => {
     }
     if (!isEmailVerified) {
         showMessage('이메일 인증을 완료해주세요.');
+        return;
+    }
+    if (ThirdPersonalLoginIdInput.value.length < 4 || ThirdPersonalLoginIdInput.value.length > 20) {
+        showMessage('아이디는 4~20자까지 가능합니다.');
+        return;
+    }
+    if (ThirdPersonalNameInput.value.length < 2 || ThirdPersonalNameInput.value.length > 20) {
+        showMessage('이름은 2~20자까지 가능합니다.');
+        return;
+    }
+    if (ThirdPersonalPasswordInput.value.length < 6 || ThirdPersonalPasswordInput.value.length > 50) {
+        showMessage('비밀번호는 6~50자까지 가능합니다.');
         return;
     }
     if (ThirdPersonalPasswordInput.value !== ThirdPersonalPasswordCheckInput.value) {
@@ -341,6 +362,7 @@ $registerForthBusinessStepAddressFindButton.addEventListener('click', () => {
 });
 
 
+
 // 회원가입 네번째 단계에서 취소버튼을 눌렀을 때
 $registerForthSteps.forEach(step => {
     const cancelButton = step.querySelector(':scope > .button-wrapper > .cancel');
@@ -363,7 +385,57 @@ $registerForthSteps.forEach(step => {
     const completeButton = step.querySelector(':scope > .button-wrapper > .complete');
 });
 
+/*
+//store db 위도 경도 변환 하기 위해
+const completeButton = $registerForthBusinessStep.querySelector(':scope > .button-wrapper > .complete');
 
+completeButton.addEventListener('click', async () => {
+    // 입력값 확인
+    const userName = $registerThirdBusinessStep.querySelector('.userName').value;
+    const email = $registerThirdBusinessStep.querySelector('.email').value;
+    const password = $registerThirdBusinessStep.querySelector('.password').value;
+
+    const storeName = $registerForthBusinessStep.querySelector('.storeName').value;
+    const postalCode = $registerForthBusinessStep.querySelector('.postalNumber').value;
+    const addressPrimary = $registerForthBusinessStep.querySelector('.primaryAddress').value;
+    const addressSecondary = $registerForthBusinessStep.querySelector('.detailAddress').value;
+    const category = $registerForthBusinessStep.querySelector('.category').value;
+    const storePhone = $registerForthBusinessStep.querySelector('.storePhone').value;
+
+    // 필수 입력 체크
+    if (!userName || !email || !password || !storeName || !addressPrimary || !category) {
+        showMessage("필수 정보를 모두 입력해주세요.");
+        return;
+    }
+
+    const payload = {
+        userName, email, password,
+        storeName, postalCode, addressPrimary, addressSecondary,
+        category, storePhone
+    };
+
+    try {
+        const res = await fetch('/api/register/business', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            showMessage(err.message || '회원가입 실패');
+            return;
+        }
+
+        // 성공 시 로그인 페이지 이동
+        location.href = '/user/login';
+    } catch (e) {
+        showMessage('서버와 연결되지 않았습니다.');
+        console.error(e);
+    }
+});
+
+*/
 
 
 // region 회원가입 네번쨰 단계(개인+애완동물 로직)
@@ -1162,7 +1234,7 @@ $petDialogThirdCompleteButton.addEventListener('click', () => {
         introduction: introduction.value,
         gender: genderInput ? genderInput.classList.contains('male') ? 'MALE' : 'FEMALE' : null,
         weight: weight.value,
-        weightType: weightTypeInput
+        bodyType: weightTypeInput
             ? weightTypeInput.classList.contains('slim') ? 'SLIM'
             : weightTypeInput.classList.contains('normal') ? 'NORMAL'
             : 'CHUBBY'
@@ -1415,13 +1487,13 @@ function loadPetDialog(petData) {
     const normalInput = $petDialogThird.querySelector(':scope > .weightTypeLabel > .weightType-wrapper > .normal > .normal');
     const chubbyInput = $petDialogThird.querySelector(':scope > .weightTypeLabel > .weightType-wrapper > .chubby > .chubby');
 
-    if (petData.weightType === 'slim') {
+    if (petData.bodyType === 'SLIM') {
         slimInput.checked = true;
     }
-    else if (petData.weightType === 'normal') {
+    else if (petData.bodyType === 'NORMAL') {
         normalInput.checked = true;
     }
-    else if (petData.weightType === 'chubby') {
+    else if (petData.bodyType === 'CHUBBY') {
         chubbyInput.checked = true;
     }
 
@@ -1475,7 +1547,7 @@ $registerContainer.addEventListener('submit', async (e) => {
                 category: $registerForthBusinessStep.querySelector('.category').value,
                 postalCode: $registerForthBusinessStep.querySelector('.postalNumber').value,
                 addressPrimary: $registerForthBusinessStep.querySelector('.primaryAddress').value,
-                addressSecondary: $registerForthBusinessStep.querySelector('.detailAddress').value
+                addressSecondary: $registerForthBusinessStep.querySelector('.detailAddress').value || null
             }
         } else {
             store = null;
@@ -1509,7 +1581,7 @@ $registerContainer.addEventListener('submit', async (e) => {
             gender: pet.gender,
             introduction: pet.introduction,
             weight: pet.weight,
-            bodyType: pet.weightType,
+            bodyType: pet.bodyType,
             imageUrl: pet.petImage,
             isPrimary: pet.isPrimary
         };
@@ -1531,11 +1603,10 @@ $registerContainer.addEventListener('submit', async (e) => {
         representativeName: selectedMemberType === 'BUSINESS' ? form.querySelector('.representativeName').value : null,
         businessNumber: selectedMemberType === 'BUSINESS' ? form.querySelector('.businessNumber').value : null,
         address: {
-            receiverName: null,
-            phone: phone,
+            addressType: selectedMemberType === 'PERSONAL' ? 'MAP' : 'COMPANY',
             postalCode: form.querySelector('.postalNumber').value,
             addressPrimary: form.querySelector('.primaryAddress').value,
-            addressSecondary: form.querySelector('.detailAddress').value
+            addressSecondary: form.querySelector('.detailAddress').value || null
         },
         store: store,
         termsIds: Array.from(document.querySelectorAll('.agreement-check > .checkbox'))
@@ -1555,8 +1626,11 @@ $registerContainer.addEventListener('submit', async (e) => {
 
         const data = await res.json();
         if (data.result === 'SUCCESS') {
-            location.href = '/user/login';
+            showMessage('가입을 환영합니다.', () => {
+                location.href = '/user/login';
+            })
         } else {
+            showMessage('회원가입에 실패하였습니다. 정보를 다시 확인해주세요.');
             console.error('회원가입 실패', data);
         }
     } catch (err) {
@@ -1594,7 +1668,7 @@ $registerThirdSteps.forEach(step => {
             }
             loading.classList.remove('visible');
             if(xhr.status < 200 || xhr.status >= 400){
-                
+
                 return;
             }
             const response = JSON.parse(xhr.responseText);
@@ -1620,7 +1694,7 @@ $registerThirdSteps.forEach(step => {
                     showMessage('알 수 없는 이유로 실패하였습니다. 다시 시도해주세요.');
 
             }
-            
+
         };
         xhr.open('POST', '/user/email');
         xhr.send(formData);

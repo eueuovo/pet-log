@@ -106,7 +106,8 @@ function normalizePlaceData(place, category) {
             status: '영업 중',  // 기본값
             lat: place.lat,
             lng: place.lng,
-            category
+            category,
+            storeId: place.storeId,
         };
     }
 
@@ -119,7 +120,8 @@ function normalizePlaceData(place, category) {
             status: place.status || '영업 중',
             lat: place.lat,
             lng: place.lng,
-            category
+            category,
+            storeId: place.storeId,
         };
     }
 
@@ -132,7 +134,8 @@ function normalizePlaceData(place, category) {
             status: place.sals_STTS_NM || '상태 정보 없음',
             lat: place.lat,
             lng: place.lng,
-            category
+            category,
+            storeId: place.storeId,
         };
     }
 
@@ -337,19 +340,6 @@ function addSingleMarker(lat, lng, title, address) {
 
 /* ================= 카테고리 ================= */
 
-/*// 장소 탭 강제 활성화
-const friendTab = document.getElementById('friendTab');
-const storeTab = document.getElementById('storeTab');
-const friendList = document.querySelector('.main.friend-list');
-const storePanel = document.querySelector('.store-panel');
-
-storeTab.classList.add('active');
-friendTab.classList.remove('active');
-
-friendList.classList.add('hidden');
-storePanel.classList.remove('hidden');*/
-
-
 async function handleCategoryClick(category) {
 
 
@@ -377,24 +367,71 @@ async function handleCategoryClick(category) {
     await showCategory(category);
 }
 
+function convertAddressToLatLng(address, callback) {
+    if (!geocoder) {
+        console.error("Geocoder가 초기화되지 않았습니다.");
+        return;
+    }
+
+    geocoder.addressSearch(address, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+            const lat = Number(result[0].y);
+            const lng = Number(result[0].x);
+            callback({ lat, lng });
+        } else {
+            console.error("주소 변환 실패:", status);
+            callback(null);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const submitBtn = document.getElementById('storeRegisterBtn'); // 가게 등록 버튼
+    submitBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const addressPrimary = document.querySelector('#addressPrimary').value;
+        const addressSecondary = document.querySelector('#addressSecondary').value;
+        const fullAddress = addressSecondary
+            ? `${addressPrimary} ${addressSecondary}`
+            : addressPrimary;
+
+        convertAddressToLatLng(fullAddress, ({lat, lng}) => {
+            if (!lat || !lng) {
+                alert('주소 변환에 실패했습니다.');
+                return;
+            }
+
+            console.log('위도:', lat, '경도:', lng);
+
+            // 여기서 form에 hidden input 추가
+            document.querySelector('#lat').value = lat;
+            document.querySelector('#lng').value = lng;
+
+            // 폼 전송
+            document.querySelector('#storeForm').submit();
+        });
+    });
+});
+
 async function showCategory(category) {
     try {
 
         let list = [];
 
-        // 1️⃣ 병원
+        // 1️병원
         if (category === 'hospital') {
             const res = await fetch('/api/hospital');
             list = await res.json();
         }
 
-        // 2️⃣ 미용실
+        // 2️미용실
         else if (category === 'salon') {
             const res = await fetch('/api/salon');
             list = await res.json();
         }
 
-        // 3️⃣ 나머지는 store 테이블
+        // 3️ 나머지는 store 테이블
         else {
             const res = await fetch(`/api/stores?category=${encodeURIComponent(category)}`);
             list = await res.json();
@@ -627,23 +664,21 @@ function renderPlaceDetail(place) {
         const min = getWalkMinutes(place.distanceKm);
         timeText = ` · 도보 ${min}분`;
     }
-
+    // 예: 서버에서 내려오는 JSON이 snake_case라면
+    console.log(place.store_id);  // 21
     el.innerHTML = `
-        <h2 class="name">${place.name}</h2>
-        <div class="distance">📍 ${distanceText}${timeText}</div>
+  <h2 class="name">${place.name}</h2>
+  <div class="distance">📍 ${distanceText}${timeText}</div>
 
-        <p><strong>주소</strong><br>${place.address}</p>
+  <p><strong>주소</strong><br>${place.address}</p>
 
-        ${place.tel ? `<p><strong>전화</strong><br>${place.tel}</p>` : ''}
-
-        ${place.status ? `<p><strong>영업 상태</strong><br>${place.status}</p>` : ''}
-
-        <p><strong>영업 시간</strong><br>평일 09:00 - 18:00</p>
-
-        ${place.category !== 'search' ? `<button class="reserve-btn">예약하기</button>` : ''}
-    `;
+  ${place.tel ? `<p><strong>전화</strong><br>${place.tel}</p>` : ''}
+  ${place.status ? `<p><strong>영업 상태</strong><br>${place.status}</p>` : ''}
+  <p><strong>영업 시간</strong><br>평일 09:00 - 18:00</p> 
+  ${place.category !== 'search' ? `<button class="reserve-btn" data-store-id="${place.storeId}">예약하기</button>` : ''}
+`;
 }
-
+//주변 친구 불러오기 함수
 function loadNearbyFriendsByCurrentLocation() {
 
     if (!navigator.geolocation) {
@@ -803,37 +838,52 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----- 예약 모달 -----
+// ----- 예약 모달 관련 수정 코드 -----
     const modal = document.getElementById('reserveModal');
     if (modal) {
         document.addEventListener('click', async (e) => {
-            // 예약 버튼 (동적 생성 대응)
             const reserveBtn = e.target.closest('.reserve-btn');
             if (reserveBtn) {
-
-                const isLoggedIn = /*[[${sessionUser != null}]]*/ false; // 서버에서 세션 전달
-                if (!isLoggedIn) {
-                    alert('로그인 후 예약할 수 있습니다.');
-                    return; // 로그인 안 되면 모달 안 열기
+                // 1. 버튼에서 storeId 추출
+                const storeId = reserveBtn.dataset.storeId;
+                if (!storeId) {
+                    alert('가게 정보가 없습니다.');
+                    return;
                 }
 
+                // [수정] selectedPlace를 덮어씌우지 말고 storeId만 업데이트하거나
+                // 현재 활성화된 selectedPlace에 id를 병합합니다.
+                if(selectedPlace) {
+                    selectedPlace.storeId = storeId;
+                }
+
+                // 2. 모달 텍스트 세팅 (선택된 장소 정보 활용)
+                const modalTitle = modal.querySelector('.modal-title');
+                const modalAddr = modal.querySelector('.modal-address');
+                if (modalTitle) modalTitle.innerText = selectedPlace?.name || '장소명 없음';
+                if (modalAddr) modalAddr.innerText = selectedPlace?.address || '주소 정보 없음';
+
+                // 3. confirm 버튼에 ID 확실히 박기
+                const confirmBtn = modal.querySelector('.btn.confirm');
+                if (confirmBtn) {
+                    confirmBtn.dataset.storeId = storeId;
+                    console.log("전송 준비된 storeId:", storeId);
+                }
+
+                resetModalInputs();
                 generateReserveTime();
                 modal.classList.add('open');
                 return;
             }
 
-            // 모달 닫기
-            if (
-                e.target.closest('#reserveModal .close-btn') ||
-                e.target.closest('#reserveModal .cancel') ||
-                e.target === modal
-            ) {
+            // 모달 닫기 로직은 동일...
+            if (e.target.closest('#reserveModal .close-btn') || e.target.closest('#reserveModal .cancel') || e.target === modal) {
                 modal.classList.remove('open');
                 return;
             }
         });
 
-        // ----- 예약 확정 버튼 -----
+        // ----- 예약 확정 버튼 리스너 -----
         const confirmBtn = modal.querySelector('.btn.confirm');
         if (confirmBtn) {
             confirmBtn.addEventListener('click', async () => {
@@ -841,24 +891,40 @@ window.addEventListener('DOMContentLoaded', () => {
                 const timeSelect = document.getElementById('reserveTime');
                 const requestInput = document.getElementById('reserveRequest');
 
-                if (!dateInput || !timeSelect) return;
 
-                const date = dateInput.value;
-                const time = timeSelect.value;
-                const request = requestInput.value;
 
-                if (!date || !time) {
+
+                // 모달 제목과 주소에서 텍스트 직접 추출
+                const pName = modal.querySelector('.modal-title')?.innerText || '';
+                const pAddr = modal.querySelector('.modal-address')?.innerText || '';
+
+                if (!dateInput.value || !timeSelect.value) {
                     alert('날짜와 시간을 선택해주세요.');
                     return;
                 }
 
+                // Dataset에서 최신 ID 가져오기
+                const rawStoreId = confirmBtn.dataset.storeId;
+
+                // 숫자가 아니거나 "null" 같은 문자열이면 null로 처리해서 서버에 보냄
+                const storeId = (rawStoreId && !isNaN(rawStoreId) && rawStoreId !== "null" && rawStoreId !== "undefined")
+                    ? parseInt(rawStoreId)
+                    : null;
+
                 const payload = {
-                    storeId: selectedPlace ? selectedPlace.id : null,
-                    reservationDate: date,       // DTO 필드명
-                    reservationTime: time,       // DTO 필드명
-                    requestText: request,        // DTO 필드명
-                    paymentMethod: 'OFFLINE',    // 필요시
+                    storeId: storeId, // 여기가 null이면 서버가 '신규 등록 대상'으로 판단함
+                    placeName: selectedPlace?.name || "",
+                    address: selectedPlace?.address || "",
+                    category: Array.isArray(selectedPlace?.category)
+                        ? selectedPlace.category.join(',')
+                        : (selectedPlace?.category || 'hospital,salon'),
+                    reservationDate: document.getElementById('reserveDate').value,
+                    reservationTime: document.getElementById('reserveTime').value,
+                    requestText: document.getElementById('reserveRequest').value,
+                    paymentMethod: 'OFFLINE'
                 };
+
+                console.log("🚀 최종 전송 데이터:", payload);
 
                 try {
                     const res = await fetch('/reservation/create', {
@@ -868,26 +934,27 @@ window.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (res.ok) {
-                        // 성공 시 text()로 받음
-                        const message = await res.text();
-                        alert(message);  // "예약이 완료되었습니다!" 출력
+                        alert('예약이 완료되었습니다.');
                         modal.classList.remove('open');
                     } else {
-                        // 실패 시 JSON일 수 있으니 안전하게 처리
-                        let data;
-                        try {
-                            data = await res.json();
-                        } catch {
-                            data = await res.text();
-                        }
-                        alert('예약 실패: ' + (data || '알 수 없는 오류'));
+                        const errorMsg = await res.text();
+                        alert('예약 실패: ' + errorMsg);
                     }
                 } catch (err) {
-                    console.error(err);
-                    alert('예약일자를 확인해 주세요');
+                    console.error("Fetch 에러:", err);
                 }
-
             });
+        }
+
+        // ----- 모달 input 리셋 함수 -----
+        function resetModalInputs() {
+            const dateInput = modal.querySelector('#reserveDate');
+            const timeSelect = modal.querySelector('#reserveTime');
+            const requestInput = modal.querySelector('#reserveRequest');
+
+            if (dateInput) dateInput.value = '';
+            if (timeSelect) timeSelect.selectedIndex = 0;
+            if (requestInput) requestInput.value = '';
         }
     }
 
@@ -897,17 +964,43 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function renderFriendList(friends) {
 
-    const listEl = document.querySelector('.friend-list');
-    if (!listEl) return;
+    console.log("=== renderFriendList 시작 ===");
+    console.log("friends 전체:", friends);
+    console.log("Array인가?", Array.isArray(friends));
+    console.log("길이:", friends?.length);
 
-    listEl.innerHTML = '';
+    const listEl = document.getElementById('friendList');
+    console.log("listEl:", listEl);
 
-    if (!friends || friends.length === 0) {
-        listEl.innerHTML = `<li class="empty">주변에 친구가 없습니다.</li>`;
+    if (!listEl) {
+        console.error("❌ .friend-list 요소 없음");
         return;
     }
 
-    friends.forEach(friend => {
+    listEl.innerHTML = '';
+
+    //  데이터가 없을 때
+    if (!friends || !Array.isArray(friends) || friends.length === 0) {
+
+        const emptyLi = document.createElement('li');
+        emptyLi.className = 'empty';
+        emptyLi.textContent = '주변에 친구가 없습니다.';
+
+        listEl.appendChild(emptyLi);
+        return;
+    }
+
+    if (!friends || !Array.isArray(friends)) {
+        console.error("❌ friends가 배열이 아님:", friends);
+        return;
+    }
+
+    friends.forEach((friend, index) => {
+
+        console.log(`--- ${index}번째 friend ---`);
+        console.log("friend 객체:", friend);
+        console.log("distanceKm:", friend.distanceKm);
+        console.log("distanceKm 타입:", typeof friend.distanceKm);
 
         const li = document.createElement('li');
         li.className = 'item';
@@ -916,35 +1009,42 @@ function renderFriendList(friends) {
             ? friend.imageUrl
             : '/images/defaultPetImage.png';
 
+        const distanceHtml = friend.distanceKm != null
+            ? `<div class="distance">📍 ${Number(friend.distanceKm).toFixed(1)}km</div>`
+            : `<div class="distance">❌ distance 없음</div>`;
+        const isFollowing = friend.isFollowing === true;
+
+        const buttonClass = isFollowing ? 'button following' : 'button follow';
+        const buttonText = isFollowing ? '팔로잉' : '팔로우';
+
+
         li.innerHTML = `
-    <div class="item-wrapper" 
-         data-pet-id="${friend.petId}"
+            <div class="item-wrapper"
+             data-user-id="${friend.userId ?? ''}"
+         data-pet-id="${friend.petId ?? ''}"
          data-birth="${friend.birthDate ?? ''}"
          data-gender="${friend.gender ?? ''}"
          data-introduction="${friend.introduction ?? ''}">
-        
-        <div class="image">
-            <img src="${imageUrl}" alt="pet image">
-        </div>
+                <div class="image">
+                    <img src="${imageUrl}" alt="pet image">
+                </div>
 
-        <div class="text-wrapper">
-            <div class="nickname">${friend.name}</div>
-            <div class="species">${friend.species ?? ''}</div>
-            ${friend.distanceKm != null
-            ? `<div class="distance">📍 ${friend.distanceKm.toFixed(1)}km</div>`
-            : ''
-        }
-        </div>
+                <div class="text-wrapper">
+                    <div class="nickname">${friend.name}</div>
+                    <div class="species">${friend.species ?? ''}</div>
+                    ${distanceHtml}
+                </div>
+                   <button class="${buttonClass}"
+                    data-user-id="${friend.userId}">
+                ${buttonText}
+            </button>
+            </div>
+        `;
 
-      <button class="button ${friend.isFollowing ? 'following' : 'follow'}"
-            data-user-id="${friend.userId}">
-        ${friend.isFollowing ? '팔로잉' : '팔로우'}
-    </button>
-
-    </div>
-`;
-
+        console.log("생성된 HTML:", li.innerHTML);
 
         listEl.appendChild(li);
     });
+
+    console.log("=== renderFriendList 종료 ===");
 }

@@ -6,18 +6,23 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+//카카오 서비스 키
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Service
 public class KakaoGeoCodingService {
 
-    private final String REST_API_KEY = "a4993f28bfdc1e9149e84e29a51993c0"; // 본인 키로 교체
+    @Value("${kakao.rest.key}")
+    private String kakaoRestKey;
+
     private final String GEO_URL = "https://dapi.kakao.com/v2/local/search/address.json?query=";
 
     public double[] getLatLng(String address) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "KakaoAK " + REST_API_KEY);
+            headers.set("Authorization", "KakaoAK " + kakaoRestKey);
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             ResponseEntity<String> response = restTemplate.exchange(

@@ -143,6 +143,7 @@ body:has(> .register-message.visible) > .cover {
   border: 0.0625rem solid #e7e5e4;
   overflow: hidden;
   position: relative;
+  margin-top: 12.5rem;
 }
 .main > .dialog {
   align-items: stretch;
