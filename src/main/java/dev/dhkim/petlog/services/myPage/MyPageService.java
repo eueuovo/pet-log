@@ -2,8 +2,10 @@ package dev.dhkim.petlog.services.myPage;
 
 import ch.qos.logback.core.spi.FilterAttachableImpl;
 import dev.dhkim.petlog.dto.user.*;
+import dev.dhkim.petlog.entities.shop.PointEntity;
 import dev.dhkim.petlog.entities.user.*;
 import dev.dhkim.petlog.mappers.myPage.MyPageMapper;
+import dev.dhkim.petlog.mappers.shop.PointMapper;
 import dev.dhkim.petlog.mappers.user.UserMapper;
 import dev.dhkim.petlog.results.MyPageResult;
 import dev.dhkim.petlog.utils.PhoneUtil;
@@ -26,6 +28,7 @@ import java.util.Map;
 public class MyPageService {
     private final MyPageMapper myPageMapper;
     private final UserMapper userMapper;
+    private final PointMapper pointMapper;
 
     public boolean verifyPassword(int userId, String password) {
         if (userId < 1 ||
@@ -663,5 +666,38 @@ public class MyPageService {
     // 주문 내역
     public Map<String, Object> getOrderDetail(int orderId, int userId) {
         return myPageMapper.selectOrderDetail(orderId, userId);
+    }
+
+
+    // 포인트적립 싹 가져오기
+    public Pair<MyPageResult, List<PointEntity>> getAllPointEarn(int userId) {
+        if (userId < 1) {
+            return Pair.of(MyPageResult.FAILURE, null);
+        }
+        List<PointEntity> dbAllPoint = this.pointMapper.selectAllPointEarnByUserId(userId);
+        return Pair.of(MyPageResult.SUCCESS, dbAllPoint);
+    }
+
+    // 포인트사용 싹 가져오기
+    public Pair<MyPageResult, List<PointEntity>> getAllPointUse(int userId) {
+        if (userId < 1) {
+            return Pair.of(MyPageResult.FAILURE, null);
+        }
+        List<PointEntity> dbAllPointUse = this.pointMapper.selectAllPointUseByUserId(userId);
+        return Pair.of(MyPageResult.SUCCESS, dbAllPointUse);
+    }
+
+
+    // 예약취소
+    public MyPageResult patchReservation(int reservationId, int userId) {
+        if (reservationId < 1 ||
+                userId < 1) {
+            return MyPageResult.FAILURE;
+        }
+        int cancel = this.myPageMapper.updateReservationCancel(reservationId, userId);
+        if (cancel <= 0) {
+            return MyPageResult.FAILURE;
+        }
+        return MyPageResult.SUCCESS;
     }
 }

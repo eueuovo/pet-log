@@ -1,7 +1,9 @@
 package dev.dhkim.petlog.controllers.myPage;
 
 import dev.dhkim.petlog.dto.user.*;
+import dev.dhkim.petlog.entities.shop.PointEntity;
 import dev.dhkim.petlog.entities.user.*;
+import dev.dhkim.petlog.mappers.shop.CouponMapper;
 import dev.dhkim.petlog.mappers.shop.ReviewMapper;
 import dev.dhkim.petlog.results.MyPageResult;
 import dev.dhkim.petlog.services.myPage.MyPageService;
@@ -27,6 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class MyPageController {
     private final MyPageService myPageService;
     private final ReviewMapper reviewMapper;
+    private final CouponMapper couponMapper;
 
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
@@ -58,11 +61,23 @@ public class MyPageController {
             Pair<MyPageResult, AddressEntity> defaultAddress = this.myPageService.getDefaultAddress(sessionUser.getUserId());
             Pair<MyPageResult, List<DeliveryAddressEntity>> deliveryAddresses = this.myPageService.getAllDeliveryAddress(sessionUser.getUserId());
             Pair<MyPageResult, DeliveryAddressEntity> deliveryAddress = this.myPageService.getDeliveryAddress(sessionUser.getUserId());
+            Pair<MyPageResult, List<PointEntity>> allPointEarn = this.myPageService.getAllPointEarn(sessionUser.getUserId());
+            Pair<MyPageResult, List<PointEntity>> allPointUse = this.myPageService.getAllPointUse(sessionUser.getUserId());
+            List<Map<String, Object>> availableCoupons = couponMapper.getAvailableCoupons(sessionUser.getUserId());
+            List<Map<String, Object>> usedCoupons = couponMapper.getUsedOrExpiredCoupons(sessionUser.getUserId());
+
+            System.out.println(availableCoupons);  // 키 이름 확인
+            System.out.println(usedCoupons);
+
             modelAndView.addObject("personalAddresses", personalAddresses.getRight());
             modelAndView.addObject("defaultAddress", defaultAddress.getRight());
             modelAndView.addObject("deliveryAddresses", deliveryAddresses.getRight());
             modelAndView.addObject("deliveryPrimaryAddress", deliveryAddress.getRight());
             modelAndView.addObject("reservations", reservations.getRight());
+            modelAndView.addObject("allPointEarn", allPointEarn.getRight());
+            modelAndView.addObject("allPointUse", allPointUse.getRight());
+            modelAndView.addObject("availableCoupons", availableCoupons);
+            modelAndView.addObject("usedCoupons", usedCoupons);
 
             List<Map<String, Object>> orderItems = myPageService.getOrderItems(sessionUser.getUserId(), period);
             orderItems.forEach(item -> {
@@ -506,5 +521,24 @@ public class MyPageController {
             return Map.of("result", "FAILURE_SESSION_EXPIRED");
         }
         return myPageService.getOrderDetail(orderId, sessionUser.getUserId());
+    }
+
+
+
+
+
+    // 예약취소
+    @RequestMapping(value = "/reservation/cancel", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> patchReservationCancel(@RequestParam(value = "reservationId") int reservationId,
+                                                      @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
+        Map<String, Object> response = new HashMap<>();
+        if (sessionUser == null) {
+            response.put("result", MyPageResult.FAILURE_SESSION_EXPIRED);
+            return response;
+        }
+        MyPageResult result = this.myPageService.patchReservation(reservationId, sessionUser.getUserId());
+        response.put("result", result.name());
+        return response;
     }
 }
