@@ -111,9 +111,7 @@ ol, ul {
         padding: 0.5rem;
         letter-spacing: -0.02rem;
         position: relative;
-        transition:
-                color 0.2s ease,
-                transform 0.2s ease;
+        transition: color 0.2s ease, transform 0.2s ease;
         text-decoration: none;
 
         &.is-active {
@@ -152,6 +150,7 @@ ol, ul {
 #category {
   @include flex(row, flex-end, space-between, clamp(0.5rem, 2vw, 1rem));
   width: 100%;
+  padding-bottom: 1rem;
 
   > .menu {
     position: relative;
@@ -166,24 +165,24 @@ ol, ul {
           color: $global-gray-right-text-color;
           font-weight: 600;
           position: relative;
-          padding: 0 1rem 0.5rem 1rem;
+          padding: 0 1rem;
           cursor: pointer;
           
           @media (max-width: 700px) {
             font-size: 1rem;
-            padding: 0 0.5rem 0.5rem 0.5rem;
+            padding: 0 0.5rem;
           }
 
-          &::after {
+/*          &::after {
             content: "";
             position: absolute;
             left: 0;
             bottom: 0;
             width: 0;
             height: 0.15rem;
-            background-color: #38A34C;
+            background-color: darken($global-color-concept, 15%);
             transition: none;
-          }
+          }*/
 
           > input[type="radio"]{
             display: none;
@@ -191,7 +190,7 @@ ol, ul {
 
           &:hover{
             font-weight: 700;
-            color: $global-gray-text-color;
+            color: darken($global-color-concept, 15%);
 
             &::after {
               width: 100%;
@@ -201,7 +200,7 @@ ol, ul {
 
           &:has(input[type="radio"]:checked) {
             font-weight: 700;
-            color: $global-gray-text-color;
+            color: darken($global-color-concept, 15%);
 
             &::after {
               width: 100%;
@@ -223,19 +222,19 @@ ol, ul {
 
             @media (max-width: 700px) {
               font-size: 1rem;
-              padding: 0 0.5rem 0.5rem 0.5rem;
+              padding: 0 0.5rem 1rem 0.5rem;
             }
 
-            &::after {
+/*            &::after {
               content: "";
               position: absolute;
               left: 0;
               bottom: 0;
               width: 0;
               height: 0.15rem;
-              background-color: #38A34C;
+              background-color: darken($global-color-concept, 15%);
               transition: none;
-            }
+            }*/
 
             > input[type="radio"]{
               display: none;
@@ -243,7 +242,7 @@ ol, ul {
 
             &:hover{
               font-weight: 700;
-              color: $global-gray-text-color;
+              color: darken($global-color-concept, 15%);
 
               &::after {
                 width: 100%;
@@ -253,7 +252,7 @@ ol, ul {
 
             &:has(input[type="radio"]:checked) {
               font-weight: 700;
-              color: $global-gray-text-color;
+              color: darken($global-color-concept, 15%);
 
               &::after {
                 width: 100%;
@@ -292,7 +291,7 @@ ol, ul {
 
                 &:hover,
                 &:has(input[type="radio"]:checked){
-                  color: $global-gray-text-color;
+                  color: darken($global-color-concept, 15%);
                 }
 
                 &::after{
@@ -313,49 +312,16 @@ ol, ul {
             }
           }
 
-          &:has(.item[data-target="dog"]:hover),
-          &:has(.submenu.dog:hover){
-            .submenu.dog {
+          &:hover {
+            > .submenu {
               display: flex;
             }
 
-            > .item[data-target="dog"]{
+            > .item {
               font-weight: 700;
-              color: $global-gray-text-color;
+              color: darken($global-color-concept, 15%);
 
-              &::after{
-                width: 100%;
-              }
-            }
-          }
-
-          &:has(.item[data-target="cat"]:hover),
-          &:has(.submenu.cat:hover){
-            .submenu.cat {
-              display: flex;
-            }
-
-            > .item[data-target="cat"]{
-              font-weight: 700;
-              color: $global-gray-text-color;
-
-              &::after{
-                width: 100%;
-              }
-            }
-          }
-
-          &:has(.item[data-target="etc"]:hover),
-          &:has(.submenu.etc:hover){
-            .submenu.etc {
-              display: flex;
-            }
-
-            > .item[data-target="etc"]{
-              font-weight: 700;
-              color: $global-gray-text-color;
-
-              &::after{
+              &::after {
                 width: 100%;
               }
             }

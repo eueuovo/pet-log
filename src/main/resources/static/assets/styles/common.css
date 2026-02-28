@@ -376,7 +376,8 @@ ol, ul {
   flex-direction: row;
   gap: clamp(0.5rem, 2vw, 1rem);
   justify-content: space-between;
-  width: 100%; }
+  width: 100%;
+  padding-bottom: 1rem; }
   #category > * {
     flex-grow: 0;
     flex-shrink: 0; }
@@ -403,32 +404,33 @@ ol, ul {
         color: #7A7A7A;
         font-weight: 600;
         position: relative;
-        padding: 0 1rem 0.5rem 1rem;
-        cursor: pointer; }
+        padding: 0 1rem;
+        cursor: pointer;
+        /*          &::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 0;
+                    height: 0.15rem;
+                    background-color: darken($global-color-concept, 15%);
+                    transition: none;
+                  }*/ }
         @media (max-width: 700px) {
           #category > .menu > .main > .list > .item {
             font-size: 1rem;
-            padding: 0 0.5rem 0.5rem 0.5rem; } }
-        #category > .menu > .main > .list > .item::after {
-          content: "";
-          position: absolute;
-          left: 0;
-          bottom: 0;
-          width: 0;
-          height: 0.15rem;
-          background-color: #38A34C;
-          transition: none; }
+            padding: 0 0.5rem; } }
         #category > .menu > .main > .list > .item > input[type="radio"] {
           display: none; }
         #category > .menu > .main > .list > .item:hover {
           font-weight: 700;
-          color: #565656; }
+          color: #fcb727; }
           #category > .menu > .main > .list > .item:hover::after {
             width: 100%;
             transition: width 0.2s ease; }
         #category > .menu > .main > .list > .item:has(input[type="radio"]:checked) {
           font-weight: 700;
-          color: #565656; }
+          color: #fcb727; }
           #category > .menu > .main > .list > .item:has(input[type="radio"]:checked)::after {
             width: 100%;
             transition: none; }
@@ -440,31 +442,32 @@ ol, ul {
           font-weight: 600;
           position: relative;
           padding: 0 1rem 0.5rem 1rem;
-          cursor: pointer; }
+          cursor: pointer;
+          /*            &::after {
+                        content: "";
+                        position: absolute;
+                        left: 0;
+                        bottom: 0;
+                        width: 0;
+                        height: 0.15rem;
+                        background-color: darken($global-color-concept, 15%);
+                        transition: none;
+                      }*/ }
           @media (max-width: 700px) {
             #category > .menu > .main > .list > .menu-item-wrapper > .item {
               font-size: 1rem;
-              padding: 0 0.5rem 0.5rem 0.5rem; } }
-          #category > .menu > .main > .list > .menu-item-wrapper > .item::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 0;
-            height: 0.15rem;
-            background-color: #38A34C;
-            transition: none; }
+              padding: 0 0.5rem 1rem 0.5rem; } }
           #category > .menu > .main > .list > .menu-item-wrapper > .item > input[type="radio"] {
             display: none; }
           #category > .menu > .main > .list > .menu-item-wrapper > .item:hover {
             font-weight: 700;
-            color: #565656; }
+            color: #fcb727; }
             #category > .menu > .main > .list > .menu-item-wrapper > .item:hover::after {
               width: 100%;
               transition: width 0.2s ease; }
           #category > .menu > .main > .list > .menu-item-wrapper > .item:has(input[type="radio"]:checked) {
             font-weight: 700;
-            color: #565656; }
+            color: #fcb727; }
             #category > .menu > .main > .list > .menu-item-wrapper > .item:has(input[type="radio"]:checked)::after {
               width: 100%;
               transition: none; }
@@ -512,7 +515,7 @@ ol, ul {
               #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item > input[type="radio"] {
                 display: none; }
               #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item:hover, #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item:has(input[type="radio"]:checked) {
-                color: #565656; }
+                color: #fcb727; }
               #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item::after {
                 content: "";
                 position: absolute;
@@ -524,26 +527,12 @@ ol, ul {
                 background-color: #00000020; }
               #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item:last-child::after {
                 display: none; }
-        #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="dog"]:hover) .submenu.dog, #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.dog:hover) .submenu.dog {
+        #category > .menu > .main > .list > .menu-item-wrapper:hover > .submenu {
           display: flex; }
-        #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="dog"]:hover) > .item[data-target="dog"], #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.dog:hover) > .item[data-target="dog"] {
+        #category > .menu > .main > .list > .menu-item-wrapper:hover > .item {
           font-weight: 700;
-          color: #565656; }
-          #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="dog"]:hover) > .item[data-target="dog"]::after, #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.dog:hover) > .item[data-target="dog"]::after {
-            width: 100%; }
-        #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="cat"]:hover) .submenu.cat, #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.cat:hover) .submenu.cat {
-          display: flex; }
-        #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="cat"]:hover) > .item[data-target="cat"], #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.cat:hover) > .item[data-target="cat"] {
-          font-weight: 700;
-          color: #565656; }
-          #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="cat"]:hover) > .item[data-target="cat"]::after, #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.cat:hover) > .item[data-target="cat"]::after {
-            width: 100%; }
-        #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="etc"]:hover) .submenu.etc, #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.etc:hover) .submenu.etc {
-          display: flex; }
-        #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="etc"]:hover) > .item[data-target="etc"], #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.etc:hover) > .item[data-target="etc"] {
-          font-weight: 700;
-          color: #565656; }
-          #category > .menu > .main > .list > .menu-item-wrapper:has(.item[data-target="etc"]:hover) > .item[data-target="etc"]::after, #category > .menu > .main > .list > .menu-item-wrapper:has(.submenu.etc:hover) > .item[data-target="etc"]::after {
+          color: #fcb727; }
+          #category > .menu > .main > .list > .menu-item-wrapper:hover > .item::after {
             width: 100%; }
       @media (max-width: 700px) {
         #category > .menu > .main > .list {
