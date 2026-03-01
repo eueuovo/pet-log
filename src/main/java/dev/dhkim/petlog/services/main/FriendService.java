@@ -21,7 +21,7 @@ public class FriendService {
         if (userId == null) return List.of();
         return friendMapper.selectFriendsByUserId(userId);
     }
-    /* *//** 내 위치 기준 1.5km 반경 친구 조회 (거리 기준 근처 유저 조회)*//*
+   /* *//** 내 위치 기준 1.5km 반경 친구 조회 (거리 기준 근처 유저 조회)*//*
     public List<PetDto> getNearbyFriends(
             Integer userId,
             double myLat,

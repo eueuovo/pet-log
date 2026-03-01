@@ -60,53 +60,53 @@
             resultType="dev.dhkim.petlog.dto.user.PetDto">
 
         SELECT
-            p.pet_id AS petId,
-            p.user_id AS userId,
-            p.name AS name,
-            p.species AS species,
-            p.birth_date AS birthDate,
-            p.gender AS gender,
-            p.image_url AS imageUrl,
-            p.introduction AS introduction,
-            a.lat AS lat,
-            a.lng AS lng,
+        p.pet_id AS petId,
+        p.user_id AS userId,
+        p.name AS name,
+        p.species AS species,
+        p.birth_date AS birthDate,
+        p.gender AS gender,
+        p.image_url AS imageUrl,
+        p.introduction AS introduction,
+        a.lat AS lat,
+        a.lng AS lng,
 
-            CASE
-                WHEN f.id IS NOT NULL THEN true
-                ELSE false
-                END AS isFollowing,
+        CASE
+        WHEN f.id IS NOT NULL THEN true
+        ELSE false
+        END AS isFollowing,
 
-            (
-                6371 * acos(
-                        LEAST(1.0,
-                              cos(radians(#{lat})) * cos(radians(a.lat)) *
-                              cos(radians(a.lng) - radians(#{lng})) +
-                              sin(radians(#{lat})) * sin(radians(a.lat))
-                        )
-                       )
-                ) AS distanceKm
+        (
+        6371 * acos(
+        LEAST(1.0,
+        cos(radians(#{lat})) * cos(radians(a.lat)) *
+        cos(radians(a.lng) - radians(#{lng})) +
+        sin(radians(#{lat})) * sin(radians(a.lat))
+        )
+        )
+        ) AS distanceKm
 
         FROM petlog.pets p
-                 JOIN petlog.address a
-                      ON p.user_id = a.user_id
+        JOIN petlog.address a
+        ON p.user_id = a.user_id
 
-                 LEFT JOIN petlog.follows f
-                           ON f.following_user_id = #{userId}
-                               AND f.followed_user_id = p.user_id
+        LEFT JOIN petlog.follows f
+        ON f.following_user_id = #{userId}
+        AND f.followed_user_id = p.user_id
 
         WHERE p.user_id != #{userId}
           AND a.address_type = 'map'
           AND a.lat IS NOT NULL
           AND a.lng IS NOT NULL
-          AND (
-                  6371 * acos(
-                          LEAST(1.0,
-                                cos(radians(#{lat})) * cos(radians(a.lat)) *
-                                cos(radians(a.lng) - radians(#{lng})) +
-                                sin(radians(#{lat})) * sin(radians(a.lat))
-                          )
-                         )
-                  ) &lt;=#{radiusKm}
+        AND (
+        6371 * acos(
+        LEAST(1.0,
+        cos(radians(#{lat})) * cos(radians(a.lat)) *
+        cos(radians(a.lng) - radians(#{lng})) +
+        sin(radians(#{lat})) * sin(radians(a.lat))
+        )
+        )
+        ) &lt;=#{radiusKm}
 
         ORDER BY distanceKm ASC
 
@@ -134,9 +134,9 @@
             u.nickname AS nickname,
             p.image_url AS imageUrl,
             (6371 * acos(LEAST(1.0, GREATEST(-1.0, cos(radians(#{myLat})) * cos(radians(a.lat))
-                                                       * cos(radians(a.lng) - radians(#{myLng}))
-                + sin(radians(#{myLat})) * sin(radians(a.lat))
-                                    )))) AS distance,
+            * cos(radians(a.lng) - radians(#{myLng}))
+             + sin(radians(#{myLat})) * sin(radians(a.lat))
+             )))) AS distance,
             p.species AS species,
             p.name AS petName,
             p.gender AS gender,
@@ -144,8 +144,8 @@
             p.introduction AS introduction,
             false AS isFollowing
         FROM `petlog`.personal_user u
-                 JOIN `petlog`.address a ON u.user_id = a.user_id
-                 LEFT JOIN `petlog`.pets p ON u.user_id = p.user_id AND p.is_primary = 1
+                                                                                                                                                                                                                                                                                                                                                        JOIN `petlog`.address a ON u.user_id = a.user_id
+                                                                                                                                                                                                                                                                                                                                                        LEFT JOIN `petlog`.pets p ON u.user_id = p.user_id AND p.is_primary = 1
         WHERE u.user_id != #{userId}
           AND a.lat != 0
         HAVING distance &lt;= #{radiusKm}
