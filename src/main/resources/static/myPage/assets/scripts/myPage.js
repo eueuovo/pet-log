@@ -3303,6 +3303,21 @@ document.querySelector('.my-review-filter')?.addEventListener('click', () => {
         }
         dateEl.style.display = hasVisible ? '' : 'none';
     });
+
+    const paymentList = document.querySelector('.payment-list');
+    paymentList.querySelector('.empty-review')?.remove();
+    paymentList.classList.remove('empty-mode');
+
+    const hasAnyVisible = [...document.querySelectorAll('.order-item')]
+        .some(item => item.style.display !== 'none');
+
+    if (!hasAnyVisible) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-review empty-orders';
+        empty.innerHTML = `<span class="empty-title">작성한 리뷰가 없습니다.</span>`;
+        paymentList.appendChild(empty);
+        paymentList.classList.add('empty-mode');
+    }
 });
 
 // ===== 리뷰 남기기 버튼 (마이페이지) =====
@@ -3527,3 +3542,8 @@ document.querySelector('.payment-list').addEventListener('click', async (e) => {
 document.querySelector('.order-detail-modal .modal-close').addEventListener('click', () => {
     document.querySelector('.order-detail-modal-overlay').style.display = 'none';
 });
+
+const paymentList = document.querySelector('.payment-list');
+if (paymentList?.querySelector('.empty-orders')) {
+    paymentList.classList.add('empty-mode');
+}

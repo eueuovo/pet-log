@@ -100,7 +100,7 @@
           flex-shrink: 1; }
         #list > .product-section > .category-wrapper > .sub-category.open {
           max-height: 60px;
-          padding: 0.7rem 0 0 0; }
+          padding: 0.7rem 0 0 0.5rem; }
         #list > .product-section > .category-wrapper > .sub-category > .sub-category-btn {
           align-items: center;
           display: flex;
