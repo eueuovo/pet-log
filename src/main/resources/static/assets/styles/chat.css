@@ -2,6 +2,10 @@
   display: none !important;
 }
 
+#chatRoot {
+  z-index: 95;
+}
+
 .chat-launcher,
 #chatBtn {
   position: fixed;
@@ -104,7 +108,7 @@
 }
 .chat-list-modal .chat-option > .search {
   width: 1.75rem;
-  height: 1.75rem;
+  height: 1.5rem;
 }
 .chat-list-modal .buttons {
   align-items: center;

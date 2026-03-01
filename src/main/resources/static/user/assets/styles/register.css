@@ -810,8 +810,12 @@ body:has(> .address-wrapper.visible) > .cover {
   margin-top: 1.5rem;
 }
 .register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > .countTime {
+  display: none;
   align-self: flex-end;
   color: #565656;
+}
+.register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > .countTime.visible {
+  display: revert;
 }
 .register-container > .register-third > .label.emailVerifyLabel > .verifyNumber-wrapper > .emailVerifyNumber:disabled {
   border-color: #e7e5e4 !important;
@@ -2940,6 +2944,7 @@ body:has(> .dialog.visible) .cover {
   .dialog {
     max-width: 30rem;
     max-height: 33rem;
+    overflow-y: scroll;
   }
   .dialog.dialog-second {
     max-height: 37rem;

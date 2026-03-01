@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // 임시 : 현재 URL 복사
             try {
                 await navigator.clipboard.writeText(window.location.href);
-                alert('프로필 링크를 복사했습니다.');
+                showMessage("프로필 링크 복사 완료");
             } catch (e) {
-                alert('복사 실패. 주소창 URL을 직접 복사해주세요.');
+                showMessage('복사 실패. 주소창 URL을 직접 복사해주세요.');
             }
         });
     }
