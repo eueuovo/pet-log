@@ -19,7 +19,7 @@ public class ReservationService {
     private final StoreMapper storeMapper; // 추가
 
     // 시스템 관리자 ID (아까 DB에 9999번으로 만들기로 한 계정)
-    private static final int SYSTEM_ADMIN_ID = 9999;
+    private static final int SYSTEM_ADMIN_ID = 1;
 
     @Transactional
     public ReservationDto createReservation(ReservationDto reservation) {
@@ -44,7 +44,7 @@ public class ReservationService {
                 newStore.setStoreName(reservation.getPlaceName());
                 newStore.setAddressPrimary(reservation.getAddress());
                 newStore.setCategory(reservation.getCategory());
-                newStore.setUserId(9999);
+                newStore.setUserId(SYSTEM_ADMIN_ID);
 
                 storeMapper.insertApiStore(newStore);
 

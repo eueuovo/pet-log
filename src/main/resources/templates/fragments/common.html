@@ -15,23 +15,40 @@
         </div>
     </div>
     <nav id="topNavigator"
-         th:with="isSigned=${session.sessionUser != null}">
+         th:with=" isSigned=${session.sessionUser != null},
+    isAdmin=${isSigned and session.sessionUser.userType == 'ADMIN'}">
         <!-- 커버 -->
         <div class="nav-wrapper">
             <div class="logo">
-                <a th:href="@{/main}">Pet-Log</a>
+                <a th:if="${isAdmin}" th:href="@{/cs}">Pet-Log</a>
+                <a th:if="${!isAdmin}" th:href="@{/main}">Pet-Log</a>
             </div>
             <div class="nav-category">
-                <a th:href="@{/main}" class="item">지도</a>
-                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}" th:href="@{/feed/explore}" class="item">피드</a>
-                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}" th:href="@{/shop/main}" class="item">쇼핑</a>
+                <!-- ADMIN은 지도 숨김 -->
+                <a th:if="${!isAdmin}" th:href="@{/main}" class="item">지도</a>
+
+                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}"
+                   th:href="@{/feed/explore}" class="item">피드</a>
+
+                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}"
+                   th:href="@{/shop/main}" class="item">쇼핑</a>
             </div>
             <div class="nav-user">
-                <a th:if="${isSigned and session.sessionUser.userType == 'PERSONAL'}" th:href="@{/shop/cart}" class="item">장바구니</a>
-                <a th:if="${isSigned}" th:href="@{/my}" class="item">마이페이지</a>
-                <a th:if="${isSigned}" th:href="@{/user/logout}" class="item">로그아웃</a>
+
+                <!-- ADMIN 전용 -->
+                <a th:if="${isAdmin}" th:href="@{/cs}" class="item">문의 답변</a>
+                <a th:if="${isAdmin}" th:href="@{/user/logout}" class="item">로그아웃</a>
+
+                <!-- PERSONAL 전용 -->
+                <a th:if="${isSigned and !isAdmin}" th:href="@{/shop/cart}" class="item">장바구니</a>
+                <a th:if="${isSigned and !isAdmin}" th:href="@{/my}" class="item">마이페이지</a>
+                <a th:if="${isSigned and !isAdmin}" th:href="@{/user/logout}" class="item">로그아웃</a>
+
+                <!-- 비로그인 -->
                 <a th:if="${!isSigned}" th:href="@{/user/login}" class="item">로그인</a>
-                <a th:href="@{/cs}" class="item">고객센터</a>
+
+                <!-- 공통 -->
+                <a th:if="${!isAdmin}" th:href="@{/cs}" class="item">고객센터</a>
             </div>
         </div>
         <div class="hamburger">
@@ -49,9 +66,14 @@
             </button>
             <span class="nav-caption"> CATEGORY </span>
             <div class="nav-category">
-                <a th:href="@{/main}" class="item">지도</a>
-                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}" th:href="@{/feed/explore}" class="item">피드</a>
-                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}" th:href="@{/shop/main}" class="item">쇼핑</a>
+                <!-- ADMIN은 지도 숨김 -->
+                <a th:if="${!isAdmin}" th:href="@{/main}" class="item">지도</a>
+
+                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}"
+                   th:href="@{/feed/explore}" class="item">피드</a>
+
+                <a th:if="${!isSigned or session.sessionUser.userType == 'PERSONAL'}"
+                   th:href="@{/shop/main}" class="item">쇼핑</a>
             </div>
             <span class="nav-caption"> USER </span>
             <div class="nav-user">
