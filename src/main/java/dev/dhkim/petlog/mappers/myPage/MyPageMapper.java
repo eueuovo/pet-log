@@ -165,4 +165,11 @@ public interface MyPageMapper {
 
     // 주문내역 필터
     List<Map<String, Object>> selectOrdersByPeriod(@Param("userId") Integer userId, @Param("period") String period);
+
+
+
+    // 예약취소
+    int updateReservationCancel(@Param(value = "reservationId") int reservationId,
+                                @Param(value = "userId") int userId);
+
 }

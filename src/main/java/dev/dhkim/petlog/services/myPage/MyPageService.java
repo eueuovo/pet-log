@@ -2,8 +2,10 @@ package dev.dhkim.petlog.services.myPage;
 
 import ch.qos.logback.core.spi.FilterAttachableImpl;
 import dev.dhkim.petlog.dto.user.*;
+import dev.dhkim.petlog.entities.shop.PointEntity;
 import dev.dhkim.petlog.entities.user.*;
 import dev.dhkim.petlog.mappers.myPage.MyPageMapper;
+import dev.dhkim.petlog.mappers.shop.PointMapper;
 import dev.dhkim.petlog.mappers.user.UserMapper;
 import dev.dhkim.petlog.results.MyPageResult;
 import dev.dhkim.petlog.utils.PhoneUtil;
@@ -16,16 +18,23 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
     private final MyPageMapper myPageMapper;
     private final UserMapper userMapper;
+    private final PointMapper pointMapper;
 
     public boolean verifyPassword(int userId, String password) {
         if (userId < 1 ||
@@ -134,11 +143,18 @@ public class MyPageService {
         return MyPageResult.SUCCESS;
     }
 
-    public Pair<MyPageResult, Integer> insertPetInMyPage(int userId, PetDto pet) {
-        if (userId < 1 ||
-                pet == null) {
+    public Pair<MyPageResult, Integer> insertPetInMyPage(int userId, PetDto pet, MultipartFile petImage) {
+        if (userId < 1 || pet == null) {
             return Pair.of(MyPageResult.FAILURE, null);
         }
+
+        // 이미지 저장
+        String imageUrl = "/user/assets/images/defaultPetImage.png";
+        if (petImage != null && !petImage.isEmpty()) {
+            imageUrl = savePetImage(petImage);
+        }
+        pet.setImageUrl(imageUrl);
+
         List<PetEntity> pets = this.myPageMapper.selectPetsByUserId(userId);
         if (pets == null || pets.isEmpty()) {
             pet.setIsPrimary(true);
@@ -146,6 +162,26 @@ public class MyPageService {
         return this.userMapper.insertPet(userId, pet) > 0
                 ? Pair.of(MyPageResult.SUCCESS, pet.getPetId())
                 : Pair.of(MyPageResult.FAILURE, null);
+    }
+
+    private String savePetImage(MultipartFile file) {
+        try {
+            String uploadDir = System.getProperty("user.dir") + "/uploads/pets/";
+            Path dirPath = Paths.get(uploadDir);
+            if (!Files.exists(dirPath)) {
+                Files.createDirectories(dirPath);
+            }
+            String originalFilename = file.getOriginalFilename();
+            String ext = originalFilename != null && originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
+            String savedFilename = UUID.randomUUID() + ext;
+            Files.copy(file.getInputStream(), dirPath.resolve(savedFilename));
+            return "/uploads/pets/" + savedFilename;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "/user/assets/images/defaultPetImage.png";
+        }
     }
 
 
@@ -157,16 +193,25 @@ public class MyPageService {
         return Pair.of(MyPageResult.SUCCESS, dbPet);
     }
 
-    public MyPageResult updatePet(PetEntity pet, int userId) {
-        if (pet.getPetId() < 1 ||
-                userId < 1) {
+    public MyPageResult updatePet(PetEntity pet, MultipartFile petImage, String existingImageUrl, int userId) {
+        if (pet.getPetId() < 1 || userId < 1) {
             return MyPageResult.FAILURE;
         }
+
+        // 새 이미지가 있으면 저장, 없으면 기존 URL 유지
+        if (petImage != null && !petImage.isEmpty()) {
+            String imageUrl = savePetImage(petImage);
+            pet.setImageUrl(imageUrl);
+        } else {
+            // 기존 이미지 URL 그대로 세팅
+            pet.setImageUrl(existingImageUrl != null && !existingImageUrl.isBlank()
+                    ? existingImageUrl
+                    : "/user/assets/images/defaultPetImage.png");
+        }
+
         return this.myPageMapper.updatePet(pet, userId) > 0
                 ? MyPageResult.SUCCESS
                 : MyPageResult.FAILURE;
-
-
     }
 
     public MyPageResult changePrimaryPet(int petId, int userId) {
@@ -663,5 +708,38 @@ public class MyPageService {
     // 주문 내역
     public Map<String, Object> getOrderDetail(int orderId, int userId) {
         return myPageMapper.selectOrderDetail(orderId, userId);
+    }
+
+
+    // 포인트적립 싹 가져오기
+    public Pair<MyPageResult, List<PointEntity>> getAllPointEarn(int userId) {
+        if (userId < 1) {
+            return Pair.of(MyPageResult.FAILURE, null);
+        }
+        List<PointEntity> dbAllPoint = this.pointMapper.selectAllPointEarnByUserId(userId);
+        return Pair.of(MyPageResult.SUCCESS, dbAllPoint);
+    }
+
+    // 포인트사용 싹 가져오기
+    public Pair<MyPageResult, List<PointEntity>> getAllPointUse(int userId) {
+        if (userId < 1) {
+            return Pair.of(MyPageResult.FAILURE, null);
+        }
+        List<PointEntity> dbAllPointUse = this.pointMapper.selectAllPointUseByUserId(userId);
+        return Pair.of(MyPageResult.SUCCESS, dbAllPointUse);
+    }
+
+
+    // 예약취소
+    public MyPageResult patchReservation(int reservationId, int userId) {
+        if (reservationId < 1 ||
+                userId < 1) {
+            return MyPageResult.FAILURE;
+        }
+        int cancel = this.myPageMapper.updateReservationCancel(reservationId, userId);
+        if (cancel <= 0) {
+            return MyPageResult.FAILURE;
+        }
+        return MyPageResult.SUCCESS;
     }
 }

@@ -60,6 +60,7 @@ public class OrderService {
         int usedPoint = toInt(orderInfo.get("usedPoint"));
         if (usedPoint > 0) {
             orderMapper.deductPoint(userId, usedPoint, orderId);
+            orderMapper.updatePoint(userId, -usedPoint);
         }
 
         // 쿠폰 사용 처리
@@ -75,6 +76,7 @@ public class OrderService {
         int earnPoint = (int)(finalAmount * 0.01);
         if (earnPoint > 0) {
             orderMapper.earnPoint(userId, earnPoint, orderId);
+            orderMapper.updatePoint(userId, earnPoint);
         }
 
         Object cartIdsObj = orderInfo.get("cartIds");

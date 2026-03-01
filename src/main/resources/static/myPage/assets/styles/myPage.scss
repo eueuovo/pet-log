@@ -23,7 +23,8 @@ body:has(.dialog.visible),
 body:has(.modal-cover.visible),
 body:has(.addressDeleteMessage.visible),
 body:has(.deliveryAddressDeleteMessage.visible),
-body:has(.petDeleteMessage.visible) {
+body:has(.petDeleteMessage.visible),
+body:has(.reservationMessage.visible) {
   overflow-y: hidden;
 }
 
@@ -485,10 +486,6 @@ body:has(.petDeleteMessage.visible) {
         position: absolute;
         inset: 0;
         background-color: #ffffff;
-/*        transform: scaleX(0);
-        transform-origin: left;
-        transition-property: transform;
-        transition-duration: 350ms;*/
         z-index: -1;
       }
 
@@ -496,10 +493,6 @@ body:has(.petDeleteMessage.visible) {
         color: #2e7d32;
         font-weight: 600;
         border-left: 0.25rem solid #4CAF50;
-
-/*        &::before {
-          transform: scaleX(1);
-        }*/
       }
     }
   }
@@ -1276,6 +1269,80 @@ body:has(.petDeleteMessage.visible) {
   }
 }
 
+.reservationMessage {
+  @include flex(column, stertch, flex-start, 1rem);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  min-width: 25rem;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  > .title {
+    font-size: 1.35rem;
+    font-weight: 500;
+  }
+
+  > .text {
+    font-size: 1rem;
+  }
+
+  > .button-wrapper {
+    @include flex(row, stretch, center, 2rem);
+
+    > .yes {
+      background-color: #e53935;
+      border-radius: 0.35rem;
+      color: #ffffff;
+      cursor: pointer;
+      height: 2.25rem;
+      margin-top: 1rem;
+      width: 9rem;
+      transition-duration: 250ms;
+      transition-property: background-color;
+
+      &:hover {
+        background-color: darken(#e53935, 5%);
+      }
+
+      &:active {
+        background-color: darken(#e53935, 10%);
+      }
+    }
+
+    > .no {
+      background-color: lighten($global-gray-text-color, 55%);
+      color: lighten($global-gray-text-color, 20%);
+      border-radius: 0.35rem;
+      cursor: pointer;
+      height: 2.25rem;
+      margin-top: 1rem;
+      width: 9rem;
+      transition-duration: 250ms;
+      transition-property: background-color;
+
+      &:hover {
+        background-color: #D6D6D6;
+      }
+
+      &:active {
+        background-color: #C8C8C8;
+      }
+    }
+  }
+}
+
+
 body:has(> .dialog.visible) {
   .cover {
     opacity: 1;
@@ -1284,6 +1351,7 @@ body:has(> .dialog.visible) {
 }
 
 body:has(> .petDeleteMessage.visible) > .cover,
+body:has(> .reservationMessage.visible) > .cover,
 body:has(> .checkMessage.visible) > .cover,
 body:has(> .defaultAddressMessage.visible) > .cover,
 body:has(> .defaultDeliveryMessage.visible) > .cover,
@@ -4165,21 +4233,10 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
             width: 4rem;
             height: 2rem;
             color: #ffffff;
+            cursor: pointer;
           }
         }
       }
-
-
-
-      /*> .coupon {
-        @include flex(column, center, center);
-        width: 4rem;
-        height: 2.2rem;
-        border-radius: 0.35rem;
-        background-color: $global-green-background-color;
-        color: $global-white-text-color;
-        cursor: pointer;
-      }*/
 
       .edit-button {
         height: 2.5rem;
@@ -4624,6 +4681,7 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
               display: block;
               word-break: break-word;
               white-space: normal;
+              line-height: 1.35;
             }
           }
         }
@@ -5743,3 +5801,496 @@ body:has(> .deliveryAddressDeleteMessage.visible) > .cover {
 .paymentDetails {
   display: none;
 }
+
+
+
+body:has(> .point-modal.visible) > .cover {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+// ── 마일리지 모달 ─────────────────────────────────────────
+.point-modal {
+  @include flex(row, center, center);
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+
+  &.visible {
+    display: flex;
+  }
+
+  > .modal-box {
+    @include flex(column, stretch, flex-start);
+    background-color: #ffffff;
+    border-radius: 1rem;
+    width: min(32.5rem, 94vw);
+    max-height: 82vh;
+    overflow: hidden;
+    box-shadow: 0 0.5rem 2.5rem rgba(0, 0, 0, 0.18);
+
+    > .modal-header {
+      @include flex(row, center, space-between);
+      padding: 1.4rem 1.6rem 0;
+
+      > .modal-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: $global-black-text-color;
+
+        > span {
+          font-size: 0.8rem;
+          font-weight: 400;
+          color: $global-gray-text-color;
+          margin-left: 0.5rem;
+        }
+      }
+
+
+
+      > .close-btn {
+        @include flex(row, center, center);
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-radius: 999rem;
+
+        &:hover {
+          background-color: #f0f0f0;
+        }
+
+        > .image {
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+      }
+    }
+
+    > .summary-card {
+      @include flex(row, center, space-between);
+      margin: 1.2rem 1.6rem 0;
+      background: linear-gradient(135deg, $global-description-color 0%, lighten($global-green-background-color, 15%) 100%);
+      border-radius: 0.8rem;
+      padding: 1.2rem 1.4rem;
+
+      > div > .title {
+        font-size: 0.82rem;
+        color: $global-green-text-color;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+      }
+
+      > div > .amount {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: darken($global-green-text-color, 10%);
+        letter-spacing: -0.03em;
+
+        > span {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-left: 0.2rem;
+        }
+      }
+
+      > .icon {
+        width: 3rem;
+        height: 3rem;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        @include flex(row, center, center);
+        font-size: 1.4rem;
+      }
+    }
+
+    > .tab-bar {
+      @include flex(row, stretch, flex-start);
+      padding: 1rem 1.6rem 0;
+      border-bottom: 0.0625rem solid lighten($global-gray-right-text-color, 30%);
+
+      > .tab-btn {
+        flex: 1;
+        padding: 0.65rem 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: $global-gray-right-text-color;
+        background: none;
+        border: none;
+        border-bottom: 0.15rem solid transparent;
+        cursor: pointer;
+        transition: color 150ms, border-color 150ms;
+
+        &.active {
+          color: $global-green-background-color;
+          border-bottom-color: $global-green-background-color;
+        }
+      }
+    }
+
+    > .filter-bar {
+      @include flex(row, center, flex-start, 0.5rem);
+      padding: 1rem 1.6rem 0;
+      flex-wrap: wrap;
+
+      > .filter-chip {
+        padding: 0.35rem 0.9rem;
+        border-radius: 999rem;
+        font-size: 0.82rem;
+        font-weight: 500;
+        border: 0.0625rem solid $global-border-color;
+        background-color: #ffffff;
+        color: $global-gray-text-color;
+        cursor: pointer;
+        transition: all 150ms;
+
+        &.active {
+          background-color: $global-green-background-color;
+          border-color: $global-green-background-color;
+          color: #ffffff;
+        }
+      }
+    }
+
+    > .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 1.6rem 1.6rem;
+
+      &::-webkit-scrollbar {
+        width: 0.3125rem;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #d0d0d0; border-radius: 999rem;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      > .tab-panel {
+        display: none;
+
+        &.active {
+          display: block;
+        }
+
+        > .history-list {
+          @include flex(column, stretch, flex-start);
+          max-height: 20rem;
+          min-height: 20rem;
+
+          > .history-item {
+            @include flex(row, center, space-between);
+            padding: 1rem 0;
+            border-bottom: 0.0625rem solid lighten($global-border-color, 3%);
+
+            &.empty {
+              @include flex(coulnmn, center, center);
+              color: $global-gray-text-color;
+              font-size: 1.1rem;
+              font-weight: 400;
+              height: 20rem;
+            }
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            > .left {
+              @include flex(column, flex-start, flex-start, 0.25rem);
+
+              > .desc {
+                font-size: 0.95rem;
+                font-weight: 500;
+                color: $global-black-text-color;
+              }
+
+              > .date {
+                font-size: 0.78rem;
+                color: $global-gray-right-text-color;
+              }
+            }
+
+            > .right {
+              @include flex(column, flex-end, flex-start, 0.15rem);
+
+              > .point-val {
+                font-size: 1rem;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+
+                &.earn { color: $global-green-text-color; }
+                &.use  { color: #c62828; }
+              }
+
+              > .expireDate {
+                opacity: 0;
+                font-size: 0.76rem;
+                color: lighten($global-gray-right-text-color, 15%);
+                transition-duration: 250ms;
+                transition-property: opacity;
+              }
+            }
+
+            > .right:has(> .point-val:hover) > .expireDate {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+// ── 쿠폰 모달 ─────────────────────────────────────────────
+.coupon-modal {
+  @include flex(row, center, center);
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+
+  &.visible {
+    display: flex;
+  }
+
+  > .modal-box {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    width: min(32.5rem, 94vw);
+    max-height: 82vh;
+    @include flex(column, stretch, flex-start);
+    overflow: hidden;
+    box-shadow: 0 0.5rem 2.5rem rgba(0, 0, 0, 0.18);
+    animation: modalIn 220ms ease;
+
+    > .modal-header {
+      @include flex(row, center, space-between);
+      padding: 1.4rem 1.6rem 0;
+
+      > .modal-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1b1b1b;
+      }
+
+      > .close-btn {
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        @include flex(row, center, center);
+        border-radius: 50%;
+        transition: background 150ms;
+
+        &:hover {
+          background-color: #f0f0f0;
+        }
+
+        > .image {
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+      }
+    }
+
+    > .summary-card {
+      @include flex(row, center, space-between);
+      margin: 1.2rem 1.6rem 0;
+      background: linear-gradient(135deg, $global-description-color 0%, lighten($global-green-background-color, 15%) 100%);
+      border-radius: 0.8rem;
+      padding: 1.2rem 1.4rem;
+
+      > div > .label {
+        font-size: 0.82rem;
+        color: $global-green-text-color;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+      }
+
+      > div > .amount {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: darken($global-green-text-color, 10%);
+        letter-spacing: -0.03em;
+      }
+
+      > .icon {
+        width: 3rem;
+        height: 3rem;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        @include flex(row, center, center);
+        font-size: 1.4rem;
+      }
+    }
+
+    > .tab-bar {
+      @include flex(row, stretch, flex-start);
+      padding: 1rem 1.6rem 0;
+      border-bottom: 0.0625rem solid lighten($global-gray-right-text-color, 30%);
+
+      > .tab-btn {
+        flex: 1;
+        padding: 0.65rem 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: $global-gray-right-text-color;
+        background: none;
+        border: none;
+        border-bottom: 0.15rem solid transparent;
+        cursor: pointer;
+        transition: color 150ms, border-color 150ms;
+
+        &.active {
+          color: $global-green-background-color;
+          border-bottom-color: $global-green-background-color;
+        }
+      }
+    }
+
+    > .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem 1.6rem 1.6rem;
+      margin-bottom: 1.2rem;
+
+      &::-webkit-scrollbar {
+        width: 0.3125rem;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #d0d0d0;
+        border-radius: 999rem;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      > .tab-panel {
+        display: none;
+
+        &.active {
+          display: block;
+        }
+
+        > .coupon-list {
+          @include flex(column, stretch, flex-start, 0.9rem);
+          max-height: 20rem;
+          min-height: 20rem;
+
+          > .coupon-card {
+            @include flex(row, stretch, flex-start);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 0.0625rem solid $global-border-color;
+            position: relative;
+
+            &.empty {
+              @include flex(coulnmn, center, center);
+              border: none;
+              color: $global-gray-text-color;
+              font-size: 1.1rem;
+              font-weight: 400;
+              height: 20rem;
+            }
+
+            &.used {
+              opacity: 0.45;
+            }
+
+            &.expired {
+              opacity: 0.45;
+            }
+
+            > .coupon-left {
+              background: linear-gradient(160deg, $global-green-background-color, $global-green-text-color);
+              color: #ffffff;
+              width: 5.5rem;
+              flex-shrink: 0;
+              @include flex(column, center, center, 0.3rem);
+              padding: 1rem 0.5rem;
+
+              &.gray {
+                background: linear-gradient(160deg, #9e9e9e, #616161);
+              }
+
+              &.orange {
+                background: linear-gradient(160deg, #ffb74d, #e65100);
+              }
+
+              > .discount {
+                font-size: 1.5rem;
+                font-weight: 800;
+                line-height: 1;
+              }
+
+              > .unit {
+                font-size: 0.72rem;
+                font-weight: 500;
+                opacity: 0.85;
+              }
+            }
+
+            > .coupon-right {
+              flex: 1;
+              padding: 0.9rem 1rem 0.9rem 1.3rem;
+              @include flex(column, flex-start, center, 0.3rem);
+
+              > .name {
+                font-size: 0.95rem;
+                font-weight: 700;
+                color: #1b1b1b;
+              }
+
+              > .condition {
+                font-size: 0.78rem;
+                color: $global-gray-right-text-color;
+              }
+
+              > .expire {
+                font-size: 0.76rem;
+                color: lighten($global-gray-right-text-color, 15%);
+                margin-top: 0.2rem;
+              }
+            }
+
+            > .coupon-badge {
+              position: absolute;
+              top: 0.6rem;
+              right: 0.6rem;
+              font-size: 0.7rem;
+              font-weight: 700;
+              padding: 0.2rem 0.55rem;
+              border-radius: 999rem;
+
+              &.available {
+                background-color: $global-description-color;
+                color: $global-green-text-color;
+              }
+
+              &.used-badge {
+                background-color: $global-gray-background-color;
+                color: $global-gray-right-text-color;
+              }
+
+              &.expired-badge {
+                background-color: #fff3e0;
+                color: #e65100;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

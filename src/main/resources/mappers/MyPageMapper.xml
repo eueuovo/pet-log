@@ -161,6 +161,12 @@
         SET `is_default` = TRUE
         WHERE `delivery_address_id` = #{addressId}
     </update>
+    <update id="updateReservationCancel">
+        UPDATE `petlog`.`reservation`
+        SET `canceled` = TRUE
+        WHERE `reservation_id` = #{reservationId}
+          AND `user_id` = #{userId}
+    </update>
     <delete id="deletePet">
         DELETE
         FROM `petlog`.`pets`
@@ -416,6 +422,7 @@
                `t1`.`reservation_time`  AS reservationTime,
                `t1`.`request_text`      AS requestText,
                `t1`.`payment_method`    AS paymentMethod,
+               `t1`.`canceled`          AS canceled,
                `t1`.`created_at`        AS createdAt,
                `t2`.`store_id`          AS storeId,
                `t2`.`store_name`        AS storeName,

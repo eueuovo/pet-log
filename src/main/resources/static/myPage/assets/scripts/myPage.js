@@ -1532,6 +1532,7 @@ if (businessInformation) {
 
         // region 가게 삭제 모달
         const deleteStoreModal = document.getElementById('delete-store-modal');
+        const deleteStoreModalContent = deleteStoreModal.querySelector('.modal-content');
         const deleteStoreModalCancelButton = deleteStoreModal.querySelector('.close-btn');
         const deleteStoreButton = deleteStoreModal.querySelector('.delete-button');
         let selectedStoreId = null;
@@ -1543,11 +1544,13 @@ if (businessInformation) {
             deleteStoreModalOpen.addEventListener('click', () => {
                 selectedStoreId = card.dataset.storeId;
                 deleteStoreModal.classList.add('visible');
+                deleteStoreModalContent.classList.add('visible');
             })
         })
 
         deleteStoreModalCancelButton.addEventListener('click', () => {
             deleteStoreModal.classList.remove('visible');
+            deleteStoreModalContent.classList.remove('visible');
         });
 
 
@@ -1587,6 +1590,7 @@ if (businessInformation) {
                         break;
                     case 'SUCCESS':
                         deleteStoreModal.classList.remove('visible');
+                        deleteStoreModalContent.classList.remove('visible');
                         location.href = '/my?menu=' + getCurrentMenuIndex();
                         break;
                     default:
@@ -2804,7 +2808,7 @@ if (petInformation) {
 
         const petData = {
             name: petNameInput.value,
-            imageUrl: fileInput.files.length > 0
+            imagePreview: fileInput.files.length > 0   // 화면 미리보기용만
                 ? preview.src
                 : editMod
                     ? editMod.imageUrl
@@ -2828,15 +2832,31 @@ if (petInformation) {
 
             // 서버로 수정 내용 전송
             try {
+                const updateFormData = new FormData();
+
+                const updatePayload = {
+                    petId: editMod.petId,
+                    name: petData.name,
+                    species: petData.species,
+                    birthDate: petData.birthDate,
+                    introduction: petData.introduction,
+                    gender: petData.gender,
+                    weight: petData.weight,
+                    bodyType: petData.bodyType
+                };
+                updateFormData.append('data', new Blob([JSON.stringify(updatePayload)], { type: 'application/json' }));
+
+// 새 이미지가 있으면 파일 전송, 없으면 기존 이미지 URL 전송
+                if (fileInput.files.length > 0) {
+                    updateFormData.append('petImage', fileInput.files[0]);
+                } else {
+                    // 기존 이미지 경로 유지 (서버에서 파일 없으면 기존 값 유지하도록)
+                    updateFormData.append('existingImageUrl', editMod.imageUrl || '');
+                }
+
                 const res = await fetch('/my/pet/update', {
-                    method: 'POST', // 혹은 POST
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        petId: editMod.petId, // 기존 애완동물 ID
-                        ...petData
-                    })
+                    method: 'POST',
+                    body: updateFormData
                 });
                 const result = await res.json();
                 if (result.result === 'SUCCESS') {
@@ -2855,12 +2875,28 @@ if (petInformation) {
             // 수정모드는 resetAllDialog 호출 안함
             currentStep = 1;
         } else {
+            const formData = new FormData();
+
+            // petData에서 imageUrl 제거하고 나머지 필드만 JSON으로
+            const petPayload = {
+                name: petData.name,
+                species: petData.species,
+                birthDate: petData.birthDate,
+                introduction: petData.introduction,
+                gender: petData.gender,
+                weight: petData.weight,
+                bodyType: petData.bodyType
+            };
+            formData.append('data', new Blob([JSON.stringify(petPayload)], { type: 'application/json' }));
+
+            // 이미지 파일이 있으면 추가
+            if (fileInput.files.length > 0) {
+                formData.append('petImage', fileInput.files[0]);
+            }
+
             const res = await fetch("/my/pet/registration", {
                 method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(petData)
+                body: formData  // Content-Type 헤더 설정 X
             });
             const data = await res.json();
             console.log(data)
@@ -3547,3 +3583,206 @@ const paymentList = document.querySelector('.payment-list');
 if (paymentList?.querySelector('.empty-orders')) {
     paymentList.classList.add('empty-mode');
 }
+
+
+if (personalInformation) {
+    // region 마일리지 내역
+    const pointBtn = personalInformation.querySelector('.point-history');
+    const pointModal = document.getElementById('point-modal');
+    const pointModalCloseBtn = pointModal.querySelector('.close-btn');
+    pointBtn.addEventListener('click', () => {
+        pointModal.classList.add('visible');
+        pointModal.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        })
+        pointModal.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.remove('active');
+        })
+        pointModal.querySelectorAll('.filter-chip').forEach(filter => {
+            filter.classList.remove('active');
+        })
+        pointModal.querySelector('.tab-btn').classList.add('active');
+        pointModal.querySelector('.tab-panel').classList.add('active');
+        pointModal.querySelector('.filter-chip').classList.add('active');
+
+        filterHistoryItems(pointModal, undefined); // 전체로 초기화
+    });
+
+    pointModalCloseBtn.addEventListener('click', () => {
+        pointModal.classList.remove('visible');
+    });
+
+// 탭 전환 공통 함수
+    function switchTab(clickedBtn) {
+        const modalBox = clickedBtn.closest('.modal-box');
+        const targetId = clickedBtn.dataset.target;
+
+        // 탭 버튼 active 전환
+        modalBox.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        clickedBtn.classList.add('active');
+
+        // 탭 패널 active 전환
+        modalBox.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        document.getElementById(targetId).classList.add('active');
+    }
+
+// 필터 칩 전환
+    function switchChip(clickedChip) {
+        const filterBar = clickedChip.closest('.filter-bar');
+        filterBar.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+        clickedChip.classList.add('active');
+
+        const months = clickedChip.dataset.months; // 전체면 undefined
+        filterHistoryItems(pointModal, months);
+    }
+
+// 필터 가져오기
+    function filterHistoryItems(modal, months) {
+        modal.querySelectorAll('.history-item').forEach(item => {
+            if (!months) {
+                // 전체 - 다 보여주기
+                item.style.display = '';
+                return;
+            }
+
+            const dateText = item.querySelector('.date').textContent.trim();
+            // "2025-06-12 / 14:30:00" 형식에서 날짜만 파싱
+            const itemDate = new Date(dateText.split(' | ')[0]);
+            const cutoff = new Date();
+            cutoff.setMonth(cutoff.getMonth() - Number(months));
+
+            item.style.display = itemDate >= cutoff ? '' : 'none';
+        });
+    }
+
+// 이벤트 등록
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn));
+    });
+
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => switchChip(chip));
+    });
+// endregion
+
+
+// region 쿠폰 내역
+    const couponBtn = personalInformation.querySelector('.coupon-list');
+    const couponModal = document.getElementById('coupon-modal');
+    const couponModalCloseBtn = couponModal.querySelector('.close-btn');
+
+    couponBtn.addEventListener('click', () => {
+        couponModal.classList.add('visible');
+    })
+
+    couponModalCloseBtn.addEventListener('click', () => {
+        couponModal.classList.remove('visible');
+    })
+// endregion
+
+
+    // region 예약취소
+    const reservationMessage = document.getElementById('reservationMessage');
+    const reservationMessageMessageTitle = document.createElement('span');
+    const reservationMessageMessageText = document.createElement('span');
+    const reservationMessageYesButton = reservationMessage.querySelector(':scope > .button-wrapper > .yes');
+    const reservationMessageNoButton = reservationMessage.querySelector(':scope > .button-wrapper > .no');
+
+    reservationMessageMessageTitle.classList.add('title');
+    reservationMessageMessageText.classList.add('text');
+    reservationMessageMessageTitle.innerText = '알림';
+    reservationMessage.prepend(reservationMessageMessageTitle, reservationMessageMessageText);
+
+
+    let cancelReservationId = null;
+
+    function showReservationMessage(text) {
+        reservationMessage.classList.add('visible');
+        reservationMessageMessageText.innerText = text;
+    }
+
+    reservationMessageNoButton.addEventListener('click', () => {
+        reservationMessage.classList.remove('visible');
+        cancelReservationId = null;
+    });
+
+
+
+
+    const reservationCards = reservationInformation.querySelectorAll('.reservation-card');
+    reservationCards.forEach(card => {
+        if (!card) {
+            return;
+        }
+        const cancelBtn = card.querySelector('.cancel-btn');
+        if (!cancelBtn) {
+            return;
+        }
+        cancelBtn.addEventListener('click', () => {
+            const reservationId = card.dataset.reservationId;
+            if (!reservationId) {
+                return;
+            }
+            cancelReservationId = reservationId;
+            showReservationMessage('정말로 예약을 취소하시겠습니까?');
+        });
+
+    });
+
+    reservationMessageYesButton.addEventListener('click', () => {
+        if (!cancelReservationId) {
+            return;
+        }
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        formData.append('reservationId', cancelReservationId);
+        xhr.onreadystatechange = () => {
+            if(xhr.readyState !== XMLHttpRequest.DONE){
+                return;
+            }
+            if(xhr.status < 200 || xhr.status >= 400){
+
+                return;
+            }
+            const response = JSON.parse(xhr.responseText);
+            switch (response.result) {
+                case 'FAILURE':
+                    showMessage('예약 취소에 실패하였습니다. 다시 시도해주세요.');
+                    break;
+                case 'FAILURE_SESSION_EXPIRED':
+                    showMessage('로그인을 해주세요.', () => {
+                        location.href = '/user/login';
+                    });
+                    break;
+                case 'SUCCESS':
+                    location.href = '/my?menu=' + getCurrentMenuIndex();
+                    break;
+                default:
+                    showMessage('알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도해주세요.');
+            }
+            reservationMessage.classList.remove('visible');
+            cancelReservationId = null;
+
+        };
+        xhr.open('POST', '/my/reservation/cancel');
+        xhr.send(formData);
+    })
+    // endregion
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

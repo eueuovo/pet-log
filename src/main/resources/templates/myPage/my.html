@@ -647,6 +647,137 @@
         </div>
     </div>
 </div>
+<!-- ════════════════════════════════
+     마일리지 모달
+════════════════════════════════ -->
+<div class="point-modal" id="point-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span class="modal-title">마일리지<span>(마일리지는 적립일 기준 1년까지 유효합니다.)</span></span>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="summary-card">
+            <div>
+                <div class="title">보유 마일리지</div>
+                <div class="amount" th:text="${#numbers.formatInteger(personalUser.getShopPoint(), 0, 'COMMA')} + 'P'"></div>
+            </div>
+        </div>
+        <div class="tab-bar">
+            <button type="button" class="tab-btn active" data-target="point-earn">적립 내역</button>
+            <button type="button" class="tab-btn" data-target="point-use">사용 내역</button>
+        </div>
+        <div class="filter-bar">
+            <button type="button" class="filter-chip active">전체</button>
+            <button type="button" class="filter-chip" data-months="1">1개월</button>
+            <button type="button" class="filter-chip" data-months="3">3개월</button>
+            <button type="button" class="filter-chip" data-months="6">6개월</button>
+        </div>
+        <div class="modal-body">
+            <!-- 적립 내역 -->
+            <div class="tab-panel active" id="point-earn">
+                <div class="history-list">
+                    <div class="history-item" th:each="pointEarn : ${allPointEarn}" th:if="${pointEarn != null}">
+                        <div class="left">
+                            <span class="desc" th:text="${pointEarn.getDescription()}"></span>
+                            <span class="date" th:text="${#temporals.format(pointEarn.getCreatedAt(), 'yyyy-MM-dd | HH:mm:ss')}"></span>
+                        </div>
+                        <div class="right">
+                            <span class="point-val earn" th:text="'+' + ${pointEarn.getChange()} + ' P'"></span>
+                        </div>
+                    </div>
+                    <div class="history-item empty" th:if="${#lists.isEmpty(allPointEarn)}">내역이 없습니다.</div>
+                </div>
+            </div>
+            <!-- 사용 내역 -->
+            <div class="tab-panel" id="point-use">
+                <div class="history-list">
+                    <div class="history-item" th:each="pointUse : ${allPointUse}" th:if="${pointUse != null}">
+                        <div class="left">
+                            <span class="desc" th:text="${pointUse.getDescription()}"></span>
+                            <span class="date" th:text="${#temporals.format(pointUse.getCreatedAt(), 'yyyy-MM-dd | HH:mm:ss')}"></span>
+                        </div>
+                        <div class="right">
+                            <span class="point-val use" th:text="${pointUse.getChange()} + ' P'">-500 P</span>
+                            <!--<span class="balance">잔액 11,700 P</span>-->
+                        </div>
+                    </div>
+                    <div class="history-item empty" th:if="${#lists.isEmpty(allPointUse)}">내역이 없습니다.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ════════════════════════════════
+     쿠폰 모달
+════════════════════════════════ -->
+<div class="coupon-modal" id="coupon-modal" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span class="modal-title">쿠폰</span>
+            <button type="button" class="close-btn">
+                <img class="image" src="/shop/assets/images/cancelButton.png" alt="">
+            </button>
+        </div>
+        <div class="summary-card">
+            <div>
+                <div class="label">사용 가능한 쿠폰</div>
+                <div class="amount" th:text="${availableCoupons.size()} + '장'"></div>
+            </div>
+        </div>
+        <div class="tab-bar">
+            <button type="button" class="tab-btn active" data-target="coupon-available">보유 쿠폰</button>
+            <button type="button" class="tab-btn" data-target="coupon-used">사용 / 만료</button>
+        </div>
+        <div class="modal-body">
+            <!-- 보유 쿠폰 -->
+            <div class="tab-panel active" id="coupon-available">
+                <div class="coupon-list">
+                    <div class="coupon-card" th:each="coupon : ${availableCoupons}" th:if="${coupon != null}">
+                        <div class="coupon-left">
+                            <div class="discount" th:text="${coupon.discountType == 'PERCENT'} ? (${coupon.discountValue} + '%') : ${#numbers.formatInteger(coupon.discountValue, 0, 'COMMA')}"></div>
+                            <div class="unit">할인</div>
+                        </div>
+                        <div class="coupon-right">
+                            <div class="name" th:text="${coupon.name}"></div>
+                            <div class="condition" th:if="${coupon['minOrderAmount'] != 0}" th:text="${coupon['maxDiscountAmount'] == null ? #numbers.formatInteger(coupon['minOrderAmount'], 0, 'COMMA') + '원 이상 구매 시' : #numbers.formatInteger(coupon['minOrderAmount'], 0, 'COMMA') + '원 이상 구매 시 (최대 ' + #numbers.formatInteger(coupon['maxDiscountAmount'], 0, 'COMMA') + '원까지 적용)'}">
+                            </div>
+                            <div class="expire" th:if="${coupon['endDate'] != null}" th:text="'~ ' + ${#dates.format(coupon.endDate, 'yyyy.MM.dd')} + ' 까지'"></div>
+                        </div>
+                        <span class="coupon-badge available">사용가능</span>
+                    </div>
+                    <div class="coupon-card empty" th:if="${#lists.isEmpty(availableCoupons)}">내역이 없습니다.</div>
+                </div>
+            </div>
+            <!-- 사용/만료 쿠폰 -->
+            <div class="tab-panel" id="coupon-used">
+                <div class="coupon-list">
+                    <div class="coupon-card" th:each="usedCoupon : ${usedCoupons}" th:if="${usedCoupon != null}" th:classappend="${usedCoupon.status == 'USED'} ? 'used' : 'expired'">
+                        <div class="coupon-left gray">
+                            <div class="discount"  th:text="${usedCoupon.discountType == 'PERCENT'} ? (${usedCoupon.discountValue} + '%') : ${#numbers.formatInteger(usedCoupon.discountValue, 0, 'COMMA')}"></div>
+                            <div class="unit">할인</div>
+                        </div>
+                        <div class="coupon-right">
+                            <div class="name" th:text="${usedCoupon.name}"></div>
+                            <div class="condition"  th:if="${usedCoupon.minOrderAmount != 0}" th:text="${#numbers.formatInteger(usedCoupon.minOrderAmount, 0, 'COMMA')} + '원 이상 구매 시'"></div>
+                            <div class="expire"
+                                 th:if="${usedCoupon['status'] == 'USED'}"
+                                 th:text="'사용일 ' + ${#dates.format(usedCoupon['usedAt'], 'yyyy.MM.dd')}">
+                            </div>
+                            <div class="expire"
+                                 th:if="${usedCoupon['status'] != 'USED'}"
+                                 th:text="'만료일 ' + ${#dates.format(usedCoupon['endDate'], 'yyyy.MM.dd')}">
+                            </div>
+                        </div>
+                        <span class="coupon-badge" th:classappend="${usedCoupon.status == 'USED'} ? 'used-badge' : 'expired-badge'" th:text="${usedCoupon.status == 'USED'} ? '사용완료' : '기간만료'"></span>
+                    </div>
+                    <div class="coupon-card empty" th:if="${#lists.isEmpty(usedCoupons)}">내역이 없습니다.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="dialog dialog-first" id="petFirst" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
     <div class="dialogCover"></div>
     <button class="cancel" type="button">
@@ -817,6 +948,12 @@
         <button type="button" class="delete">삭제</button>
     </div>
 </div>
+<div class="reservationMessage" id="reservationMessage">
+    <div class="button-wrapper">
+        <button type="button" class="no">취소</button>
+        <button type="button" class="yes">확인</button>
+    </div>
+</div>
 <div class="myPage-wrapper" id="myPage">
     <div class="sidebar">
         <div class="sidebar-header">마이페이지</div>
@@ -830,10 +967,10 @@
             <li class="menu" th:if="${sessionUser.getUserType() == 'BUSINESS'}">
                 <span>가게 관리</span>
             </li>
-            <li class="menu">
+            <li class="menu" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
                 <span>예약 조회</span>
             </li>
-            <li class="menu">
+            <li class="menu" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
                 <span>쇼핑 내역</span>
             </li>
         </ul>
@@ -855,18 +992,18 @@
                         </div>
                     </div>
 
-                    <div class="right-wrapper">
+                    <div class="right-wrapper" th:if="${sessionUser.getUserType() == 'PERSONAL'}">
                         <div class="point-wrapper">
                             <div class="text-wrapper">
                                 <span class="title">마일리지</span>
-                                <span class="point" th:text="${#numbers.formatInteger(personalUser.getShopPoint(), 0, 'COMMA')} + '원'"></span>
+                                <span class="point" th:text="${#numbers.formatInteger(personalUser.getShopPoint(), 0, 'COMMA')} + 'P'"></span>
                             </div>
                             <button type="button" class="point-history">내역</button>
                         </div>
                         <div class="coupon-wrapper">
                             <div class="text-wrapper">
                                 <span class="title">쿠폰</span>
-                                <span class="coupon">1장</span>
+                                <span class="coupon" th:text="${availableCoupons.size()} + '장'"></span>
                             </div>
                             <button type="button" class="coupon-list">쿠폰</button>
                         </div>
@@ -949,7 +1086,7 @@
                         <img class="image" th:src="${primaryPet != null} ? ${primaryPet.imageUrl} : '/user/assets/images/defaultPetImage.png'"
                              alt="#">
                     </div>
-                    <div class="profile-text"></span>
+                    <div class="profile-text">
                         <span class="companyName" th:text="${businessUser.getCompanyName()}"></span>
                         <span class="email" th:text="${user.getEmail()}"></span>
                     </div>
@@ -990,7 +1127,7 @@
                         <div class="text">
                             <span class="label">회사 주소</span>
                             <span class="value"
-                                  th:text="'[' + ${businessAddress.getPostalCode()} + '] ' + ${businessAddress.getAddressPrimary()} + (${businessAddress.getAddressSecondary() != null} ? (' ,' + ${businessAddress.getAddressSecondary()}) : '')"></span>
+                                  th:text="${businessAddress.getAddressPrimary()} + (${businessAddress.getAddressSecondary() != null} ? (' ,' + ${businessAddress.getAddressSecondary()}) : '')"></span>
                         </div>
                         <button class="small-button companyAddress-open-button">수정</button>
                     </div>
@@ -1119,7 +1256,8 @@
                         (${reservation.category == 'park'} ? '공원' :
                         (${reservation.category == 'camp'} ? '캠핑장' : '')))))">동물병원</span>
                         </div>
-                        <span class="status complete"></span>
+                        <span class="status"
+                              th:classappend="${reservation.canceled} ? ' canceled' : ' complete'"></span>
                     </div>
                     <div class="date-time">
                         <div class="date-box">
@@ -1148,7 +1286,7 @@
                         </p>
                     </div>
                     <div class="card-footer">
-                        <button class="cancel-btn">예약취소</button>
+                        <button class="cancel-btn" th:if="${!reservation.canceled}">예약취소</button>
                     </div>
                 </li>
             </ul>
