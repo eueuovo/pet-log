@@ -174,7 +174,6 @@ function renderProducts(selector, products) {
     if (!container) return;
 
     container.innerHTML = products.map(product => {
-        const discountedPrice = product.price * (100 - product.discountRate) / 100;
         const thumbnail = product.productImages?.find(img => img.isThumbnail)
             || product.productImages?.[0];
         const imageUrl = thumbnail?.imageUrl || '/shop/assets/images/default-product.png';
@@ -186,15 +185,15 @@ function renderProducts(selector, products) {
             </div>
             <div class="brand">${product.brand}</div>
             <div class="name">${product.name}</div>
-            ${product.discountRate > 0 ? `
+            ${product.discountPrice > 0 ? `
             <div class="discount">
                 <div class="percent">${product.discountRate}%</div>
                 <div class="number">${product.price.toLocaleString()}원</div>
             </div>
-            <div class="price">${discountedPrice.toLocaleString()}원</div>` :
+            <div class="price">${product.discountPrice.toLocaleString()}원</div>` :
             `<div class="price">${product.price.toLocaleString()}원</div>`}
             </a>
-`;
+        `;
     }).join('');
 }
 
@@ -219,6 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const category = e.target.value;
             loadBestProducts(category);
         });
+    });
+
+    // 더보기 버튼 추가
+    document.querySelector('.best-product .more-product')?.addEventListener('click', () => {
+        location.href = '/shop/list?sort=popular';
+    });
+
+    document.querySelector('.new-product .more-product')?.addEventListener('click', () => {
+        location.href = '/shop/list?sort=latest';
     });
 });
 

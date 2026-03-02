@@ -24,7 +24,7 @@ public class ProductController {
     public List<ProductEntity> getNewProducts(
             @RequestParam(required = false) String petType,
             @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "15") int limit
     ) {
         Integer subCategoryId = getSubCategoryId(category);
         return productService.getNewProducts(petType, subCategoryId, limit);
@@ -35,7 +35,7 @@ public class ProductController {
     public List<ProductEntity> getBestProducts(
             @RequestParam(required = false) String petType,
             @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "15") int limit,
             @RequestParam(required = false) String brand
     ) {
         Integer subCategoryId = getSubCategoryId(category);

@@ -21,6 +21,7 @@ const params = {
     categoryId: section?.dataset.categoryId || '',
     subCategoryId: section?.dataset.subCategoryId || '',
     keyword: section?.dataset.keyword || '',
+    sort: new URLSearchParams(location.search).get('sort') || '',
 };
 
 function buildUrl() {
@@ -38,6 +39,7 @@ function buildUrl() {
     if (params.category) query.set('category', params.category);
     if (params.categoryId) query.set('categoryId', params.categoryId);
     if (params.subCategoryId) query.set('subCategoryId', params.subCategoryId);
+    if (params.sort) query.set('sort', params.sort);
     query.set('page', page);
     query.set('size', 20);
     return `/shop/products?${query.toString()}`;
@@ -55,15 +57,14 @@ function createItem(product) {
         : '/shop/assets/images/default-product.png';
 
     let priceHtml = '';
-    if (product.discountRate > 0) {
-        const discounted = Math.floor(product.price * (100 - product.discountRate) / 100);
+    if (product.discountPrice > 0) {
         priceHtml = `
-            <div class="discount">
-                <span class="percent">${product.discountRate}%</span>
-                <span class="number">${product.price.toLocaleString()}원</span>
-            </div>
-            <div class="price">${discounted.toLocaleString()}원</div>
-        `;
+        <div class="discount">
+            <span class="percent">${product.discountRate}%</span>
+            <span class="number">${product.price.toLocaleString()}원</span>
+        </div>
+        <div class="price">${product.discountPrice.toLocaleString()}원</div>
+    `;
     } else {
         priceHtml = `<div class="price">${product.price.toLocaleString()}원</div>`;
     }
@@ -121,4 +122,18 @@ document.addEventListener('click', function(e) {
     if (btn && btn.dataset.url) {
         location.href = btn.dataset.url;
     }
+});
+
+// 리스트 정렬
+const sortSelect = document.getElementById('sortSelect');
+
+// 현재 sort 파라미터로 select 초기화
+const currentSort = new URLSearchParams(location.search).get('sort') || '';
+if (currentSort) sortSelect.value = currentSort;
+
+sortSelect.addEventListener('change', function() {
+    const query = new URLSearchParams(location.search);
+    query.set('sort', this.value);
+    query.delete('page');
+    location.href = `/shop/list?${query.toString()}`;
 });

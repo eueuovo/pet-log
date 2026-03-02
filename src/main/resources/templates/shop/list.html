@@ -38,6 +38,15 @@
                             th:data-url="@{/shop/list(petType=${petType},categoryId=${cat.id},category=${cat.displayText})}">
                     </button>
                 </th:block>
+                <div class="sort-filter">
+                    <select id="sortSelect">
+                        <option value="popular">판매순</option>
+                        <option value="review">리뷰많은순</option>
+                        <option value="price_low">낮은가격순</option>
+                        <option value="price_high">높은가격순</option>
+                        <option value="latest">최신순</option>
+                    </select>
+                </div>
             </div>
 
             <!-- 소분류 (슬라이드) -->
@@ -78,9 +87,9 @@
                 <th:block th:if="${product.discountRate > 0}">
                     <div class="discount">
                         <span class="percent" th:text="${product.discountRate + '%'}">10%</span>
-                        <span class="number" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}">25,000원</span>
+                        <span class="number" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}"></span>
                     </div>
-                    <div class="price" th:text="${#numbers.formatInteger(product.price * (100 - product.discountRate) / 100, 0, 'COMMA') + '원'}">22,500원</div>
+                    <div class="price" th:text="${#numbers.formatInteger(product.discountPrice, 0, 'COMMA') + '원'}"></div>
                 </th:block>
 
                 <!-- 할인이 없는 경우 -->

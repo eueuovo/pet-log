@@ -81,6 +81,17 @@
             color: #fcb727;
             border-bottom: 2px solid #fcb727;
             font-weight: 700; }
+        #list > .product-section > .category-wrapper > .main-category > .sort-filter {
+          margin-left: auto;
+          padding-right: 0.5rem; }
+          #list > .product-section > .category-wrapper > .main-category > .sort-filter > select {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.3rem;
+            border: 1px solid #e0e0e0;
+            background-color: #FFFFFF;
+            cursor: pointer; }
       #list > .product-section > .category-wrapper > .sub-category {
         align-items: center;
         display: flex;
