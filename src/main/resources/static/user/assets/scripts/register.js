@@ -1528,7 +1528,8 @@ function loadPetDialog(petData) {
 
 $registerContainer.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (currentStep !== "4") {
+    console.log("클릭됨");
+    if (currentStep !== 4) {
         e.preventDefault();
         return;
     }
