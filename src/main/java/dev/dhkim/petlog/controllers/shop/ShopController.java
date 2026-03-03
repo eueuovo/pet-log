@@ -122,4 +122,12 @@ public class ShopController {
 
         return modelAndView;
     }
+
+    // 신규 쿠폰 발급 페이지
+    @RequestMapping(value = "welcome", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getWelcome (ModelAndView modelAndView) {
+        modelAndView.setViewName("shop/welcome");
+
+        return modelAndView;
+    }
 }
