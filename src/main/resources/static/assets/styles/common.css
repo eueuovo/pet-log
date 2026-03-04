@@ -268,6 +268,24 @@ textarea[data-object=input][data-resize=both] {
   flex-shrink: 1;
 }
 
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff") format("woff");
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff");
+  font-weight: 700;
+  font-display: swap;
+}
 * {
   box-sizing: border-box;
 }
@@ -475,7 +493,7 @@ ol, ul {
   width: 10rem;
   height: 100vh;
   background: #A4DDB0;
-  padding: 6rem 1rem 2rem;
+  padding: 3rem 1rem 2rem;
   transition: right 0.3s ease;
   z-index: 90;
 }
@@ -506,16 +524,23 @@ ol, ul {
 }
 #topNavigator > .mobile-menu > .nav-caption {
   width: 100%;
+  padding-top: 1.5rem;
   color: white;
   font-size: 1.75rem;
   font-weight: 400;
   text-align: center;
 }
-#topNavigator > .mobile-menu > .nav-caption::before, #topNavigator > .mobile-menu > .nav-caption::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background-color: white;
+#topNavigator > .mobile-menu > .nav-caption.user {
+  border-top: 0.0625rem solid #ffffff;
+}
+#topNavigator > .mobile-menu > .nav-caption {
+  /*      &::before,
+        &::after {
+          content: "";
+          flex: 1;
+          height: 1px;
+          background-color: white;
+        }*/
 }
 #topNavigator > .mobile-menu > .nav-category,
 #topNavigator > .mobile-menu > .nav-user {
@@ -540,6 +565,8 @@ ol, ul {
   color: white;
   font-size: 1.25rem;
   text-decoration: none;
+  font-family: "GMarketSans";
+  font-weight: 500;
 }
 
 @media (max-width: 1024px) {
