@@ -44,22 +44,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!targetUserId) return;
 
         const currentlyFollowing = btn.classList.contains('following');
-
         try {
-            const res = await fetch(`/api/follow/toggle?targetUserId=${targetUserId}`, {
+            const res = await fetch(`/api/feed/follow/${targetUserId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
             });
             const result = await res.json();
-
-            if (result === true) {
-                btn.classList.add('following');
-                btn.classList.remove('follow');
-                btn.textContent = '팔로잉';
-            } else if (result === false) {
-                btn.classList.remove('following');
-                btn.classList.add('follow');
-                btn.textContent = '팔로우';
+            if (result.result === 'SUCCESS') {
+                if (result.following === true) {
+                    btn.classList.add('following');
+                    btn.classList.remove('follow');
+                    btn.textContent = '팔로잉';
+                } else if (result.following === false) {
+                    btn.classList.remove('following');
+                    btn.classList.add('follow');
+                    btn.textContent = '팔로우';
+                }
             }
 
         } catch (err) {
@@ -80,9 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================== 친구 클릭 ====================
     if (friendContent && container) {
         const friendList = friendContent.querySelector('.friend-list');
-/*        if (!friendList) {
+       if (!friendList) {
             return;
-        }*/
+        }
 
         friendList.addEventListener('click', (e) => {
             const item = e.target.closest('.item-wrapper');

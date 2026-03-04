@@ -1030,11 +1030,11 @@ function renderFriendList(friends) {
     const listEl = document.getElementById('friendList');
     if (!listEl) return;
     listEl.innerHTML = '';
-
     if (!friends || friends.length === 0) {
         listEl.innerHTML = '<li class="empty">주변에 친구가 없습니다.</li>';
         return;
     }
+
 
     friends.forEach(friend => {
         const li = document.createElement('li');
@@ -1043,7 +1043,6 @@ function renderFriendList(friends) {
         const genderText =
             friend.gender === 'MALE' ? '남아' :
              friend.gender === 'FEMALE' ? '여아' : '';
-
         li.innerHTML = `
             <div class="item-wrapper"
                  data-user-id="${friend.userId}"
@@ -1057,8 +1056,8 @@ function renderFriendList(friends) {
                     <div class="species">${friend.species ?? '정보 없음'}</div>
                     <div class="distance">📍 ${Number(friend.distance).toFixed(1)}km</div>
                 </div>
-                <button class="button ${friend.isFollowing ? 'following' : 'follow'}" data-user-id="${friend.userId}">
-                    ${friend.isFollowing ? '팔로잉' : '팔로우'}
+                <button class="button ${friend.following ? 'following' : 'follow'}" data-user-id="${friend.userId}">
+                    ${friend.following ? '팔로잉' : '팔로우'}
                 </button>
             </div>
         `;
