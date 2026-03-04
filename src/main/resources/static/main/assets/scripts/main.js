@@ -97,6 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.dataset.openId = '';
                 return;
             }
+            // 유저 닉네임 가져옴
+            const nickname = item.querySelector('.nickname').textContent || '무명';
 
             // 펫 이름을 가져옴 (data-pet-name)
             const petName = item.dataset.petName || '이름 없음';
@@ -121,7 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="friend description">
                 <button type="button" class="close-btn">X</button>
                 <div class="text-wrapper">
-                    <div class="image"><img src="${image}"></div>
+                    <div class="detail-image">
+                        <a href="/feed/profile/${nickname}"><img src="${image}"></a>
+                    </div>
                     <div class="caption-wrapper">
                         <div><strong>펫 이름:</strong> ${petName}</div>
                         <div><strong>타입:</strong> ${species}</div>
