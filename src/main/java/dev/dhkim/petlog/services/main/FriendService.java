@@ -3,6 +3,7 @@ package dev.dhkim.petlog.services.main;
 import dev.dhkim.petlog.dto.main.FriendListDto;
 import dev.dhkim.petlog.dto.user.PetDto;
 import dev.dhkim.petlog.entities.user.AddressEntity;
+import dev.dhkim.petlog.mappers.main.AddressMapper;
 import dev.dhkim.petlog.mappers.main.FriendMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 public class FriendService {
 
     private final FriendMapper friendMapper;
+    private final AddressMapper addressMapper;
     private final KakaoGeoCodingService kakaoGeoCodingService;
 
     //** 내 펫 리스트(친구인 사람만 팔로우 ?) 조회 *//*
@@ -35,7 +37,7 @@ public class FriendService {
         if (myLat == 0.0 || myLng == 0.0) {
             System.out.println("🔍 [INFO] 좌표가 0입니다. DB에서 내 기본 주소를 조회합니다.");
             // address 테이블에서 유저의 기본 좌표를 가져오는 가상의 메서드
-            AddressEntity myAddr = friendMapper.findDefaultByUserId(userId);
+            AddressEntity myAddr = addressMapper.findDefaultByUserId(userId);
             if (myAddr != null) {
                 myLat = myAddr.getLat();
                 myLng = myAddr.getLng();
@@ -72,7 +74,7 @@ public class FriendService {
     public AddressEntity getOrCreateAddressWithLatLng(Integer userId) {
         if (userId == null) return null;
 
-        AddressEntity address = friendMapper.findDefaultByUserId(userId);
+        AddressEntity address = addressMapper.findDefaultByUserId(userId);
 
         if (address == null) {
             // 기본 주소 없으면 테스트용 빈 주소 생성
@@ -83,7 +85,7 @@ public class FriendService {
             newAddress.setLat(0.0);
             newAddress.setLng(0.0);
 
-            friendMapper.insertAddress(newAddress);
+            addressMapper.insertAddress(newAddress);
             return newAddress;
         }
 
@@ -98,7 +100,7 @@ public class FriendService {
             address.setLat(latLng[0]);
             address.setLng(latLng[1]);
 
-            friendMapper.updateAddressLatLng(address.getAddressId(), latLng[0], latLng[1]);
+            addressMapper.updateAddressLatLng(address.getAddressId(), latLng[0], latLng[1]);
         }
 
         return address;
@@ -106,7 +108,7 @@ public class FriendService {
 
     /** 다른 회원들의 lat/lng 없으면 채우기 다른 사용자들 중,type = map 주소만*/
     private void ensureAllOtherUsersHaveLatLng(Integer currentUserId) {
-        List<AddressEntity> addresses = friendMapper.selectAllOtherUsersMapAddresses(currentUserId);
+        List<AddressEntity> addresses = addressMapper.selectAllOtherUsersMapAddresses(currentUserId);
         for (AddressEntity addr : addresses) {
             if (addr.getLat() == null || addr.getLng() == null || addr.getLat() == 0.0 || addr.getLng() == 0.0) {
                 // primary + secondary 합쳐서 보내면 더 정확
@@ -124,7 +126,7 @@ public class FriendService {
                 addr.setLng(latLng[1]);
 
                 // DB에 반영
-                friendMapper.updateAddressLatLng(addr.getAddressId(), latLng[0], latLng[1]);
+                addressMapper.updateAddressLatLng(addr.getAddressId(), latLng[0], latLng[1]);
             }
         }
     }
