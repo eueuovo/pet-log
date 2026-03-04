@@ -448,6 +448,7 @@ body:has(.message.visible) .modal-cover {
           @include flex(column, flex-start, flex-start, 0.3rem);
           min-width: 0;
           width: 100%;
+          flex: 1;
 
           > .product-name {
             font-size: 1rem;

@@ -170,10 +170,6 @@ function initMap() {
 
     getCurrentLocation();
     bindSearch();
-// ✅ 주석 제거하고 아래로 교체
-    window.addEventListener('resize', () => {
-        if (map) map.relayout();
-    });
 
     window.addEventListener('pageshow', () => {
         if (map) {
@@ -195,9 +191,7 @@ function initMap() {
 
     // 화면 리사이즈 시에도 relayout
     window.addEventListener('resize', () => {
-        if (map) {
-            map.relayout();
-        }
+        if (map) {map.relayout();}
     });
 
 
