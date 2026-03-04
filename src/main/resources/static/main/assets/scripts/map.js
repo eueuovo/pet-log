@@ -2,6 +2,8 @@ let map;
 let geocoder;
 let currentInfo = null;
 
+let isPanning = false;
+
 //현재 마커 + 인포
 let currentLocationMarker = null;
 let currentLocationInfo = null;
@@ -175,6 +177,22 @@ function initMap() {
         const center = map.getCenter();
         currentLat = center.getLat();
         currentLng = center.getLng();
+    });
+
+    kakao.maps.event.addListener(map, 'idle', () => {
+        const center = map.getCenter();
+        currentLat = center.getLat();
+        currentLng = center.getLng();
+
+        if (isPanning) {
+            isPanning = false;
+            return;
+        }
+
+        if (activeCategory) {
+            clearAllCategories();
+            showCategory(activeCategory);
+        }
     });
 
     window.addEventListener('pageshow', () => {
@@ -409,6 +427,8 @@ async function handleCategoryClick(category) {
         clearCategory(category);
         btn?.classList.remove('active');
         activeCategory = null;
+        renderStoreList([]);
+        switchView('list');
         return;
     }
 
@@ -420,6 +440,8 @@ async function handleCategoryClick(category) {
     btn?.classList.add('active');
 
     activeCategory = category;
+
+    switchView('list');
 
     clearAllCategories();
     await showCategory(category);
@@ -505,6 +527,8 @@ async function showCategory(category) {
 }
 
 function renderPlaces(list, category) {
+    const centerLat = currentLat;
+    const centerLng = currentLng;
 
     const bounds = new kakao.maps.LatLngBounds();
     const visiblePlaces = [];
@@ -514,13 +538,12 @@ function renderPlaces(list, category) {
         if (!data || !data.lat || !data.lng) return;
 
         let distanceKm = null;
-        if (currentLat && currentLng) {
-            distanceKm = getDistanceKm(
-                currentLat,
-                currentLng,
-                data.lat,
-                data.lng
-            );
+        if (centerLat && centerLng) {
+            distanceKm = getDistanceKm(centerLat, centerLng, data.lat, data.lng);
+            const radiusMap = { hospital: 3, salon: 3, cafe: 3, school: 3, park: 3, camp: 15 };
+            const maxDistance = radiusMap[category] ?? 3;
+            if (distanceKm > maxDistance) return;
+        }
             const radiusMap = {
                 hospital: 3,
                 salon: 3,
@@ -532,7 +555,7 @@ function renderPlaces(list, category) {
             const maxDistance = radiusMap[category] ?? 3;
 
             if (distanceKm > maxDistance) return;
-        }
+
 
         const position = new kakao.maps.LatLng(data.lat, data.lng);
         const { marker, info } = createMarker({ position, ...data });
@@ -803,7 +826,6 @@ function renderStoreList(places) {
         countEl.textContent = `총 ${places.length}개`;
     }
 
-    // ✅ 추가: 결과 없으면 empty 표시, 있으면 리스트 표시
     if (places.length === 0) {
         emptyEl?.classList.remove('hidden');
         storeListHeader?.classList.add('hidden');
@@ -820,7 +842,6 @@ function renderStoreList(places) {
 
         const li = document.createElement('li');
         li.className = 'item';
-        /*이건 장소 리스트 하나 만드는거  -> 이거클릭하면 디테일 뷰 열림*/
         li.innerHTML = `
             <div class="item-wrapper">
                 <div class="text-wrapper">
@@ -830,16 +851,26 @@ function renderStoreList(places) {
                 </div>
             </div>
         `;
+
         li.addEventListener('click', () => {
+            if (li.classList.contains('active')) {
+                li.classList.remove('active');
+                if (currentInfo) currentInfo.close();
+                switchView('list');
+                return;
+            }
+
             clearActiveList();
             li.classList.add('active');
 
-            // 선택 마커 하나만 남기기
-            selectSingleMarker(place.marker, place.info);
+            isPanning = true;
+            if (currentInfo) currentInfo.close();
+            place.info.open(map, place.marker);
+            currentInfo = place.info;
+            map.panTo(place.marker.getPosition());
 
             switchView('detail', place);
         });
-
 
         listEl.appendChild(li);
     });
