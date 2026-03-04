@@ -2,34 +2,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const friendTab = document.getElementById('friendTab');
     const storeTab = document.getElementById('storeTab');
-    const friendContent = document.querySelector('.friend-tab-content'); // wrapper
+    const friendContent = document.querySelector('.friend-tab-content');
     const storePanel = document.querySelector('.store-panel');
     const container = document.getElementById('descriptionContainer');
 
-    // 서버에서 로그인 여부를 JS로 전달
     const sessionUser = /*[[${sessionUser != null}]]*/ false;
 
     // ==================== 탭 전환 ====================
     if (friendTab && storeTab) {
-
         friendTab.addEventListener('click', () => {
             friendTab.classList.add('active');
             storeTab.classList.remove('active');
-
-            friendContent?.classList.remove('hidden');  // 친구 탭 영역 표시
-            storePanel?.classList.add('hidden');       // 장소 숨김
-
+            friendContent?.classList.remove('hidden');
+            storePanel?.classList.add('hidden');
             container.style.display = "none";
         });
 
         storeTab.addEventListener('click', () => {
             storeTab.classList.add('active');
             friendTab.classList.remove('active');
-
-            friendContent?.classList.add('hidden');    // 친구 탭 영역 숨김
-            storePanel?.classList.remove('hidden');    // 장소 표시
-
+            friendContent?.classList.add('hidden');
+            storePanel?.classList.remove('hidden');
             container.style.display = "none";
+        });
+    }
+
+    // ==================== 카테고리 필터 슬라이드 ====================
+    const categoryFilter = document.getElementById('categoryFilter');
+    const prevBtn = categoryFilter?.querySelector('.front');
+    const nextBtn = categoryFilter?.querySelector('.back');
+    const categoryBtns = categoryFilter?.querySelectorAll('.category-btn');
+
+    const VISIBLE_COUNT = 3; // 한 번에 보이는 개수
+    let currentIndex = 0;
+
+    const updateCategory = () => {
+        categoryBtns.forEach((btn, i) => {
+            if (i >= currentIndex && i < currentIndex + VISIBLE_COUNT) {
+                btn.style.display = '';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+    };
+
+    if (categoryBtns?.length) {
+        updateCategory();
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex -= VISIBLE_COUNT;
+            if (currentIndex < 0) currentIndex = categoryBtns.length - VISIBLE_COUNT;
+            updateCategory();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex += VISIBLE_COUNT;
+            if (currentIndex >= categoryBtns.length) currentIndex = 0;
+            updateCategory();
+        });
+
+        // 터치 슬라이드
+        let touchStartX = 0;
+        categoryFilter.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+        });
+        categoryFilter.addEventListener('touchend', e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) < 30) return;
+            if (diff > 0) {
+                currentIndex += VISIBLE_COUNT;
+                if (currentIndex >= categoryBtns.length) currentIndex = 0;
+            } else {
+                currentIndex -= VISIBLE_COUNT;
+                if (currentIndex < 0) currentIndex = categoryBtns.length - VISIBLE_COUNT;
+            }
+            updateCategory();
         });
     }
 
@@ -44,24 +91,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!targetUserId) return;
 
         const currentlyFollowing = btn.classList.contains('following');
-
         try {
-            const res = await fetch(`/api/follow/toggle?targetUserId=${targetUserId}`, {
+            const res = await fetch(`/api/feed/follow/${targetUserId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
             });
             const result = await res.json();
-
-            if (result === true) {
-                btn.classList.add('following');
-                btn.classList.remove('follow');
-                btn.textContent = '팔로잉';
-            } else if (result === false) {
-                btn.classList.remove('following');
-                btn.classList.add('follow');
-                btn.textContent = '팔로우';
+            if (result.result === 'SUCCESS') {
+                if (result.following === true) {
+                    btn.classList.add('following');
+                    btn.classList.remove('follow');
+                    btn.textContent = '팔로잉';
+                } else if (result.following === false) {
+                    btn.classList.remove('following');
+                    btn.classList.add('follow');
+                    btn.textContent = '팔로우';
+                }
             }
-
         } catch (err) {
             console.error('팔로우 토글 실패', err);
             alert('팔로우 상태 변경에 실패했습니다.');
@@ -80,9 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================== 친구 클릭 ====================
     if (friendContent && container) {
         const friendList = friendContent.querySelector('.friend-list');
-/*        if (!friendList) {
+       if (!friendList) {
             return;
-        }*/
+        }
 
         friendList.addEventListener('click', (e) => {
             const item = e.target.closest('.item-wrapper');
@@ -118,20 +164,20 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             container.innerHTML = `
-            <div class="friend description">
-                <button type="button" class="close-btn">X</button>
-                <div class="text-wrapper">
-                    <div class="image"><img src="${image}"></div>
-                    <div class="caption-wrapper">
-                        <div><strong>펫 이름:</strong> ${petName}</div>
-                        <div><strong>타입:</strong> ${species}</div>
-                        <div><strong>생년월일:</strong> ${birthDate} (${calculateAge(birthDate)}살)</div>
-                        <div><strong>성별:</strong> ${gender}</div>
-                        <div><strong>한줄 소개:</strong> ${introduction}</div>
+                <div class="friend description">
+                    <button type="button" class="close-btn">X</button>
+                    <div class="text-wrapper">
+                        <div class="image"><img src="${image}"></div>
+                        <div class="caption-wrapper">
+                            <div><strong>펫 이름:</strong> ${petName}</div>
+                            <div><strong>타입:</strong> ${species}</div>
+                            <div><strong>생년월일:</strong> ${birthDate} (${calculateAge(birthDate)}살)</div>
+                            <div><strong>성별:</strong> ${gender}</div>
+                            <div><strong>한줄 소개:</strong> ${introduction}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
 
             container.style.display = "block";
             container.dataset.openId = userId;

@@ -170,10 +170,6 @@ function initMap() {
 
     getCurrentLocation();
     bindSearch();
-// ✅ 주석 제거하고 아래로 교체
-    window.addEventListener('resize', () => {
-        if (map) map.relayout();
-    });
 
     window.addEventListener('pageshow', () => {
         if (map) {
@@ -195,9 +191,7 @@ function initMap() {
 
     // 화면 리사이즈 시에도 relayout
     window.addEventListener('resize', () => {
-        if (map) {
-            map.relayout();
-        }
+        if (map) {map.relayout();}
     });
 
 
@@ -388,9 +382,21 @@ function addSingleMarker(lat, lng, title, address) {
 
 async function handleCategoryClick(category) {
 
+    // 카테고리 클릭 시 탭 전환
+    const storeTab = document.getElementById('storeTab');
+    const friendTab = document.getElementById('friendTab');
+    const friendContent = document.querySelector('.friend-tab-content');
+    const storePanel = document.querySelector('.store-panel');
+
+    if (storeTab && friendTab) {
+        storeTab.classList.add('active');
+        friendTab.classList.remove('active');
+        friendContent?.classList.add('hidden');
+        storePanel?.classList.remove('hidden');
+    }
+    //
 
     const btn = document.querySelector(`[data-category="${category}"]`);
-
 
     // 이미 선택된 카테고리면 OFF
     if (activeCategory === category) {
@@ -664,18 +670,18 @@ function getCurrentLocation() {
 
             const latlng = new kakao.maps.LatLng(currentLat, currentLng);
 
-            // 기존 현재위치 마커 제거
             if (currentLocationMarker) {
-                currentLocationMarker.setMap(null);
+                currentLocationMarker.setMap(null);  // ← CustomOverlay도 setMap(null) 됩니다
             }
-            const markerImageSrc = '/main/assets/images/currentMarker.png';
-            const markerImageSize = new kakao.maps.Size(32, 32);
-            const markerImageOption = {offset: new kakao.maps.Point(16, 32)};
-            const customMarkerImage = new kakao.maps.MarkerImage(markerImageSrc, markerImageSize, markerImageOption);
-            currentLocationMarker = new kakao.maps.Marker({
-                map,
+
+            const markerContent = document.createElement("div");
+            markerContent.classList.add("my-location-marker");
+
+            currentLocationMarker = new kakao.maps.CustomOverlay({
                 position: latlng,
-                image: customMarkerImage // 내 위치도 바꾼 이미지로!
+                content: markerContent,
+                map: map,
+                yAnchor: 1,
             });
 
             // 주소 가져오기
@@ -694,12 +700,13 @@ function getCurrentLocation() {
                                 <div style="color:#555;">${address}</div>
                               </div>`
                 });
-            });
 
-            kakao.maps.event.addListener(currentLocationMarker, 'click', () => {
-                if (currentInfo) currentInfo.close();
-                currentLocationInfo.open(map, currentLocationMarker);
-                currentInfo = currentLocationInfo;
+                // 클릭 이벤트는 CustomOverlay는 카카오 이벤트 대신 DOM 이벤트 사용
+                markerContent.addEventListener('click', () => {
+                    if (currentInfo) currentInfo.close();
+                    currentLocationInfo.open(map, new kakao.maps.Marker({ position: latlng }));
+                    currentInfo = currentLocationInfo;
+                });
             });
 
             map.setCenter(latlng);
@@ -987,6 +994,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     requestText: document.getElementById('reserveRequest').value,
                     paymentMethod: 'OFFLINE'
                 };
+                console.log(payload)
 
 
                 try {
@@ -1031,11 +1039,11 @@ function renderFriendList(friends) {
     const listEl = document.getElementById('friendList');
     if (!listEl) return;
     listEl.innerHTML = '';
-
     if (!friends || friends.length === 0) {
         listEl.innerHTML = '<li class="empty">주변에 친구가 없습니다.</li>';
         return;
     }
+
 
     friends.forEach(friend => {
         const li = document.createElement('li');
@@ -1044,7 +1052,6 @@ function renderFriendList(friends) {
         const genderText =
             friend.gender === 'MALE' ? '남아' :
              friend.gender === 'FEMALE' ? '여아' : '';
-
         li.innerHTML = `
             <div class="item-wrapper"
                  data-user-id="${friend.userId}"
@@ -1058,8 +1065,8 @@ function renderFriendList(friends) {
                     <div class="species">${friend.species ?? '정보 없음'}</div>
                     <div class="distance">📍 ${Number(friend.distance).toFixed(1)}km</div>
                 </div>
-                <button class="button ${friend.isFollowing ? 'following' : 'follow'}" data-user-id="${friend.userId}">
-                    ${friend.isFollowing ? '팔로잉' : '팔로우'}
+                <button class="button ${friend.following ? 'following' : 'follow'}" data-user-id="${friend.userId}">
+                    ${friend.following ? '팔로잉' : '팔로우'}
                 </button>
             </div>
         `;

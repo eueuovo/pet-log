@@ -32,7 +32,4 @@ public class OrderItemEntity {
 
     @Column(name = "price", nullable = false)
     private Integer price;
-
-    @Column(name = "discount_rate", nullable = false)
-    private Integer discountRate = 0;
 }

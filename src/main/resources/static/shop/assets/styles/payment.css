@@ -675,6 +675,7 @@ body:has(.message.visible) .modal-cover {
 #payment > .info-wrapper > .order-product > .product-wrapper > .product-info {
   min-width: 0;
   width: 100%;
+  flex: 1;
 }
 #payment > .info-wrapper > .order-product > .product-wrapper > .product-info > .product-name {
   font-size: 1rem;

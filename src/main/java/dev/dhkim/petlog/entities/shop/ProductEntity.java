@@ -18,7 +18,7 @@ public class ProductEntity {
     private String brand;
     private String name;
     private Integer price;
-    private Integer discountRate;
+    private Integer discountPrice;
     private Integer deliveryFee;
     private Integer stock;
     private String petType;
@@ -32,4 +32,9 @@ public class ProductEntity {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<ProductImageEntity> productImages;
+
+    public int getDiscountRate() {
+        if (discountPrice == null || discountPrice == 0 || price == 0) return 0;
+        return (int) Math.round((1.0 - (double) discountPrice / price) * 100);
+    }
 }
