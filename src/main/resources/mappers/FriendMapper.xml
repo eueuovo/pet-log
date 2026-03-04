@@ -130,24 +130,31 @@
     </select>
     <select id="selectNearbyUsers" resultType="dev.dhkim.petlog.dto.main.FriendListDto">
         SELECT
-            u.user_id AS userId,
-            u.nickname AS nickname,
-            p.image_url AS imageUrl,
-            (6371 * acos(LEAST(1.0, GREATEST(-1.0, cos(radians(#{myLat})) * cos(radians(a.lat))
-            * cos(radians(a.lng) - radians(#{myLng}))
-             + sin(radians(#{myLat})) * sin(radians(a.lat))
-             )))) AS distance,
-            p.species AS species,
-            p.name AS petName,
-            p.gender AS gender,
-            p.birth_date AS birthDate,
-            p.introduction AS introduction,
-            false AS isFollowing
+        u.user_id AS userId,
+        u.nickname AS nickname,
+        p.image_url AS imageUrl,
+        (6371 * acos(LEAST(1.0, GREATEST(-1.0,
+        cos(radians(#{myLat})) * cos(radians(a.lat))
+        * cos(radians(a.lng) - radians(#{myLng}))
+        + sin(radians(#{myLat})) * sin(radians(a.lat))
+        )))) AS distance,
+        p.species AS species,
+        p.name AS petName,
+        p.gender AS gender,
+        p.birth_date AS birthDate,
+        p.introduction AS introduction,
+        false AS isFollowing
+
         FROM `petlog`.personal_user u
-                                                                                                                                                                                                                                                                                                                                                        JOIN `petlog`.address a ON u.user_id = a.user_id
-                                                                                                                                                                                                                                                                                                                                                        LEFT JOIN `petlog`.pets p ON u.user_id = p.user_id AND p.is_primary = 1
+        JOIN `petlog`.address a
+        ON u.user_id = a.user_id
+
+        -- ( 대표 동물 없으면 리스트에 안나타나게 함 )
+        JOIN `petlog`.pets p
+        ON u.user_id = p.user_id
+        AND p.is_primary = 1
         WHERE u.user_id != #{userId}
-          AND a.lat != 0
+        AND a.lat != 0
         HAVING distance &lt;= #{radiusKm}
         ORDER BY distance ASC
     </select>

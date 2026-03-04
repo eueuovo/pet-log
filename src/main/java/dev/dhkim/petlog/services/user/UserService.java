@@ -626,7 +626,6 @@ UserService {
 
 
 
-
 // 구글 로그인
     @Transactional
     public UserEntity loginOrRegisterByGoogle(String code) {
@@ -680,6 +679,7 @@ UserService {
 
             // 3️⃣ DB 확인
             UserEntity dbUser = userMapper.selectByEmail(email);
+
 
             if (dbUser == null) {
                 return null;

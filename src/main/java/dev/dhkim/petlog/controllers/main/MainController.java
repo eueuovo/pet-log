@@ -24,11 +24,17 @@ public class MainController {
             ModelAndView modelAndView,
             @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser
     ) {
+
+        // ✅ ADMIN이면 고객센터(/cs)로 강제 이동
+        if (sessionUser != null && "ADMIN".equals(sessionUser.getUserType())) {
+            modelAndView.setViewName("redirect:/cs");
+            return modelAndView;
+        }
+
         modelAndView.setViewName("main/main");
         modelAndView.addObject("sessionUser", sessionUser);
 
-        if (sessionUser != null) {
-            // 좌표 보정만 수행 (필요 시)
+        if (sessionUser != null && "PERSONAL".equals(sessionUser.getUserType())) {
             friendService.getOrCreateAddressWithLatLng(sessionUser.getUserId());
         }
 

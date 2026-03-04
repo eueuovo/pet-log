@@ -295,7 +295,6 @@ public class UserController {
 
 
 
-
     // 구글로그인
     // 구글 로그인
     @RequestMapping(value="/login/google", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
