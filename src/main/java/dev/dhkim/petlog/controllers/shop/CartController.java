@@ -56,11 +56,16 @@ public class CartController {
         List<Map<String, Object>> items = (List<Map<String, Object>>) request.get("items");
 
         try {
-            boolean hasExisting = cartService.addToCart(userId, items);
-            if (hasExisting) {
+            Map<String, Object> result = cartService.addToCart(userId, items);
+            boolean hasExisting = (boolean) result.get("hasExisting");
+            boolean sameQuantity = (boolean) result.get("sameQuantity");
+
+            if (hasExisting && sameQuantity) {
                 return Map.of("success", false, "alreadyExists", true);
+            } else if (hasExisting && !sameQuantity) {
+                return Map.of("success", true, "updated", true);
             }
-            return Map.of("success", true);
+            return Map.of("success", true, "updated", false);
         } catch (Exception e) {
             e.printStackTrace();
             return Map.of("success", false, "message", "장바구니 담기에 실패했습니다");

@@ -385,3 +385,8 @@ function toggleHeart(productId, heartElement) {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
 }
+
+window.addEventListener('pageshow', function() {
+    const searchBox = document.querySelector('.search-box');
+    if (searchBox) searchBox.value = '';
+});

@@ -166,9 +166,10 @@
         }
 
         > .name {
-          padding: 0 0 0.3rem 0;
+          padding: 0 0 0.5rem 0;
           font-size: 1rem;
           color: $global-gray-text-color;
+          line-height: 1.2;
         }
 
         > .discount{

@@ -10,6 +10,13 @@
   margin: 5rem 0 2rem 0 !important;
   overflow: auto;
 
+  > .divider {
+    width: 100%;
+    border: none;
+    border-top: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
+    margin: 0.5rem 0;
+  }
+
   > .banner-wrapper{
     @include flex(row, center, center);
     position: relative;
@@ -91,7 +98,7 @@
   > .brand-recommend{
     @include flex(column, flex-start, flex-start, 1rem);
     width: 100%;
-    margin-top: 2rem;
+    margin: 2rem 0;
 
     > .caption{
       font-size: 1.3rem;
@@ -137,8 +144,11 @@
           }
         }
 
-        > .content{
+        > .content {
           font-size: 1rem;
+          color: $global-gray-text-color;
+          line-height: 1.3;
+          margin-bottom: 0.5em;
         }
       }
     }
@@ -148,7 +158,7 @@
   > .best-product {
     @include flex(column, flex-start, flex-start, 1rem);
     width: 100%;
-    margin-top: 2rem;
+    margin: 2rem 0;
 
     > .category-wrapper{
       @include flex(row, center, center, 1rem);
@@ -253,13 +263,14 @@
           padding: 0.4rem 0 0.3rem 0;
           font-size: 0.8rem;
           font-weight: 500;
-          color: $global-gray-text-color;
+          color: lighten($global-gray-text-color, 40%);
         }
 
         > .name {
-          padding: 0 0 0.3rem 0;
+          padding: 0 0 0.5rem 0;
           font-size: 1rem;
           color: $global-gray-text-color;
+          line-height: 1.2;
         }
 
         > .discount{

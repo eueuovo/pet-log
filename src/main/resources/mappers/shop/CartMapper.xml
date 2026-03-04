@@ -111,4 +111,9 @@
         </foreach>
         ORDER BY c.created_at DESC
     </select>
+
+    <!--수량체크-->
+    <select id="getCartQuantity" resultType="int">
+        SELECT quantity FROM `petlog`.cart WHERE id = #{cartId}
+    </select>
 </mapper>

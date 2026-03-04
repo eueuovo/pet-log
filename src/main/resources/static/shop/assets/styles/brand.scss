@@ -12,6 +12,13 @@
     @include flex(column, flex-start, flex-start, 1rem);
     width: 100%;
 
+    > .divider {
+      width: 100%;
+      border: none;
+      border-top: 0.0625rem solid lighten($global-gray-right-text-color, 40%);
+      margin: 0.5rem 0;
+    }
+
     > .brand-info {
       width: 100%;
 

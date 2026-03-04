@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function addToCart() {
     const btn = document.querySelector('.content .cart');
-    if (!btn || btn.dataset.login === 'false') {  // null 체크 추가
+    if (!btn || btn.dataset.login === 'false') {
         showToast('로그인이 필요합니다.', '로그인하기', '/user/login');
         return;
     }
@@ -412,7 +412,9 @@ function addToCart() {
         if (xhr.readyState !== XMLHttpRequest.DONE) return;
         if (xhr.status < 200 || xhr.status >= 400) return;
         const result = JSON.parse(xhr.responseText);
-        if (result.success) {
+        if (result.success && result.updated) {
+            showToast('장바구니 수량이 업데이트되었습니다.', '장바구니 바로가기', '/shop/cart');
+        } else if (result.success) {
             showToast('장바구니에 담았습니다.', '장바구니 바로가기', '/shop/cart');
         } else if (result.alreadyExists) {
             showToast('이미 장바구니에 추가되어 있습니다.', '장바구니 바로가기', '/shop/cart');
@@ -428,6 +430,20 @@ function addToCart() {
             quantity: option.quantity
         }))
     }));
+}
+
+function updateCartQuantity(cartItemId, quantity) {
+    fetch(`/shop/cart/${cartItemId}/quantity`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: quantity })
+    })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                showToast('장바구니 수량이 업데이트되었습니다.', '장바구니 바로가기', '/shop/cart');
+            }
+        });
 }
 
 function getProductIdFromUrl() {
