@@ -267,5 +267,9 @@
         <button class="buy-btn" type="button">구매하기</button>
     </div>
 </form>
+<div th:replace="~{fragments/chat :: chatModal}"></div>
+<div class="product-footer-wrapper">
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</div>
 </body>
 </html>

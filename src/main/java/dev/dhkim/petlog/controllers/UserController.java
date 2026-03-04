@@ -339,4 +339,16 @@ public class UserController {
 
         return "redirect:/main";
     }
+
+    @RequestMapping(value = "/terms", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getTerms(ModelAndView modelAndView){
+        modelAndView.setViewName("user/terms");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/personalInformationPolicy", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getPolicy(ModelAndView modelAndView){
+        modelAndView.setViewName("user/personalInformationPolicy");
+        return modelAndView;
+    }
 }

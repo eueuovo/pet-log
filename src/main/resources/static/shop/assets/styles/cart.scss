@@ -374,3 +374,9 @@
     }
   }
 }
+
+.product-footer-wrapper {
+  @media (max-width: 800px) {
+    padding-bottom: 6rem;
+  }
+}

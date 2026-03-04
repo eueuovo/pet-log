@@ -583,8 +583,8 @@ body:has(.message.visible) .cover {
   }
 }
 
-.footer{
-  @include flex(row, flex-start, flex-start, 5rem);
+.footer {
+  @include flex(row, center, center, 5rem);
   background-color: darken($global-gray-background-color, 5%);
   padding: 2rem;
 
@@ -594,62 +594,83 @@ body:has(.message.visible) .cover {
     align-self: stretch;
   }
 
-  .cs-wrapper{
-    @include flex(column, flex-start, center);
+  .media-wrapper {
+    @include flex(row, center, center, 5rem);
 
-    .service-center{
-      font-size: 1.4rem;
-      font-weight: 600;
-      padding-bottom: 0.5rem;
-      cursor: pointer;
+    .cs-wrapper {
+      @include flex(column, flex-start, center);
+
+      .service-center {
+        font-size: 1.2rem;
+        font-weight: 600;
+        padding-bottom: 0.5rem;
+        cursor: pointer;
+        color: $global-gray-text-color;
+
+        &:hover{
+          color: darken($global-gray-text-color, 20%);
+        }
+      }
+
+      .cs-method {
+        @include flex(row, flex-start, flex-start, 0.5rem);
+        padding-bottom: 0.5rem;
+
+        .service-num,
+        .service-email {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: $global-gray-text-color;
+        }
+
+        .method-divider {
+          width: 0.0625rem;
+          height: 0.8rem;
+          background-color: #ccc;
+          padding-top: 1rem;
+        }
+      }
+
+      .info-list {
+        @include flex(column, flex-start, center, 0.3rem);
+        list-style-type: disc;
+        padding-left: 1rem;
+
+        .item {
+          font-size: 0.8rem;
+          color: $global-gray-text-color;
+        }
+      }
     }
 
-    .service-num{
-      font-size: 1.1rem;
-      font-weight: 500;
-      padding-bottom: 0.2rem;
-    }
+    .terms-wrapper {
+      .terms {
+        @include flex(column, flex-start, center, 1rem);
 
-    .service-email{
-      font-size: 1rem;
-      padding-bottom: 0.5rem;
-    }
+        .service,
+        .security {
+          cursor: pointer;
+          color: $global-gray-text-color;
+          font-size: 0.9rem;
 
-    .info-list{
-      @include flex(column, flex-start, center, 0.3rem);
-      list-style-type: disc;
-      padding-left: 1rem;
-
-      .item{
-        font-size: 0.9rem;
+          &:hover{
+            color: darken($global-gray-text-color, 20%);
+          }
+        }
       }
     }
   }
 
-  .compony-wrapper{
+  .compony-wrapper {
     @include flex(column, flex-start, center, 1rem);
 
-    .terms {
-      @include flex(row, flex-start, center, 0.5rem);
-
-      .terms-divider {
-        width: 0.0625rem;
-        height: 0.8rem;
-        background-color: #ccc;
-        padding-top: 1rem;
-      }
-
-      .service,
-      .security{
-        cursor: pointer;
-      }
-    }
-
-    .info{
+    .info {
       @include flex(column, flex-start, center, 0.5rem);
 
-      .compony-info{
+      .compony-info {
         @include flex(row, flex-start, center, 0.5rem);
+        color: $global-gray-text-color;
+        font-size: 0.9rem;
 
         .info-divider {
           width: 0.0625rem;
@@ -658,25 +679,62 @@ body:has(.message.visible) .cover {
           padding-top: 1rem;
         }
       }
-      .compony-content{
+
+      .compony-content {
         @include flex(row, flex-start, center, 0.5rem);
+        color: $global-gray-text-color;
+        font-size: 0.85rem;
 
         .info-divider {
           width: 0.0625rem;
           height: 0.8rem;
           background-color: #ccc;
           padding-top: 1rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      .sub-item {
+        font-size: 0.8rem;
+        color: $global-gray-text-color;
+      }
+
+      .sub-copy {
+        font-size: 0.7rem;
+        color: lighten($global-gray-text-color, 20%);
+      }
+    }
+  }
+
+  @media (max-width: 1229px) {
+    @include flex(column, flex-start, flex-start, 1rem);
+
+    > .divider {
+      width: 100%;
+      height: 0.0625rem;
+      align-self: stretch;
+    }
+
+    .media-wrapper {
+      gap: 2rem;
+    }
+
+    .compony-wrapper .info {
+      gap: 0.3rem;
+
+      .compony-info,
+      .compony-content {
+        display: block;
+        line-height: 1;
+
+
+        .item, .info-divider {
+          display: inline;
         }
       }
 
       .sub-item{
-        font-size: 0.8rem;
-        padding-top: 0.5rem;
-      }
-
-      .sub-copy{
-        font-size: 0.7rem;
-        color: lighten($global-gray-text-color, 20%);
+        line-height: 1.2;
       }
     }
   }

@@ -9,26 +9,32 @@
 </head>
 <body>
 <div class="footer" id="footer" th:fragment="footer">
-    <div class="cs-wrapper">
-        <div class="service-center">고객센터 ></div>
-        <div class="service-num">02-1234-5678</div>
-        <div class="service-email">support@service.com</div>
-        <ul class="info-list">
-            <li class="item">평일 09:00 ~ 18:00</li>
-            <li class="item">점심시간 12:00 ~ 13:00</li>
-            <li class="item">주말, 공휴일 휴무</li>
-        </ul>
+    <div class="media-wrapper">
+        <div class="cs-wrapper">
+            <a href="/cs" class="service-center">고객센터</a>
+            <div class="cs-method">
+                <div class="service-num">02-1234-5678</div>
+                <span class="method-divider"></span>
+                <div class="service-email">support@service.com</div>
+            </div>
+            <ul class="info-list">
+                <li class="item">평일 09:00 ~ 18:00 (12:00~13:00 점심)</li>
+                <li class="item">주말, 공휴일 휴무</li>
+            </ul>
+        </div>
+        <div class="divider"></div>
+        <div class="terms-wrapper">
+            <div class="terms">
+                <a href="/user/terms" class="service">이용약관</a>
+                <a href="/user/personalInformationPolicy" class="security">개인정보처리방침</a>
+            </div>
+        </div>
     </div>
     <div class="divider"></div>
     <div class="compony-wrapper">
-        <div class="terms">
-            <div class="service">이용약관</div>
-            <span class="terms-divider"></span>
-            <div class="security">개인정보처리방침</div>
-        </div>
         <div class="info">
             <div class="compony-info">
-                <span class="item">(주)팀이름</span>
+                <span class="item">(주)펫로그</span>
                 <span class="info-divider"></span>
                 <span class="item">대표이사 김박</span>
                 <span class="info-divider"></span>

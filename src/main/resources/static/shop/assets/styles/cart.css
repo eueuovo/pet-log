@@ -476,4 +476,8 @@
         .option-modal > .modal-content > .modal-footer > .modal-confirm:hover {
           background-color: #65bd76; }
 
+@media (max-width: 800px) {
+  .product-footer-wrapper {
+    padding-bottom: 6rem; } }
+
 /*# sourceMappingURL=cart.css.map */

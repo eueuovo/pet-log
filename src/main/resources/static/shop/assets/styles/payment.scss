@@ -685,7 +685,6 @@ body:has(.message.visible) .modal-cover {
     @include flex(column, flex-start, flex-start, 0);
     height: auto;
     min-height: auto;
-    padding: 1rem 1rem 5rem 1rem;
     width: 100%;
 
 
@@ -1132,5 +1131,11 @@ body:has(.message.visible) .modal-cover {
         }
       }
     }
+  }
+}
+
+.product-footer-wrapper {
+  @media (max-width: 930px) {
+    padding-bottom: 6rem;
   }
 }

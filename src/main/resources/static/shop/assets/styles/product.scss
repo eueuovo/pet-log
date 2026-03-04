@@ -504,7 +504,7 @@
 
   > .detail-wrapper{
     @media (max-width: 1000px) {
-      padding-bottom: 6rem;
+      padding-bottom: 2rem;
     }
 
     > .line {
@@ -1027,5 +1027,11 @@
         cursor: pointer;
       }
     }
+  }
+}
+
+.product-footer-wrapper {
+  @media (max-width: 1000px) {
+    padding-bottom: 6rem;
   }
 }
