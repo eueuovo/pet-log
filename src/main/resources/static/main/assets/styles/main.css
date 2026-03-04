@@ -170,6 +170,17 @@
         overflow-y: auto;
         border-radius: 1.2rem 1.2rem 0 0;
         padding: 0; }
+        #main > .content-wrapper .tab-list-container #descriptionContainer .friend.description::-webkit-scrollbar {
+          width: 0.5rem; }
+        #main > .content-wrapper .tab-list-container #descriptionContainer .friend.description::-webkit-scrollbar-track {
+          background: transparent; }
+        #main > .content-wrapper .tab-list-container #descriptionContainer .friend.description::-webkit-scrollbar-thumb {
+          background-color: rgba(202, 226, 207, 0.3);
+          border-radius: 1rem;
+          background-clip: padding-box;
+          border: 0.125rem solid transparent; }
+          #main > .content-wrapper .tab-list-container #descriptionContainer .friend.description::-webkit-scrollbar-thumb:hover {
+            background-color: #CAE2CF; }
         #main > .content-wrapper .tab-list-container #descriptionContainer .friend.description .close-btn {
           position: absolute;
           top: 0.9rem;
@@ -365,13 +376,15 @@
           background-color: #f0f6ff;
           border-left: 0.8rem solid #3b82f6; }
         #main > .content-wrapper .tab-list-container > .list .friend-list {
-          display: block; }
+          display: block;
+          flex: 1; }
           #main > .content-wrapper .tab-list-container > .list .friend-list .empty {
             padding: 3rem 1rem;
             text-align: center;
             font-size: 1.1rem;
             color: #999;
             font-weight: 500;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center; }
