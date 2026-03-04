@@ -1004,6 +1004,21 @@ display: flex;
   }
 }
 
+.my-location-marker {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #4285f4;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.3);
+  cursor: pointer;
+  animation: pulse 2s infinite;
+}
 
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+}
 
 

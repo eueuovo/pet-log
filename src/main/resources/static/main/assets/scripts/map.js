@@ -658,18 +658,18 @@ function getCurrentLocation() {
 
             const latlng = new kakao.maps.LatLng(currentLat, currentLng);
 
-            // 기존 현재위치 마커 제거
             if (currentLocationMarker) {
-                currentLocationMarker.setMap(null);
+                currentLocationMarker.setMap(null);  // ← CustomOverlay도 setMap(null) 됩니다
             }
-            const markerImageSrc = '/main/assets/images/currentMarker.png';
-            const markerImageSize = new kakao.maps.Size(32, 32);
-            const markerImageOption = {offset: new kakao.maps.Point(16, 32)};
-            const customMarkerImage = new kakao.maps.MarkerImage(markerImageSrc, markerImageSize, markerImageOption);
-            currentLocationMarker = new kakao.maps.Marker({
-                map,
+
+            const markerContent = document.createElement("div");
+            markerContent.classList.add("my-location-marker");
+
+            currentLocationMarker = new kakao.maps.CustomOverlay({
                 position: latlng,
-                image: customMarkerImage // 내 위치도 바꾼 이미지로!
+                content: markerContent,
+                map: map,
+                yAnchor: 1,
             });
 
             // 주소 가져오기
@@ -688,12 +688,13 @@ function getCurrentLocation() {
                                 <div style="color:#555;">${address}</div>
                               </div>`
                 });
-            });
 
-            kakao.maps.event.addListener(currentLocationMarker, 'click', () => {
-                if (currentInfo) currentInfo.close();
-                currentLocationInfo.open(map, currentLocationMarker);
-                currentInfo = currentLocationInfo;
+                // 클릭 이벤트는 CustomOverlay는 카카오 이벤트 대신 DOM 이벤트 사용
+                markerContent.addEventListener('click', () => {
+                    if (currentInfo) currentInfo.close();
+                    currentLocationInfo.open(map, new kakao.maps.Marker({ position: latlng }));
+                    currentInfo = currentLocationInfo;
+                });
             });
 
             map.setCenter(latlng);
@@ -980,6 +981,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     requestText: document.getElementById('reserveRequest').value,
                     paymentMethod: 'OFFLINE'
                 };
+                console.log(payload)
 
 
                 try {
