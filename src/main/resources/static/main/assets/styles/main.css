@@ -244,7 +244,6 @@
               letter-spacing: 0.02em; }
       #main > .content-wrapper .tab-list-container .tabs {
         display: flex;
-        /* height: 6%;*/
         gap: 0.07rem; }
       #main > .content-wrapper .tab-list-container .tab {
         flex: 1;
@@ -631,36 +630,33 @@
         font-size: 0.875rem;
         color: #555; }
       .modal .modal-body .form-group input,
-      .modal .modal-body .form-group textarea,
       .modal .modal-body .form-group select {
         width: 100%;
         padding: 0.5rem 0.625rem;
         border: 1px solid #ddd;
         border-radius: 0.375rem;
         font-size: 0.875rem; }
-    .modal .modal-body .payment-method {
+    .modal .modal-body .payment-info {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 0.5rem;
-      background: #f9f9f9; }
-      .modal .modal-body .payment-method input[type="radio"] {
-        accent-color: #2ecc71; }
-      .modal .modal-body .payment-method label {
-        display: flex;
-        flex-direction: column;
-        cursor: default; }
-        .modal .modal-body .payment-method label strong {
-          font-size: 0.875rem; }
-        .modal .modal-body .payment-method label span {
-          font-size: 0.75rem;
-          color: #777; }
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: #f0f7f2;
+      border: 1px solid #a8d5b5;
+      border-radius: 0.5rem; }
+      .modal .modal-body .payment-info strong {
+        font-size: 0.875rem;
+        color: #2e7d4f; }
+      .modal .modal-body .payment-info p {
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 0.2rem; }
+      .modal .modal-body .payment-info .payment-icon {
+        font-size: 1.5rem; }
   .modal .modal-footer {
     padding: 1rem 1.25rem;
     border-top: 0.0625rem solid #eee;
-    align-items: flex-end;
+    align-items: stretch;
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
@@ -672,10 +668,12 @@
       flex-grow: 1;
       flex-shrink: 1; }
     .modal .modal-footer .btn {
+      flex: 1;
       padding: 0.5rem 1rem;
       border-radius: 0.375rem;
       font-size: 0.875rem;
-      cursor: pointer; }
+      cursor: pointer;
+      text-align: center; }
       .modal .modal-footer .btn.cancel {
         background: #f3f3f3; }
       .modal .modal-footer .btn.confirm {
@@ -812,6 +810,12 @@
     #main > .content-wrapper .tab-list-container > .-flex-stretch {
       flex-grow: 1;
       flex-shrink: 1; }
+    #main > .content-wrapper .tab-list-container .tab.friend-tab {
+      border-top-left-radius: 0; }
+    #main > .content-wrapper .tab-list-container .tab.store-tab {
+      border-top-right-radius: 0; }
+    #main > .content-wrapper .tab-list-container .list {
+      overflow-y: scroll; }
 
   /* 검색창 */
   #main .search-box {
