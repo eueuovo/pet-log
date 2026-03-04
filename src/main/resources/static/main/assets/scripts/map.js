@@ -171,6 +171,12 @@ function initMap() {
     getCurrentLocation();
     bindSearch();
 
+    kakao.maps.event.addListener(map, 'center_changed', () => {
+        const center = map.getCenter();
+        currentLat = center.getLat();
+        currentLng = center.getLng();
+    });
+
     window.addEventListener('pageshow', () => {
         if (map) {
             setTimeout(() => {
@@ -535,10 +541,6 @@ function renderPlaces(list, category) {
         visiblePlaces.push({ ...data, distanceKm, marker, info });
     });
 
-    if (!bounds.isEmpty()) {
-        map.setBounds(bounds);
-    }
-
     renderStoreList(visiblePlaces);
 }
 
@@ -720,35 +722,29 @@ function getCurrentLocation() {
 
 // ====================== 장소 상세 렌더링 ======================
 function renderPlaceDetail(place) {
-    const el = document.querySelector('.place-detail-content');
-    if (!el) return;
+    const container = document.getElementById('descriptionContainer');
+    if (!container) return;
 
-    let distanceText = '거리 정보 없음';
-    let timeText = '';
+    container.innerHTML = `<div class="place description">
+    <button type="button" class="close-btn" id="placeCloseBtn">X</button>
+    <div class="caption-wrapper" style="margin-top:1rem;">
+        <div><strong>장소명:</strong> ${place.name}</div>
+        <div><strong>주소:</strong> ${place.address}</div>
+        ${place.tel ? `<div><strong>전화:</strong> ${place.tel}</div>` : ''}
+        ${place.distanceKm != null ? `<div><strong>거리:</strong> ${place.distanceKm < 1 ? Math.round(place.distanceKm*1000)+'m' : place.distanceKm.toFixed(1)+'km'}</div>` : ''}
+        ${place.category !== 'search' && place.category !== 'park' && place.category !== 'camp'
+        ? `<button class="reserve-btn" data-store-id="${place.storeId}">예약하기</button>`
+        : ''}
+    </div>
+</div>`;
 
-    if (place.distanceKm != null) {
-        distanceText =
-            place.distanceKm < 1
-                ? `${Math.round(place.distanceKm * 1000)}m`
-                : `${place.distanceKm.toFixed(1)}km`;
-
-        const min = getWalkMinutes(place.distanceKm);
-        timeText = ` · 도보 ${min}분`;
-    }
-    // 예: 서버에서 내려오는 JSON이 snake_case라면
-    console.log(place.store_id);  // 21
-    el.innerHTML = `
-  <h2 class="name">${place.name}</h2>
-  <div class="distance">📍 ${distanceText}${timeText}</div>
-
-  <p><strong>주소</strong><br>${place.address}</p>
-
-  ${place.tel ? `<p><strong>전화</strong><br>${place.tel}</p>` : ''}
-  ${place.status ? `<p><strong>영업 상태</strong><br>${place.status}</p>` : ''}
-  <p><strong>영업 시간</strong><br>평일 09:00 - 18:00</p> 
-  ${place.category !== 'search' && place.category !== 'park' && place.category !== 'camp' ? `<button class="reserve-btn" data-store-id="${place.storeId}">예약하기</button>` : ''}
-`;
+    container.querySelector('.close-btn').onclick = () => {
+        container.style.display = "none";
+        container.innerHTML = '';
+        switchView('list');
+    };
 }
+
 //주변 친구 불러오기 함수
 function loadNearbyFriendsByCurrentLocation() {
 
@@ -839,36 +835,24 @@ function renderStoreList(places) {
 function switchView(mode, place = null) {
     const listView = document.querySelector('.place-list-view');
     const detailView = document.querySelector('.place-detail-view');
-    const backBtn = document.querySelector('.back-btn')
-
+    const container = document.getElementById('descriptionContainer');
 
     viewMode = mode;
 
     if (mode === 'detail' && place) {
-
-        // 여기서 거리 없으면 계산
         if (place.distanceKm == null && currentLat && currentLng) {
-            place.distanceKm = getDistanceKm(
-                currentLat,
-                currentLng,
-                place.lat,
-                place.lng
-            );
+            place.distanceKm = getDistanceKm(currentLat, currentLng, place.lat, place.lng);
         }
-
         selectedPlace = place;
 
-        listView.classList.add('hidden');
-        detailView.classList.remove('hidden');
-
         renderPlaceDetail(place);
+        container.style.display = "block";
     }
 
     if (mode === 'list') {
         selectedPlace = null;
-
-        detailView.classList.add('hidden');
-        listView.classList.remove('hidden');
+        container.style.display = "none";
+        container.innerHTML = '';
     }
 }
 
