@@ -966,6 +966,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
+
                 // Dataset에서 최신 ID 가져오기
                 const rawStoreId = confirmBtn.dataset.storeId;
 

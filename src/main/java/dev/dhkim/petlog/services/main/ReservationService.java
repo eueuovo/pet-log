@@ -19,7 +19,7 @@ public class ReservationService {
     private final StoreMapper storeMapper; // 추가
 
     // 시스템 관리자 ID (아까 DB에 9999번으로 만들기로 한 계정)
-    private static final int SYSTEM_ADMIN_ID = 1;
+    private static final int SYSTEM_ADMIN_ID = 9999;
 
     @Transactional
     public ReservationDto createReservation(ReservationDto reservation) {
