@@ -382,9 +382,21 @@ function addSingleMarker(lat, lng, title, address) {
 
 async function handleCategoryClick(category) {
 
+    // 카테고리 클릭 시 탭 전환
+    const storeTab = document.getElementById('storeTab');
+    const friendTab = document.getElementById('friendTab');
+    const friendContent = document.querySelector('.friend-tab-content');
+    const storePanel = document.querySelector('.store-panel');
+
+    if (storeTab && friendTab) {
+        storeTab.classList.add('active');
+        friendTab.classList.remove('active');
+        friendContent?.classList.add('hidden');
+        storePanel?.classList.remove('hidden');
+    }
+    //
 
     const btn = document.querySelector(`[data-category="${category}"]`);
-
 
     // 이미 선택된 카테고리면 OFF
     if (activeCategory === category) {
