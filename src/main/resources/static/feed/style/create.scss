@@ -25,7 +25,8 @@
 .thumbnail {
     position: relative;
     width: 100%;
-    aspect-ratio: 4/5;
+    height: 100%;
+    //aspect-ratio: 4/5;
     background-color: $global-gray-background-color;
     border: 0.125rem solid $global-border-color;
     border-radius: 1rem;
@@ -191,7 +192,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // 우측 페이지
 .info-container {
-    @include flex(column, flex-start, flex-start);
+    @include flex(column, center, center);
     padding: 2rem 3rem 3rem 1.5rem;
     height: 100%;
 }
@@ -254,15 +255,16 @@
 }
 
 @media (max-width: 990px) {
-    #form {
-        grid-template-columns: 1fr;
-    }
-
     .thumbnail {
-        padding: 1rem;
+        width: 80%;
+        height: 80%;
     }
 
     .info-container {
-        padding: 1rem;
+        padding-right: 0;
+        justify-self: flex-start;
+    }
+    .information {
+        height: 80%;
     }
 }
