@@ -62,12 +62,13 @@ public class PaymentController {
         for (Map<String, Object> item : selectedItems) {
             int price = (int) item.get("price");
             int additionalPrice = item.get("additionalPrice") != null ? (int) item.get("additionalPrice") : 0;
-            int discountRate = (int) item.get("discountRate");
+            int discountPrice = item.get("discountPrice") != null ? (int) item.get("discountPrice") : 0;
             int deliveryFee = (int) item.get("deliveryFee");
             int quantity = (int) item.get("quantity");
 
             int itemTotal = (price + additionalPrice) * quantity;
-            int discount = itemTotal * discountRate / 100;
+
+            int discount = discountPrice > 0 ? (price - discountPrice) * quantity : 0;
 
             totalPrice += itemTotal;
             totalDiscount += discount;
@@ -133,11 +134,11 @@ public class PaymentController {
         for (Map<String, Object> item : selectedItems) {
             int price = (int) item.get("price");
             int additionalPrice = item.get("additionalPrice") != null ? (int) item.get("additionalPrice") : 0;
-            int discountRate = (int) item.get("discountRate");
+            int discountPrice = item.get("discountPrice") != null ? (int) item.get("discountPrice") : 0;
             int deliveryFee = (int) item.get("deliveryFee");
 
             int itemTotal = (price + additionalPrice) * quantity;
-            int discount = itemTotal * discountRate / 100;
+            int discount = discountPrice > 0 ? (price + additionalPrice) * quantity - discountPrice * quantity : 0;
 
             totalPrice += itemTotal;
             totalDiscount += discount;

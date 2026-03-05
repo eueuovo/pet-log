@@ -16,7 +16,7 @@
       width: 70%;
       height: 100%;
       background-color: #fff;
-      padding: 2rem;
+      padding: 1rem 2rem;
       overflow: hidden;
       position: relative;
 
@@ -32,15 +32,18 @@
       /*지도안의 요소들*/
       > .top-wrapper {
         @include flex(row, stretch, center, 2rem);
+        width: 100%;
+        max-width: 97.5%;
 
         > .search-box {
-          max-width: 40rem;
+          max-width: 100%;
+          flex: 1;
           display: flex;
           align-items: center;
           background-color: #fff;
           border-radius: 0.5rem;
           box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.2);
-          padding: 0.25rem 2.2rem;
+          padding: 0.25rem 0.7rem;
           z-index: 10;
 
           > .search-input {
@@ -56,7 +59,6 @@
             @include flex(column, stretch, center);
 
             > .search-icon {
-              position: absolute;
               width: 1.6rem; // 아이콘 크기
               height: 1.6rem;
               cursor: pointer;
@@ -79,20 +81,30 @@
           position: absolute;
           top: 110%;
           left: -10%;
-
           display: none;
           flex-direction: column;
           gap: 0.3rem;
-
           padding: 0.5rem;
           border-radius: 0.5rem;
-
-
           z-index: 10;
         }
 
         .more-category.open {
           display: flex;
+        }
+
+        .front,
+        .back{
+          height: 2.25rem;
+          width: 2.25rem;
+          border-radius: 999rem;
+          background-color: #FFFFFF;
+          box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+
+          &:hover{
+            background-color: $global-gray-background-color;
+          }
         }
 
         /* 버튼 기본 */
@@ -167,6 +179,26 @@
         overflow-y: auto;
         border-radius: 1.2rem 1.2rem 0 0;
         padding: 0;
+
+        // --- 스크롤바 커스텀 시작 ---
+        &::-webkit-scrollbar {
+          width: 0.5rem; // 8px: 적당히 슬림한 두께
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent; // 트랙을 투명하게 해서 리스트 배경색(#f9fafb)이 보이게 함
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: rgba($global-border-green-color, 0.3); // 보더 컬러를 30% 투명하게
+          border-radius: 1rem;
+          background-clip: padding-box;
+          border: 0.125rem solid transparent; // 2px 투명 보더로 막대를 더 얇게 연출
+
+          &:hover {
+            background-color: $global-border-green-color; // 마우스 올리면 선명한 초록색
+          }
+        }
 
         .close-btn {
           position: absolute;
@@ -263,7 +295,6 @@
 
       .tabs {
         display: flex;
-       /* height: 6%;*/
         gap: 0.07rem;
 
       }
@@ -342,6 +373,10 @@
           }
         }
         // --- 스크롤바 커스텀 끝 ---
+
+        > .friend-tab-content {
+          height: 100%;
+        }
 
 
         .store-panel {
@@ -441,6 +476,7 @@
 
         .friend-list {
             display: block;
+          flex: 1;
 
           .empty {
             padding: 3rem 1rem;
@@ -448,6 +484,7 @@
             font-size: 1.1rem;
             color: #999;
             font-weight: 500;
+            height: 100%;
 
             display: flex;
             justify-content: center;
@@ -714,7 +751,7 @@
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 90;
 
   &.open {
     display: flex;
@@ -770,7 +807,6 @@
       }
 
       input,
-      textarea,
       select {
         width: 100%;
         padding: 0.5rem 0.625rem;
@@ -780,47 +816,44 @@
       }
     }
 
-    .payment-method {
+    .payment-info {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: #f0f7f2;
+      border: 1px solid #a8d5b5;
       border-radius: 0.5rem;
-      background: #f9f9f9;
 
-      input[type="radio"] {
-        accent-color: #2ecc71;
+      strong {
+        font-size: 0.875rem;
+        color: #2e7d4f;
       }
 
-      label {
-        display: flex;
-        flex-direction: column;
-        cursor: default;
+      p {
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 0.2rem;
+      }
 
-        strong {
-          font-size: 0.875rem;
-        }
-
-        span {
-          font-size: 0.75rem;
-          color: #777;
-        }
+      .payment-icon {
+        font-size: 1.5rem;
       }
     }
-
   }
 
   .modal-footer {
     padding: 1rem 1.25rem;
     border-top: 0.0625rem solid #eee;
-    @include flex(row, flex-end, center, 0.5rem);
+    @include flex(row, stretch, center, 0.5rem);
 
     .btn {
+      flex: 1; // 추가
       padding: 0.5rem 1rem;
       border-radius: 0.375rem;
       font-size: 0.875rem;
       cursor: pointer;
+      text-align: center; //  추가
 
       &.cancel {
         background: #f3f3f3;
@@ -829,6 +862,10 @@
       &.confirm {
         background: #2ecc71;
         color: #fff;
+      }
+      &.login-confirm{
+        background: #eaeaea;
+        color: #000000;
       }
     }
   }
@@ -845,7 +882,7 @@
   align-items: center;
   justify-content: center;
 
-  z-index: 9999;
+  z-index: 99;
 }
 
 .message-overlay.visible {
@@ -935,7 +972,7 @@ display: flex;
 }
 
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
 
   #main {
     padding: 1rem; // 모바일은 여백 줄이기
@@ -959,9 +996,10 @@ display: flex;
     height: calc(87vh - 20rem);  // ✅ 이거 추가 (리스트 높이만큼 뺌)
   }
   // ✅ 카카오맵이 생성하는 내부 div도 높이 맞춤
-  #main > .content-wrapper .map > div:not(.top-wrapper) {
+  #main > .content-wrapper .map #map {
     width: 100% !important;
     height: 100% !important;
+    position: relative;
   }
 
   /* 리스트 숨김 */
@@ -971,18 +1009,18 @@ display: flex;
     max-height: 20rem;
     position: absolute;
     bottom:0;
-    z-index: 90;
-  }
+    z-index: 85;
 
-  /* 상단 검색 UI */
-  #main > .content-wrapper .map > .top-wrapper {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    right: 1rem;
-    display: flex;
-    justify-content: center;
-    z-index: 10;
+    .tab.friend-tab {
+      border-top-left-radius: 0;
+    }
+
+    .tab.store-tab {
+      border-top-right-radius: 0;
+    }
+    .list{
+      overflow-y: scroll;
+    }
   }
 
   /* 검색창 */
@@ -991,10 +1029,32 @@ display: flex;
     max-width: 100%;
   }
 
-  #main > .content-wrapper .map > .top-wrapper .category-filter {
-    display: none;
+  #main > .content-wrapper .map > .top-wrapper{
+    @include flex(column, flex-start, flex-start, 0.5rem);
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    z-index: 10;
+    max-width: 93.5%;
   }
+}
 
+.my-location-marker {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #4285f4;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.3);
+  cursor: pointer;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
 }
 
 

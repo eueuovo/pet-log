@@ -18,8 +18,8 @@ public class BannerEntity {
     @Column(name = "image_url", nullable = false, length = 255)
     private String imageUrl;
 
-    @Column(name = "target_id")
-    private Integer targetId;
+    @Column(name = "sub_category_id")
+    private Integer subCategoryId;
 
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;

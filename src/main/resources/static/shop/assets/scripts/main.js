@@ -35,7 +35,7 @@ if ($banner) {
             const $item = document.createElement('li');
             $item.className = 'item';
             $item.setAttribute('data-target-type', banner.targetType);
-            $item.setAttribute('data-target-id', banner.targetId || '');
+            $item.setAttribute('data-target-id', banner.categoryId || '');
             $item.setAttribute('data-brand-name', banner.brandName || '');
             $item.innerHTML = '<img class="image" src="' + banner.imageUrl + '" alt="배너">';
 
@@ -50,14 +50,18 @@ if ($banner) {
 
     // 배너 클릭 처리
     function handleBannerClick(banner) {
-        if (banner.targetType === 'category' && banner.targetId) {
-            location.href = '/shop/list?categoryId=' + banner.targetId;
+        if (banner.targetType === 'category' && banner.subCategoryId) {
+            location.href = '/shop/list?eventCategoryId=' + banner.subCategoryId;
+        } else if (banner.targetType === 'category' && banner.categoryId) {
+            location.href = '/shop/list?categoryId=' + banner.categoryId;
         } else if (banner.targetType === 'brand' && banner.brandName) {
-            location.href = '/shop/list?brand=' + encodeURIComponent(banner.brandName);
+            location.href = '/shop/brand?brand=' + encodeURIComponent(banner.brandName);
         } else if (banner.targetType === 'sale') {
             location.href = '/shop/list?sort=sale';
         } else if (banner.targetType === 'new') {
             location.href = '/shop/list?sort=new';
+        } else if (banner.targetType === 'event' && banner.id === 3) {
+            location.href = '/shop/welcome';
         }
     }
 
@@ -94,7 +98,7 @@ if ($banner) {
                     $banner.style.transition = 'none';
                     $banner.style.transform = 'translateX(0%)';
                     index = 0;
-                }, 500);
+                }, 1000);
             }
         };
 
@@ -174,7 +178,6 @@ function renderProducts(selector, products) {
     if (!container) return;
 
     container.innerHTML = products.map(product => {
-        const discountedPrice = product.price * (100 - product.discountRate) / 100;
         const thumbnail = product.productImages?.find(img => img.isThumbnail)
             || product.productImages?.[0];
         const imageUrl = thumbnail?.imageUrl || '/shop/assets/images/default-product.png';
@@ -186,15 +189,15 @@ function renderProducts(selector, products) {
             </div>
             <div class="brand">${product.brand}</div>
             <div class="name">${product.name}</div>
-            ${product.discountRate > 0 ? `
+            ${product.discountPrice > 0 ? `
             <div class="discount">
                 <div class="percent">${product.discountRate}%</div>
                 <div class="number">${product.price.toLocaleString()}원</div>
             </div>
-            <div class="price">${discountedPrice.toLocaleString()}원</div>` :
+            <div class="price">${product.discountPrice.toLocaleString()}원</div>` :
             `<div class="price">${product.price.toLocaleString()}원</div>`}
             </a>
-`;
+        `;
     }).join('');
 }
 
@@ -202,6 +205,16 @@ function renderProducts(selector, products) {
 document.addEventListener('DOMContentLoaded', () => {
     loadNewProducts();
     loadBestProducts();
+
+    // 브랜드 추천
+    document.querySelectorAll('.brand-recommend .item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            const brandName = this.dataset.brandName;
+            if (brandName) {
+                location.href = '/shop/brand?brand=' + encodeURIComponent(brandName);
+            }
+        });
+    });
 
     // NEW 카테고리 필터링
     const newCategoryRadios = document.querySelectorAll('input[name="new-category"]');
@@ -219,6 +232,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const category = e.target.value;
             loadBestProducts(category);
         });
+    });
+
+    // 더보기 버튼 추가
+    document.querySelector('.best-product .more-product')?.addEventListener('click', () => {
+        location.href = '/shop/list?sort=popular';
+    });
+
+    document.querySelector('.new-product .more-product')?.addEventListener('click', () => {
+        location.href = '/shop/list?sort=latest';
     });
 });
 

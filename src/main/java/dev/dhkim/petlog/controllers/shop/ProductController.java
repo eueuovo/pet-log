@@ -24,7 +24,7 @@ public class ProductController {
     public List<ProductEntity> getNewProducts(
             @RequestParam(required = false) String petType,
             @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "15") int limit
     ) {
         Integer subCategoryId = getSubCategoryId(category);
         return productService.getNewProducts(petType, subCategoryId, limit);
@@ -35,7 +35,7 @@ public class ProductController {
     public List<ProductEntity> getBestProducts(
             @RequestParam(required = false) String petType,
             @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "15") int limit,
             @RequestParam(required = false) String brand
     ) {
         Integer subCategoryId = getSubCategoryId(category);
@@ -90,11 +90,12 @@ public class ProductController {
             @RequestParam(required = false) String petType,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer subCategoryId,
-            @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(defaultValue = "popular") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String brand
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) Integer eventCategoryId
     ) {
-        return productService.getProducts(petType, categoryId, subCategoryId, sort, page, size, brand);
+        return productService.getProducts(petType, categoryId, subCategoryId, sort, page, size, brand, eventCategoryId);
     }
 }

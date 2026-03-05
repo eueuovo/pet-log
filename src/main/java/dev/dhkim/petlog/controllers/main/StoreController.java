@@ -31,5 +31,18 @@ public class StoreController {
         storeService.registerStore(storeDto);
         return ResponseEntity.ok("가게 등록 완료");
     }
+    // js patch
+    // Controller 파일의 수정 메서드
+    @PatchMapping("/my/store/modify")
+    @ResponseBody
+    public String modifyStore(StoreDto storeDto) {
+        try {
+            storeService.updateStore(storeDto);
+            return "{\"result\": \"SUCCESS\"}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"result\": \"FAILURE\"}";
+        }
+    }
 }
 

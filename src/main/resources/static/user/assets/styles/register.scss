@@ -656,11 +656,11 @@ body:has(> .address-wrapper.visible) > .cover {
           margin-top: 1.5rem;
 
           > .countTime {
-            display: none;
+            opacity: 0;
             align-self: flex-end;
-            color: $global-gray-text-color;
+            color: red;
             &.visible{
-              display: revert;
+              opacity: 1;
             }
           }
 
@@ -1011,10 +1011,11 @@ body:has(> .address-wrapper.visible) > .cover {
               margin-left: 0.5rem;
 
               > .petImage {
-                width: 5rem;
-                height: 5rem;
+                width: 6rem;
+                height: 6rem;
                 object-fit: cover;
                 border-radius: 999rem;
+                padding: 0.2rem;
               }
             }
           }
@@ -1451,8 +1452,22 @@ body:has(> .dialog.visible) {
 
       > .image {
         width: 9rem;
-        height: 9rem;
+        height: 7rem;
         image-rendering: auto;
+        margin-bottom: 1rem;
+        margin-left: 0.1rem;
+
+        &.cat {
+          width: 7.5rem !important;
+          height: 6.5rem !important;
+          image-rendering: auto;
+          margin-bottom: 1rem;
+          margin-left: 0.1rem;
+        }
+      }
+
+      > .cat {
+        margin-top: 0.4rem;
       }
 
       > .dog,
@@ -2232,6 +2247,43 @@ body:has(> .dialog.visible) {
 @media screen and (max-height: 38.125rem) {
   .register-container {
     overflow: hidden auto;
+  }
+}
+
+
+@media (max-width: 420px) {
+  .register-container {
+    > .register-second {
+      padding: 2rem 1.25rem !important;
+
+      > .agreement-wrapper {
+        > .agreement-check {
+          align-items: flex-start !important;
+          flex: 1;
+          min-width: 0;
+
+          .circle {
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+          }
+
+          .text {
+            word-break: keep-all;
+            flex: 1;
+            line-height: 1.5;
+            text-align: left;
+          }
+        }
+      }
+      .button-wrapper {
+        flex-wrap: wrap;
+        margin-top: 2rem;
+
+        .cancel { order: 3; flex: 1; }
+        .previous { flex: 1; }
+        .next { flex: 1; }
+      }
+    }
   }
 }
 

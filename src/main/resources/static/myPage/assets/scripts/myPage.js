@@ -1,5 +1,12 @@
+let geocoder;
+
+kakao.maps.load(function () {
+    geocoder = new kakao.maps.services.Geocoder();
+});
+
 // 사이드바 메뉴 클릭 시 active 이동
 const sidebarItems = document.querySelectorAll('.sidebar .menu');
+
 
 const myPageWrapper = document.getElementById('myPage');
 const content = myPageWrapper.querySelector(':scope > .content');
@@ -8,6 +15,7 @@ const personalInformation = content.querySelector(':scope > .personalInformation
 const businessInformation = content.querySelector(':scope > .businessInformation');
 const petInformation = content.querySelector(':scope > .petInformation');
 const reservationInformation = content.querySelector(':scope > .reservationInformation');
+const reservationManagement = content.querySelector(':scope > .reservationManagement')
 const storeInformation = content.querySelector(':scope > .storeInformation');
 const paymentDetails = content.querySelector(':scope > .paymentDetails');
 const productHeartDetails = content.querySelector(':scope > .productHeartDetails');
@@ -18,6 +26,7 @@ const sections = [
     petInformation,
     storeInformation,
     reservationInformation,
+    reservationManagement,
     paymentDetails,
     productHeartDetails
 ].filter(section => section !== null);
@@ -1697,96 +1706,88 @@ if (businessInformation) {
         });
 
         // 모달에서 가게수정 버튼
-        modifyStoreButton.addEventListener('click', () => {
-            const modifyStorePhone = modifyStoreLocalNumber.value + modifyStoreMiddleNumber.value + modifyStoreLastNumber.value;
+        // [수정] (e) 추가 : 이벤트를 인자로 받아야 새로고침을 막습니다.
+        modifyStoreButton.addEventListener('click', (e) => {
+            e.preventDefault();
 
+            const address = modifyStoreAddressPrimaryInput.value;
 
-            if (modifyStoreNameInput.value === '') {
-                showMessage('가게명을 입력해주세요.');
-                return;
-            }
-            if (modifyStoreNameInput.value.length < 1 ||
-                modifyStoreNameInput.value.length > 100) {
-                showMessage('가게명은 1~100자까지 가능합니다.');
-                return;
-            }
-            if (modifyStoreAddressPostalInput.value === '' ||
-                modifyStoreAddressPrimaryInput.value === '') {
-                showMessage('주소를 입력해주세요.');
-                return;
-            }
-            if (modifyStoreAddressPostalInput.value.length !== 5) {
-                showMessage('우편번호가 맞지 않습니다.');
-                return;
-            }
-            if (modifyStoreAddressPrimaryInput.value.length < 1 || modifyStoreAddressPrimaryInput.value.length > 150) {
-                showMessage('기본주소는 1~150자까지 가능합니다.');
-                return;
-            }
-            if (modifyStoreAddressSecondaryInput.value.length > 100) {
-                showMessage('상세주소는 최대 100자까지 가능합니다.');
-                return;
-            }
-            if (modifyStoreAddressCategory.value === '') {
-                showMessage('카테고리를 선택해주세요.');
-                return;
-            }
-            if (modifyStorePhone.length < 9 ||
-                modifyStorePhone.length > 11) {
-                showMessage('전화번호를 다시 확인해주세요.');
-                return;
-            }
-            if (modifyStoreLastNumber.value.length !== 4) {
-                showMessage('전화번호를 다시 확인해주세요.');
+            if (!geocoder) {
+                console.error("Geocoder 준비 안됨");
                 return;
             }
 
+            geocoder.addressSearch(address, function (result, status) {
 
-            const xhr = new XMLHttpRequest();
-            const formData = new FormData();
-            formData.append('storeId', selectedStoreId);
-            formData.append('storeName', modifyStoreNameInput.value);
-            formData.append('storePhone', modifyStorePhone);
-            formData.append('postalCode', modifyStoreAddressPostalInput.value);
-            formData.append('addressPrimary', modifyStoreAddressPrimaryInput.value);
-            if (modifyStoreAddressSecondaryInput.value !== '') {
-                formData.append('addressSecondary', modifyStoreAddressSecondaryInput.value);
-            }
-            formData.append('category', modifyStoreAddressCategory.value);
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState !== XMLHttpRequest.DONE) {
+                if (status !== kakao.maps.services.Status.OK) {
+                    alert("주소 검색 실패");
                     return;
                 }
-                if (xhr.status < 200 || xhr.status >= 400) {
 
-                    return;
+                const lat = result[0].y;
+                const lng = result[0].x;
+
+                console.log("위도:", lat);
+                console.log("경도:", lng);
+
+                console.log("🚀 [JS] 수정 버튼 클릭됨! selectedStoreId:", selectedStoreId);
+
+                const modifyStorePhone =
+                    modifyStoreLocalNumber.value +
+                    modifyStoreMiddleNumber.value +
+                    modifyStoreLastNumber.value;
+
+                const xhr = new XMLHttpRequest();
+                const formData = new FormData();
+
+                formData.append('storeId', selectedStoreId);
+                formData.append('storeName', modifyStoreNameInput.value);
+                formData.append('storePhone', modifyStorePhone);
+                formData.append('postalCode', modifyStoreAddressPostalInput.value);
+                formData.append('addressPrimary', address);
+
+                if (modifyStoreAddressSecondaryInput.value !== '') {
+                    formData.append('addressSecondary', modifyStoreAddressSecondaryInput.value);
                 }
-                const response = JSON.parse(xhr.responseText);
-                switch (response.result) {
-                    case 'FAILURE':
-                        showMessage('가게 수정에 실패하였습니다 정보를 다시 확인해주세요.');
-                        break;
-                    case 'FAILURE_SESSION_EXPIRED':
-                        showMessage('로그인을 해주세요.', () => {
-                            location.href = '/user/login';
-                        });
-                        break;
-                    case 'SUCCESS':
-                        modifyStoreModal.classList.remove('visible');
-                        resetStoreModal();
+
+                formData.append('category', modifyStoreAddressCategory.value);
+
+                // 🔥 여기서 lat/lng 추가
+                formData.append('lat', lat);
+                formData.append('lng', lng);
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState !== XMLHttpRequest.DONE) return;
+
+                    console.log("🚀 [JS] 서버 응답 도착:", xhr.status, xhr.responseText);
+
+                    if (xhr.status < 200 || xhr.status >= 400) {
+                        console.error("❌ 서버 통신 에러");
+                        return;
+                    }
+
+                    const response = JSON.parse(xhr.responseText);
+
+                    if (response.result === 'SUCCESS') {
+                        alert("수정 성공!");
                         location.href = '/my?menu=' + getCurrentMenuIndex();
-                        break;
-                    default:
-                        showMessage('알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도해주세요.');
-                }
+                    } else {
+                        alert("수정 실패");
+                    }
+                };
 
-            };
-            xhr.open('PATCH', '/my/store/modify');
-            xhr.send(formData);
+                console.log("🚀 [JS] 서버로 PATCH 요청 보냅니다");
+                // 주소 컨트롤러 기준 store
+                xhr.open('PATCH', '/api/stores/my/store/modify');
+                xhr.send(formData);
+
+            });
+
         });
+    }
         // endregion
     }
-}
+
 
 
 // 공통 변경
@@ -3770,6 +3771,79 @@ if (personalInformation) {
         xhr.send(formData);
     })
     // endregion
+}
+
+if (businessInformation) {
+    // region 사업자 예약취소
+    const businessReservationMessage = document.getElementById('businessReservationMessage');
+    const businessReservationMessageTitle = document.createElement('span');
+    const businessReservationMessageText = document.createElement('span');
+    const businessReservationYesButton = businessReservationMessage.querySelector(':scope > .button-wrapper > .yes');
+    const businessReservationNoButton = businessReservationMessage.querySelector(':scope > .button-wrapper > .no');
+
+    businessReservationMessageTitle.classList.add('title');
+    businessReservationMessageText.classList.add('text');
+    businessReservationMessageTitle.innerText = '알림';
+    businessReservationMessage.prepend(businessReservationMessageTitle, businessReservationMessageText);
+
+    let cancelBusinessReservationId = null;
+
+    function showBusinessReservationMessage(text) {
+        businessReservationMessage.classList.add('visible');
+        businessReservationMessageText.innerText = text;
+    }
+
+    businessReservationNoButton.addEventListener('click', () => {
+        businessReservationMessage.classList.remove('visible');
+        cancelBusinessReservationId = null;
+    });
+
+    const businessReservationCards = document.querySelectorAll('.reservationManagement .reservation-card');
+    businessReservationCards.forEach(card => {
+        const cancelBtn = card.querySelector('.cancel-btn');
+        if (!cancelBtn) return;
+
+        cancelBtn.addEventListener('click', () => {
+            const reservationId = card.dataset.reservationId;
+            if (!reservationId) return;
+            cancelBusinessReservationId = reservationId;
+            showBusinessReservationMessage('정말로 해당 회원의 예약을 취소하시겠습니까?');
+        });
+    });
+
+    businessReservationYesButton.addEventListener('click', () => {
+        if (!cancelBusinessReservationId) return;
+
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        formData.append('reservationId', cancelBusinessReservationId);
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState !== XMLHttpRequest.DONE) return;
+            if (xhr.status < 200 || xhr.status >= 400) return;
+
+            const response = JSON.parse(xhr.responseText);
+            switch (response.result) {
+                case 'FAILURE':
+                    showMessage('예약 취소에 실패하였습니다. 다시 시도해주세요.');
+                    break;
+                case 'FAILURE_SESSION_EXPIRED':
+                    showMessage('로그인을 해주세요.', () => {
+                        location.href = '/user/login';
+                    });
+                    break;
+                case 'SUCCESS':
+                    location.href = '/my?menu=' + getCurrentMenuIndex();
+                    break;
+                default:
+                    showMessage('알 수 없는 오류가 발생하였습니다. 잠시 후 다시 시도해주세요.');
+            }
+            businessReservationMessage.classList.remove('visible');
+            cancelBusinessReservationId = null;
+        };
+        xhr.open('POST', '/my/reservation/business/cancel');
+        xhr.send(formData);
+    });
+// endregion
 }
 
 // 찜 취소

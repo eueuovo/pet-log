@@ -2,6 +2,7 @@ package dev.dhkim.petlog.services.user;
 
 import dev.dhkim.petlog.dto.user.PetDto;
 import dev.dhkim.petlog.dto.user.RegisterDto;
+import dev.dhkim.petlog.dto.user.StoreDto;
 import dev.dhkim.petlog.entities.user.BusinessUserEntity;
 import dev.dhkim.petlog.entities.user.EmailVerificationEntity;
 import dev.dhkim.petlog.entities.user.PersonalUserEntity;
@@ -10,6 +11,7 @@ import dev.dhkim.petlog.enums.user.EmailVerificationType;
 import dev.dhkim.petlog.mappers.user.EmailVerificationMapper;
 import dev.dhkim.petlog.mappers.user.UserMapper;
 import dev.dhkim.petlog.results.*;
+import dev.dhkim.petlog.services.main.StoreService;
 import dev.dhkim.petlog.validators.UserValidator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -54,6 +56,7 @@ UserService {
     private final EmailVerificationMapper emailVerificationMapper;
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final StoreService storeService;
 
 
     @Transactional
@@ -135,11 +138,18 @@ UserService {
             if (dbBusinessInsert < 1) {
                 return RegisterResult.FAILURE;
             }
+            //주석 하고 밑에 코드 넣은 이유 매퍼 말고 서비스 호출 이유 서비스 안에
+            //위도 경도, 가공 하는 코드를 이용해서 값을 넣기 위해 직접 db 에 바로 넣는것 보다 로직 이용을 위한것
             if (dto.getStore() != null) {
-                int dbStoreInsert = userMapper.insertStore(userId, dto.getStore());
+               int dbStoreInsert = userMapper.insertStore(userId, dto.getStore());
                 if (dbStoreInsert < 1) {
                     return RegisterResult.FAILURE;
                 }
+               /* dto.getStore().setUserId(userId);
+                StoreDto saved = storeService.registerStore(dto.getStore());
+                if (saved == null) {
+                    return RegisterResult.FAILURE;
+                }*/
             }
         }
 
@@ -478,6 +488,85 @@ UserService {
 
 
 
+    @Transactional
+    public UserEntity loginOrRegisterByKakao(String code) {
+        try {
+            // 1️⃣ access token 요청
+            String tokenUrl = "https://kauth.kakao.com/oauth/token";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "authorization_code");
+            params.add("client_id", System.getenv("KAKAO_REST_KEY"));
+            params.add("client_secret", System.getenv("KAKAO_CLIENT_SECRET"));
+            params.add("redirect_uri", "http://localhost:8080/user/login/kakao/callback");
+            params.add("code", code);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+            Map<String, Object> tokenResponse = restTemplate.postForObject(tokenUrl, request, Map.class);
+            System.out.println("카카오 tokenResponse = " + tokenResponse);
+
+            if (tokenResponse == null || !tokenResponse.containsKey("access_token")) {
+                System.out.println("카카오 access_token 없음");
+                return null;
+            }
+            String accessToken = (String) tokenResponse.get("access_token");
+            System.out.println("카카오 accessToken = " + accessToken);
+
+            // 2️⃣ 사용자 정보 요청
+            HttpHeaders userHeaders = new HttpHeaders();
+            userHeaders.set("Authorization", "Bearer " + accessToken);
+            HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
+
+            ResponseEntity<Map> userResponse = restTemplate.exchange(
+                    "https://kapi.kakao.com/v2/user/me",
+                    HttpMethod.GET,
+                    userEntity,
+                    Map.class
+            );
+            System.out.println("카카오 userResponse body = " + userResponse.getBody());
+
+            if (userResponse.getBody() == null) {
+                System.out.println("카카오 userResponse body 없음");
+                return null;
+            }
+
+            Map<String, Object> kakaoAccount = (Map<String, Object>) userResponse.getBody().get("kakao_account");
+            System.out.println("카카오 kakaoAccount = " + kakaoAccount);
+
+            if (kakaoAccount == null || !kakaoAccount.containsKey("email")) {
+                System.out.println("카카오 이메일 없음 - 동의항목 확인 필요");
+                return null;
+            }
+
+            String email = (String) kakaoAccount.get("email");
+            System.out.println("카카오 email = " + email);
+
+            if (email == null) {
+                System.out.println("카카오 email null");
+                return null;
+            }
+
+            // 3️⃣ DB 확인
+            UserEntity dbUser = userMapper.selectByEmail(email);
+            System.out.println("카카오 dbUser = " + dbUser);
+
+            if (dbUser == null) {
+                System.out.println("카카오 DB에 해당 이메일 없음");
+                return null;
+            }
+
+            return dbUser;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 
