@@ -2,6 +2,8 @@ let map;
 let geocoder;
 let currentInfo = null;
 
+let isPanning = false;
+
 //현재 마커 + 인포
 let currentLocationMarker = null;
 let currentLocationInfo = null;
@@ -153,6 +155,42 @@ function normalizePlaceData(place, category) {
     return null;
 }
 
+// ================== 현위치 버튼 ==================
+// initMap() 함수 안에 추가하거나, DOMContentLoaded 이벤트에 추가
+
+function bindCurrentLocationBtn() {
+    const btn = document.querySelector('.map .button');  // "현위치" 버튼
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            alert('위치 서비스를 지원하지 않는 브라우저입니다.');
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                const latlng = new kakao.maps.LatLng(lat, lng);
+
+                // 지도 중심을 현재 위치로 이동
+                map.setCenter(latlng);
+                map.setLevel(4); // 줌 레벨도 초기값으로 리셋 (선택)
+
+                // currentLat/Lng 전역 변수도 동기화
+                currentLat = lat;
+                currentLng = lng;
+            },
+            err => {
+                console.error('현위치 가져오기 실패:', err);
+                alert('현재 위치를 가져올 수 없습니다. 위치 권한을 확인해주세요.');
+            },
+            { enableHighAccuracy: true, timeout: 5000 }
+        );
+    });
+}
+
 /* ================= 지도 초기화 ================= */
 
 function initMap() {
@@ -167,6 +205,29 @@ function initMap() {
 
     getCurrentLocation();
     bindSearch();
+    bindCurrentLocationBtn(); // ← 여기에 추가
+
+    kakao.maps.event.addListener(map, 'center_changed', () => {
+        const center = map.getCenter();
+        currentLat = center.getLat();
+        currentLng = center.getLng();
+    });
+
+    kakao.maps.event.addListener(map, 'idle', () => {
+        const center = map.getCenter();
+        currentLat = center.getLat();
+        currentLng = center.getLng();
+
+        if (isPanning) {
+            isPanning = false;
+            return;
+        }
+
+        if (activeCategory) {
+            clearAllCategories();
+            showCategory(activeCategory);
+        }
+    });
 
     window.addEventListener('pageshow', () => {
         if (map) {
@@ -400,7 +461,6 @@ async function handleCategoryClick(category) {
         friendContent?.classList.add('hidden');
         storePanel?.classList.remove('hidden');
     }
-    //
 
     const btn = document.querySelector(`[data-category="${category}"]`);
 
@@ -409,6 +469,8 @@ async function handleCategoryClick(category) {
         clearCategory(category);
         btn?.classList.remove('active');
         activeCategory = null;
+        renderStoreList([]);
+        switchView('list');
         return;
     }
 
@@ -420,6 +482,8 @@ async function handleCategoryClick(category) {
     btn?.classList.add('active');
 
     activeCategory = category;
+
+    switchView('list');
 
     clearAllCategories();
     await showCategory(category);
@@ -501,6 +565,8 @@ async function showCategory(category) {
 }
 
 function renderPlaces(list, category) {
+    const centerLat = currentLat;
+    const centerLng = currentLng;
 
     const bounds = new kakao.maps.LatLngBounds();
     const visiblePlaces = [];
@@ -510,13 +576,12 @@ function renderPlaces(list, category) {
         if (!data || !data.lat || !data.lng) return;
 
         let distanceKm = null;
-        if (currentLat && currentLng) {
-            distanceKm = getDistanceKm(
-                currentLat,
-                currentLng,
-                data.lat,
-                data.lng
-            );
+        if (centerLat && centerLng) {
+            distanceKm = getDistanceKm(centerLat, centerLng, data.lat, data.lng);
+            const radiusMap = { hospital: 3, salon: 3, cafe: 3, school: 3, park: 3, camp: 15 };
+            const maxDistance = radiusMap[category] ?? 3;
+            if (distanceKm > maxDistance) return;
+        }
             const radiusMap = {
                 hospital: 3,
                 salon: 3,
@@ -528,7 +593,7 @@ function renderPlaces(list, category) {
             const maxDistance = radiusMap[category] ?? 3;
 
             if (distanceKm > maxDistance) return;
-        }
+
 
         const position = new kakao.maps.LatLng(data.lat, data.lng);
         const { marker, info } = createMarker({ position, ...data });
@@ -536,10 +601,6 @@ function renderPlaces(list, category) {
         bounds.extend(position);
         visiblePlaces.push({ ...data, distanceKm, marker, info });
     });
-
-    if (!bounds.isEmpty()) {
-        map.setBounds(bounds);
-    }
 
     renderStoreList(visiblePlaces);
 }
@@ -722,35 +783,29 @@ function getCurrentLocation() {
 
 // ====================== 장소 상세 렌더링 ======================
 function renderPlaceDetail(place) {
-    const el = document.querySelector('.place-detail-content');
-    if (!el) return;
+    const container = document.getElementById('descriptionContainer');
+    if (!container) return;
 
-    let distanceText = '거리 정보 없음';
-    let timeText = '';
+    container.innerHTML = `<div class="place description">
+    <button type="button" class="close-btn" id="placeCloseBtn">X</button>
+    <div class="caption-wrapper" style="margin-top:1rem;">
+        <div><strong>장소명:</strong> ${place.name}</div>
+        <div><strong>주소:</strong> ${place.address}</div>
+        ${place.tel ? `<div><strong>전화:</strong> ${place.tel}</div>` : ''}
+        ${place.distanceKm != null ? `<div><strong>거리:</strong> ${place.distanceKm < 1 ? Math.round(place.distanceKm*1000)+'m' : place.distanceKm.toFixed(1)+'km'}</div>` : ''}
+        ${place.category !== 'search' && place.category !== 'park' && place.category !== 'camp'
+        ? `<button class="reserve-btn" data-store-id="${place.storeId}">예약하기</button>`
+        : ''}
+    </div>
+</div>`;
 
-    if (place.distanceKm != null) {
-        distanceText =
-            place.distanceKm < 1
-                ? `${Math.round(place.distanceKm * 1000)}m`
-                : `${place.distanceKm.toFixed(1)}km`;
-
-        const min = getWalkMinutes(place.distanceKm);
-        timeText = ` · 도보 ${min}분`;
-    }
-    // 예: 서버에서 내려오는 JSON이 snake_case라면
-    console.log(place.store_id);  // 21
-    el.innerHTML = `
-  <h2 class="name">${place.name}</h2>
-  <div class="distance">📍 ${distanceText}${timeText}</div>
-
-  <p><strong>주소</strong><br>${place.address}</p>
-
-  ${place.tel ? `<p><strong>전화</strong><br>${place.tel}</p>` : ''}
-  ${place.status ? `<p><strong>영업 상태</strong><br>${place.status}</p>` : ''}
-  <p><strong>영업 시간</strong><br>평일 09:00 - 18:00</p> 
-  ${place.category !== 'search' && place.category !== 'park' && place.category !== 'camp' ? `<button class="reserve-btn" data-store-id="${place.storeId}">예약하기</button>` : ''}
-`;
+    container.querySelector('.close-btn').onclick = () => {
+        container.style.display = "none";
+        container.innerHTML = '';
+        switchView('list');
+    };
 }
+
 //주변 친구 불러오기 함수
 function loadNearbyFriendsByCurrentLocation() {
 
@@ -800,10 +855,23 @@ function renderStoreList(places) {
 
     const listEl = document.querySelector('.store-list');
     const countEl = document.querySelector('.result-count');
+    const emptyEl = document.getElementById('storeEmpty');
+    const storeListHeader = document.getElementById('listHeader');
+    const listView = document.getElementById('placeListView');
     if (!listEl) return;
 
     if (countEl) {
         countEl.textContent = `총 ${places.length}개`;
+    }
+
+    if (places.length === 0) {
+        emptyEl?.classList.remove('hidden');
+        storeListHeader?.classList.add('hidden');
+        listView?.classList.add('hidden');
+    } else {
+        emptyEl?.classList.add('hidden');
+        storeListHeader?.classList.remove('hidden');
+        listView?.classList.remove('hidden');
     }
 
     listEl.innerHTML = '';
@@ -812,7 +880,6 @@ function renderStoreList(places) {
 
         const li = document.createElement('li');
         li.className = 'item';
-        /*이건 장소 리스트 하나 만드는거  -> 이거클릭하면 디테일 뷰 열림*/
         li.innerHTML = `
             <div class="item-wrapper">
                 <div class="text-wrapper">
@@ -822,16 +889,26 @@ function renderStoreList(places) {
                 </div>
             </div>
         `;
+
         li.addEventListener('click', () => {
+            if (li.classList.contains('active')) {
+                li.classList.remove('active');
+                if (currentInfo) currentInfo.close();
+                switchView('list');
+                return;
+            }
+
             clearActiveList();
             li.classList.add('active');
 
-            // 선택 마커 하나만 남기기
-            selectSingleMarker(place.marker, place.info);
+            isPanning = true;
+            if (currentInfo) currentInfo.close();
+            place.info.open(map, place.marker);
+            currentInfo = place.info;
+            map.panTo(place.marker.getPosition());
 
             switchView('detail', place);
         });
-
 
         listEl.appendChild(li);
     });
@@ -841,36 +918,24 @@ function renderStoreList(places) {
 function switchView(mode, place = null) {
     const listView = document.querySelector('.place-list-view');
     const detailView = document.querySelector('.place-detail-view');
-    const backBtn = document.querySelector('.back-btn')
-
+    const container = document.getElementById('descriptionContainer');
 
     viewMode = mode;
 
     if (mode === 'detail' && place) {
-
-        // 여기서 거리 없으면 계산
         if (place.distanceKm == null && currentLat && currentLng) {
-            place.distanceKm = getDistanceKm(
-                currentLat,
-                currentLng,
-                place.lat,
-                place.lng
-            );
+            place.distanceKm = getDistanceKm(currentLat, currentLng, place.lat, place.lng);
         }
-
         selectedPlace = place;
 
-        listView.classList.add('hidden');
-        detailView.classList.remove('hidden');
-
         renderPlaceDetail(place);
+        container.style.display = "block";
     }
 
     if (mode === 'list') {
         selectedPlace = null;
-
-        detailView.classList.add('hidden');
-        listView.classList.remove('hidden');
+        container.style.display = "none";
+        container.innerHTML = '';
     }
 }
 

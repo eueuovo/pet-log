@@ -130,7 +130,6 @@ public class ShopController {
     @RequestMapping(value = "welcome", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getWelcome (ModelAndView modelAndView) {
         modelAndView.setViewName("shop/welcome");
-
         return modelAndView;
     }
 }

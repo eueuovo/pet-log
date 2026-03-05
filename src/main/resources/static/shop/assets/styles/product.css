@@ -799,7 +799,7 @@
 }
 @media (max-width: 1000px) {
   #product > .detail-wrapper {
-    padding-bottom: 6rem;
+    padding-bottom: 2rem;
   }
 }
 #product > .detail-wrapper > .line {
@@ -1608,6 +1608,12 @@
     border-radius: 0.35rem;
     font-size: 1.1rem;
     cursor: pointer;
+  }
+}
+
+@media (max-width: 1000px) {
+  .product-footer-wrapper {
+    padding-bottom: 6rem;
   }
 }
 

@@ -40,4 +40,6 @@ public interface CartMapper {
                          @Param("quantity") Integer quantity);
 
     List<Map<String, Object>> getCartItemsByIds(List<Integer> cartIds);
+
+    Integer getCartQuantity(Integer cartId);
 }

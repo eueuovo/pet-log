@@ -110,8 +110,10 @@
                   address_primary = #{addressPrimary},
                   address_secondary = #{addressSecondary},
                   postal_code = #{postalCode},
-                  lat = #{lat},   lng = #{lng},   store_phone = #{storePhone}
-              WHERE store_id = #{storeId}  </update>
+                  lat = #{lat},   lng = #{lng},   store_phone = #{storePhone},
+                  updated_at = NOW()
+              WHERE store_id = #{storeId}
+              AND user_id = #{userId}</update>
 
        <delete id="deleteById">
               DELETE FROM petlog.store WHERE store_id  = #{storeId}

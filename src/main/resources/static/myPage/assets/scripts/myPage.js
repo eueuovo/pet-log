@@ -1710,7 +1710,49 @@ if (businessInformation) {
         modifyStoreButton.addEventListener('click', (e) => {
             e.preventDefault();
 
+            const modifyStorePhone = modifyStoreLocalNumber.value + modifyStoreMiddleNumber.value + modifyStoreLastNumber.value;
             const address = modifyStoreAddressPrimaryInput.value;
+
+            if (modifyStoreNameInput.value === '') {
+                showMessage('가게명을 입력해주세요.');
+                return;
+            }
+            if (modifyStoreNameInput.value.length < 1 ||
+                modifyStoreNameInput.value.length > 100) {
+                showMessage('가게명은 1~100자까지 가능합니다.');
+                return;
+            }
+            if (modifyStoreAddressPostalInput.value === '' ||
+                modifyStoreAddressPrimaryInput.value === '') {
+                showMessage('주소를 입력해주세요.');
+                return;
+            }
+            if (modifyStoreAddressPostalInput.value.length !== 5) {
+                showMessage('우편번호가 맞지 않습니다.');
+                return;
+            }
+            if (modifyStoreAddressPrimaryInput.value.length < 1 || modifyStoreAddressPrimaryInput.value.length > 150) {
+                showMessage('기본주소는 1~150자까지 가능합니다.');
+                return;
+            }
+            if (modifyStoreAddressSecondaryInput.value.length > 100) {
+                showMessage('상세주소는 최대 100자까지 가능합니다.');
+                return;
+            }
+            if (modifyStoreAddressCategory.value === '') {
+                showMessage('카테고리를 선택해주세요.');
+                return;
+            }
+            if (modifyStorePhone.length < 9 ||
+                modifyStorePhone.length > 11) {
+                showMessage('전화번호를 다시 확인해주세요.');
+                return;
+            }
+            if (modifyStoreLastNumber.value.length !== 4) {
+                showMessage('전화번호를 다시 확인해주세요.');
+                return;
+            }
+
 
             if (!geocoder) {
                 console.error("Geocoder 준비 안됨");
@@ -1769,10 +1811,13 @@ if (businessInformation) {
                     const response = JSON.parse(xhr.responseText);
 
                     if (response.result === 'SUCCESS') {
-                        alert("수정 성공!");
                         location.href = '/my?menu=' + getCurrentMenuIndex();
+                    } else if (response.result === "FAILURE_SESSION_EXPIRED"){
+                        showMessage('로그인을 해주세요.', () => {
+                            location.href = '/user/login';
+                        });
                     } else {
-                        alert("수정 실패");
+                        showMessage('가게 수정에 실패하였습니다 정보를 다시 확인해주세요.');
                     }
                 };
 

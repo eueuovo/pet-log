@@ -1,6 +1,6 @@
 @import "../../../assets/styles/def";
 body {
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
 }
 
@@ -12,6 +12,7 @@ body {
   margin-top: 5rem;
   width: 40rem;
   height: 40rem;
+  align-self: center;
 
   > .image{
     width: 25rem;
@@ -45,9 +46,10 @@ body {
   background-color: #ffffff;
   border-radius: 1rem;
   padding: 3rem 4rem;
-  margin-top: 5rem;
+  margin: 5rem 0;
   width: 40rem;
   height: 40rem;
+  align-self: center;
 
   > .image{
     width: 22rem;

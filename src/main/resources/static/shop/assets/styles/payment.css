@@ -1078,8 +1078,8 @@ body:has(.message.visible) .modal-cover {
   #payment {
     height: auto;
     min-height: auto;
-    padding: 1rem 1rem 5rem 1rem;
     width: 100%;
+    margin-bottom: 6rem;
   }
   #payment > .summary-wrapper {
     position: static;
@@ -2184,6 +2184,15 @@ body:has(.message.visible) .modal-cover {
 .delivery-address-modify-modal > .delivery-address-modify > .registration-wrapper > .label > .button:hover,
 .delivery-address-modify-modal > .delivery-address-modify > .delivery-modify-wrapper > .label > .button:hover {
   background-color: rgb(119.1952662722, 196.3047337278, 134.1568047337);
+}
+
+.product-footer-wrapper {
+  margin-top: auto;
+}
+@media (max-width: 930px) {
+  .product-footer-wrapper {
+    display: none;
+  }
 }
 
 /*# sourceMappingURL=payment.css.map */

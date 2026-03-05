@@ -374,3 +374,11 @@
     }
   }
 }
+
+.product-footer-wrapper {
+  margin-top: auto;
+
+  @media (max-width: 800px) {
+    display: none;
+  }
+}

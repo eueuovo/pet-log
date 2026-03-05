@@ -3,6 +3,8 @@ package dev.dhkim.petlog.services.main;
 import dev.dhkim.petlog.dto.user.StoreDto;
 import dev.dhkim.petlog.entities.user.StoreEntity;
 import dev.dhkim.petlog.mappers.main.StoreMapper;
+import dev.dhkim.petlog.results.MyPageResult;
+import dev.dhkim.petlog.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -155,8 +157,19 @@ public class StoreService {
     // StoreService 내부
 
     @Transactional
-    public void updateStore(StoreDto storeDto) {
+    public MyPageResult updateStore(StoreDto storeDto) {
         // 주소 합치기
+        if (storeDto.getStoreId() < 1 ||
+                !UserValidator.validateStoreForRegistration(storeDto) ||
+                storeDto.getUserId() < 1) {
+            System.out.println(storeDto.getStoreName());
+            System.out.println(storeDto.getPostalCode());
+            System.out.println(storeDto.getAddressPrimary());
+            System.out.println(storeDto.getAddressSecondary());
+            System.out.println(storeDto.getCategory());
+            System.out.println(storeDto.getStorePhone());
+            return MyPageResult.FAILURE;
+        }
         String fullAddress = storeDto.getAddressPrimary().trim();
 
 
@@ -170,7 +183,9 @@ public class StoreService {
         StoreEntity entity = dtoToEntity(storeDto);
         storeMapper.updateStore(entity);
 
-        int result = storeMapper.updateStore(entity);
+        return storeMapper.updateStore(entity) > 0
+                ? MyPageResult.SUCCESS
+                : MyPageResult.FAILURE;
 
     }
 

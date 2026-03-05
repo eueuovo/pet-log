@@ -4,6 +4,33 @@
 @import "objects/label";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Chewy&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@font-face {
+  font-family: 'GMarketSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AvieSehyun';
+  src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeSe_hyun.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GMarketSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GMarketSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
+  font-weight: 700;
+  font-display: swap;
+}
 
 * {
   box-sizing: border-box;
@@ -80,14 +107,13 @@ ol, ul {
 
     > .logo {
       @include flex(row, center, center);
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 600;
       cursor: pointer;
+      font-family: 'AvieSehyun';
       color: $global-white-text-color;
-      transition: color,transform 0.2s ease, opacity 0.2s ease;
 
       &:hover {
-        transform: translateY(-0.2rem);
         opacity: 0.9;
         color: #ffdd00;
       }
@@ -101,14 +127,13 @@ ol, ul {
         font-size: 1.375rem;
         color: $global-white-text-color;
         cursor: pointer;
-        font-weight: 600;
         padding: 0.5rem;
         position: relative;
-        transition: color 0.2s ease, transform 0.2s ease;
         text-decoration: none;
+        font-family: "GMarketSans";
+        font-weight: 500;
 
         &:hover {
-          transform: translateY(-0.2rem);
           opacity: 0.9;
           color: #ffdd00;
         }
@@ -149,7 +174,7 @@ ol, ul {
     width: 10rem;
     height: 100vh;
     background: #A4DDB0;
-    padding: 6rem 1rem 2rem;
+    padding: 3rem 1rem 2rem;
     transition: right 0.3s ease;
     z-index: 90;
 
@@ -163,23 +188,30 @@ ol, ul {
       left: 0.3125rem;
       width: 2rem;
       height: 2rem;
+      cursor: pointer;
     }
 
     > .nav-caption {
       @include flex(row, center, center);
       width: 100%;
+      padding-top: 1.5rem;
       color: white;
-      font-size: 1.75rem;
+      font-family: 'AvieSehyun';
+      font-size: 1.1rem;
       font-weight: 400;
       text-align: center;
 
-      &::before,
+      &.user {
+        border-top: 0.0625rem solid #ffffff;
+      }
+
+/*      &::before,
       &::after {
         content: "";
         flex: 1;
         height: 1px;
         background-color: white;
-      }
+      }*/
     }
 
     > .nav-category,
@@ -190,6 +222,8 @@ ol, ul {
         color: white;
         font-size: 1.25rem;
         text-decoration: none;
+        font-family: "GMarketSans";
+        font-weight: 500;
       }
     }
   }
@@ -225,6 +259,7 @@ ol, ul {
   @include flex(row, flex-end, space-between, clamp(0.5rem, 2vw, 1rem));
   width: 100%;
   padding-bottom: 1rem;
+  margin-bottom: 1rem;
 
   > .menu {
     position: relative;
@@ -237,10 +272,11 @@ ol, ul {
         > .item {
           font-size: 1.2rem;
           color: $global-gray-right-text-color;
-          font-weight: 600;
+          font-weight: 500;
           position: relative;
           padding: 0 1rem;
           cursor: pointer;
+          font-family: 'GMarketSans';
 
           @media (max-width: 700px) {
             font-size: 1rem;
@@ -289,10 +325,11 @@ ol, ul {
           > .item {
             font-size: 1.2rem;
             color: $global-gray-right-text-color;
-            font-weight: 600;
+            font-weight: 500;
             position: relative;
             padding: 0 1rem 0.5rem 1rem;
             cursor: pointer;
+            font-family: 'GMarketSans';
 
             @media (max-width: 700px) {
               font-size: 1rem;
@@ -354,8 +391,9 @@ ol, ul {
               > .item{
                 font-size: 1rem;
                 color: $global-gray-right-text-color;
-                font-weight: 600;
+                font-weight: 500;
                 cursor: pointer;
+                font-family: 'GMarketSans';
                 margin: 0 1rem;
                 position: relative;
 
@@ -583,8 +621,159 @@ body:has(.message.visible) .cover {
   }
 }
 
-> .footer{
-  @include flex(column, flex-start, flex-start, 1rem);
-  background-color: $global-gray-background-color;
-  padding: 1rem;
+.footer {
+  @include flex(row, center, center, 5rem);
+  background-color: darken($global-gray-background-color, 5%);
+  padding: 2rem;
+
+  .divider {
+    width: 0.0625rem;
+    background-color: #ccc;
+    align-self: stretch;
+  }
+
+  .media-wrapper {
+    @include flex(row, center, center, 5rem);
+
+    .cs-wrapper {
+      @include flex(column, flex-start, center);
+
+      .service-center {
+        font-size: 1.2rem;
+        font-weight: 600;
+        padding-bottom: 0.5rem;
+        cursor: pointer;
+        color: $global-gray-text-color;
+
+        &:hover{
+          color: darken($global-gray-text-color, 20%);
+        }
+      }
+
+      .cs-method {
+        @include flex(row, flex-start, flex-start, 0.5rem);
+        padding-bottom: 0.5rem;
+
+        .service-num,
+        .service-email {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: $global-gray-text-color;
+        }
+
+        .method-divider {
+          width: 0.0625rem;
+          height: 0.8rem;
+          background-color: #ccc;
+          padding-top: 1rem;
+        }
+      }
+
+      .info-list {
+        @include flex(column, flex-start, center, 0.3rem);
+        list-style-type: disc;
+        padding-left: 1rem;
+
+        .item {
+          font-size: 0.8rem;
+          color: $global-gray-text-color;
+        }
+      }
+    }
+
+    .terms-wrapper {
+      .terms {
+        @include flex(column, flex-start, center, 1rem);
+
+        .service,
+        .security {
+          cursor: pointer;
+          color: $global-gray-text-color;
+          font-size: 0.9rem;
+
+          &:hover{
+            color: darken($global-gray-text-color, 20%);
+          }
+        }
+      }
+    }
+  }
+
+  .compony-wrapper {
+    @include flex(column, flex-start, center, 1rem);
+
+    .info {
+      @include flex(column, flex-start, center, 0.5rem);
+
+      .compony-info {
+        @include flex(row, flex-start, center, 0.5rem);
+        color: $global-gray-text-color;
+        font-size: 0.9rem;
+
+        .info-divider {
+          width: 0.0625rem;
+          height: 0.8rem;
+          background-color: #ccc;
+          padding-top: 1rem;
+        }
+      }
+
+      .compony-content {
+        @include flex(row, flex-start, center, 0.5rem);
+        color: $global-gray-text-color;
+        font-size: 0.85rem;
+
+        .info-divider {
+          width: 0.0625rem;
+          height: 0.8rem;
+          background-color: #ccc;
+          padding-top: 1rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      .sub-item {
+        font-size: 0.8rem;
+        color: $global-gray-text-color;
+      }
+
+      .sub-copy {
+        font-size: 0.7rem;
+        color: lighten($global-gray-text-color, 20%);
+      }
+    }
+  }
+
+  @media (max-width: 1229px) {
+    @include flex(column, flex-start, flex-start, 1rem);
+
+    > .divider {
+      width: 100%;
+      height: 0.0625rem;
+      align-self: stretch;
+    }
+
+    .media-wrapper {
+      gap: 2rem;
+    }
+
+    .compony-wrapper .info {
+      gap: 0.3rem;
+
+      .compony-info,
+      .compony-content {
+        display: block;
+        line-height: 1;
+
+
+        .item, .info-divider {
+          display: inline;
+        }
+      }
+
+      .sub-item{
+        line-height: 1.2;
+      }
+    }
+  }
 }

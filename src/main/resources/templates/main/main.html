@@ -44,6 +44,7 @@
 
                 </div>
             </div>
+            <button class="button">현위치</button>
         </div>
         <div class="tab-list-container">
             <div class="tabs">
@@ -95,7 +96,7 @@
 
                 <div class="store-panel hidden">
                     <!-- 리스트 헤더 -->
-                    <div class="list-header">
+                    <div class="list-header hidden" id="listHeader">
                         <div class="result-count" id="resultCount"></div>
                         <div class="filter">
                             <button class="filter-btn" id="distanceFilterBtn">
@@ -106,6 +107,11 @@
                                 <li data-sort="far">먼 순</li>
                             </ul>
                         </div>
+                    </div>
+
+                    <!-- empty 상태 (기본 숨김) -->
+                    <div class="empty" id="storeEmpty">
+                        검색 결과가 없습니다
                     </div>
 
                     <!--  장소 리스트 뷰 (기본 노출) -->
@@ -194,6 +200,7 @@
     <button class="button">확인</button>
 </div>
 <div th:replace="~{fragments/chat :: chatModal}"></div>
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
 </body>
 </html>
 

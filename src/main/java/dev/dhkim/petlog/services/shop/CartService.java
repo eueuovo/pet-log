@@ -17,22 +17,33 @@ public class CartService {
     private final CartMapper cartMapper;
 
     @Transactional
-    public boolean addToCart(Integer userId, List<Map<String, Object>> items) {
+    public Map<String, Object> addToCart(Integer userId, List<Map<String, Object>> items) {
         boolean hasExisting = false;
+        boolean sameQuantity = true;
+
         for (Map<String, Object> item : items) {
             Integer productId = (Integer) item.get("productId");
             Integer optionId = (Integer) item.get("optionId");
             Integer quantity = (Integer) item.get("quantity");
 
-            Integer existingCartId = cartMapper.findCartItem(userId, productId, optionId);
+            Integer foundCartId = cartMapper.findCartItem(userId, productId, optionId);
 
-            if (existingCartId != null) {
+            if (foundCartId != null) {
                 hasExisting = true;
+                Integer currentQuantity = cartMapper.getCartQuantity(foundCartId);
+                if (currentQuantity != null && !currentQuantity.equals(quantity)) {
+                    cartMapper.setCartQuantity(foundCartId, quantity);
+                    sameQuantity = false;
+                }
             } else {
                 cartMapper.insertCartItem(userId, productId, optionId, quantity);
             }
         }
-        return hasExisting;
+
+        Map<String, Object> result = new java.util.HashMap<>();
+        result.put("hasExisting", hasExisting);
+        result.put("sameQuantity", sameQuantity);
+        return result;
     }
 
     public List<Map<String, Object>> getCartItems(Integer userId) {

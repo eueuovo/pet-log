@@ -24,11 +24,14 @@
             <div class="caption">BEST</div>
             <div class="product"></div>
         </div>
+        <hr class="divider">
         <div class="all-product">
             <div class="navi">
                 <div class="title">
                     <div class="text">전체</div>
+<!--
                     <div class="count">32개</div>
+-->
                 </div>
                 <label class="filter">
                     <select class="product-filter">
@@ -45,5 +48,8 @@
     </div>
 </div>
 <div th:replace="~{fragments/chat :: chatModal}"></div>
+<div class="product-footer-wrapper">
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</div>
 </body>
 </html>
