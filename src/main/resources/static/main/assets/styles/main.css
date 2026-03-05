@@ -260,12 +260,8 @@
             padding: 0.45rem 0.7rem;
             background: #fff;
             border-radius: 0.5rem;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
             border-left: 3px solid #a8d5b5;
-            transition: transform 0.15s ease, box-shadow 0.15s ease; }
-            #main > .content-wrapper .tab-list-container #descriptionContainer .friend.description .caption-wrapper > div:hover {
-              transform: translateX(0.2rem);
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
             #main > .content-wrapper .tab-list-container #descriptionContainer .friend.description .caption-wrapper > div strong {
               font-size: 0.75rem;
               font-weight: 700;
@@ -318,7 +314,7 @@
             padding: 0.45rem 0.7rem;
             background: #fff;
             border-radius: 0.5rem;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             border-left: 3px solid #a8d5b5; }
             #main > .content-wrapper .tab-list-container #descriptionContainer .place.description .caption-wrapper > div strong {
               font-size: 0.75rem;

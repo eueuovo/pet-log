@@ -455,7 +455,6 @@ async function handleCategoryClick(category) {
         friendContent?.classList.add('hidden');
         storePanel?.classList.remove('hidden');
     }
-    //
 
     const btn = document.querySelector(`[data-category="${category}"]`);
 

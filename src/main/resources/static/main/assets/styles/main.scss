@@ -292,19 +292,13 @@
             padding: 0.45rem 0.7rem;
             background: #fff;
             border-radius: 0.5rem;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-            border-left: 3px solid #a8d5b5; // ← #4caf78 → 연한 초록으로
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-            &:hover {
-              transform: translateX(0.2rem);
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
+            border-left: 3px solid #a8d5b5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
             strong {
               font-size: 0.75rem;
               font-weight: 700;
-              color: #4a9068; // ← #2e7d4f → 좀 더 밝게
+              color: #4a9068;
               min-width: 5rem;
               letter-spacing: 0.02em;
             }
@@ -364,7 +358,7 @@
               padding: 0.45rem 0.7rem;
               background: #fff;
               border-radius: 0.5rem;
-              box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
               border-left: 3px solid #a8d5b5;
 
               strong {
