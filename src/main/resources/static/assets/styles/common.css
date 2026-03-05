@@ -606,151 +606,6 @@ ol, ul {
 }
 #category {
   width: 100%;
-<<<<<<< HEAD
-  padding-bottom: 1rem; }
-  #category > * {
-    flex-grow: 0;
-    flex-shrink: 0; }
-  #category > .-flex-stretch {
-    flex-grow: 1;
-    flex-shrink: 1; }
-  #category > .menu {
-    position: relative;
-    flex-shrink: 0; }
-    #category > .menu > .main > .list {
-      align-items: flex-start;
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;
-      justify-content: flex-start; }
-      #category > .menu > .main > .list > * {
-        flex-grow: 0;
-        flex-shrink: 0; }
-      #category > .menu > .main > .list > .-flex-stretch {
-        flex-grow: 1;
-        flex-shrink: 1; }
-      #category > .menu > .main > .list > .item {
-        font-size: 1.2rem;
-        color: #7A7A7A;
-        font-weight: 500;
-        position: relative;
-        padding: 0 1rem;
-        cursor: pointer;
-        font-family: 'GMarketSans';
-        /*          &::after {
-                    content: "";
-                    position: absolute;
-                    left: 0;
-                    bottom: 0;
-                    width: 0;
-                    height: 0.15rem;
-                    background-color: darken($global-color-concept, 15%);
-                    transition: none;
-                  }*/ }
-        @media (max-width: 700px) {
-          #category > .menu > .main > .list > .item {
-            font-size: 1rem;
-            padding: 0 0.5rem; } }
-        #category > .menu > .main > .list > .item > input[type="radio"] {
-          display: none; }
-        #category > .menu > .main > .list > .item:hover {
-          font-weight: 700;
-          color: #fcb727; }
-          #category > .menu > .main > .list > .item:hover::after {
-            width: 100%;
-            transition: width 0.2s ease; }
-        #category > .menu > .main > .list > .item:has(input[type="radio"]:checked) {
-          font-weight: 700;
-          color: #fcb727; }
-          #category > .menu > .main > .list > .item:has(input[type="radio"]:checked)::after {
-            width: 100%;
-            transition: none; }
-      #category > .menu > .main > .list > .menu-item-wrapper {
-        position: relative; }
-        #category > .menu > .main > .list > .menu-item-wrapper > .item {
-          font-size: 1.2rem;
-          color: #7A7A7A;
-          font-weight: 500;
-          position: relative;
-          padding: 0 1rem 0.5rem 1rem;
-          cursor: pointer;
-          font-family: 'GMarketSans';
-          /*            &::after {
-                        content: "";
-                        position: absolute;
-                        left: 0;
-                        bottom: 0;
-                        width: 0;
-                        height: 0.15rem;
-                        background-color: darken($global-color-concept, 15%);
-                        transition: none;
-                      }*/ }
-          @media (max-width: 700px) {
-            #category > .menu > .main > .list > .menu-item-wrapper > .item {
-              font-size: 1rem;
-              padding: 0 0.5rem 1rem 0.5rem; } }
-          #category > .menu > .main > .list > .menu-item-wrapper > .item > input[type="radio"] {
-            display: none; }
-          #category > .menu > .main > .list > .menu-item-wrapper > .item:hover {
-            font-weight: 700;
-            color: #fcb727; }
-            #category > .menu > .main > .list > .menu-item-wrapper > .item:hover::after {
-              width: 100%;
-              transition: width 0.2s ease; }
-          #category > .menu > .main > .list > .menu-item-wrapper > .item:has(input[type="radio"]:checked) {
-            font-weight: 700;
-            color: #fcb727; }
-            #category > .menu > .main > .list > .menu-item-wrapper > .item:has(input[type="radio"]:checked)::after {
-              width: 100%;
-              transition: none; }
-        #category > .menu > .main > .list > .menu-item-wrapper > .submenu {
-          align-items: center;
-          display: flex;
-          flex-direction: row;
-          gap: 1rem;
-          justify-content: center;
-          display: none;
-          position: absolute;
-          width: max-content;
-          z-index: 999;
-          top: calc(100% + 0.6rem);
-          left: 0; }
-          #category > .menu > .main > .list > .menu-item-wrapper > .submenu > * {
-            flex-grow: 0;
-            flex-shrink: 0; }
-          #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .-flex-stretch {
-            flex-grow: 1;
-            flex-shrink: 1; }
-          #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list {
-            align-items: center;
-            display: flex;
-            flex-direction: row;
-            gap: 1rem;
-            justify-content: flex-start;
-            padding: 1rem 0.5rem;
-            width: 100%;
-            background-color: #FFFFFF;
-            white-space: nowrap; }
-            #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > * {
-              flex-grow: 0;
-              flex-shrink: 0; }
-            #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .-flex-stretch {
-              flex-grow: 1;
-              flex-shrink: 1; }
-            #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item {
-              font-size: 1rem;
-              color: #7A7A7A;
-              font-weight: 500;
-              cursor: pointer;
-              font-family: 'GMarketSans';
-              margin: 0 1rem;
-              position: relative; }
-              #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item > input[type="radio"] {
-                display: none; }
-              #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item:hover, #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item:has(input[type="radio"]:checked) {
-                color: #fcb727; }
-              #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item::after {
-=======
   padding-bottom: 1rem;
 }
 #category > .menu {
@@ -775,10 +630,11 @@ ol, ul {
 #category > .menu > .main > .list > .item {
   font-size: 1.2rem;
   color: #7A7A7A;
-  font-weight: 600;
+  font-weight: 500;
   position: relative;
   padding: 0 1rem;
   cursor: pointer;
+  font-family: "GMarketSans";
 }
 @media (max-width: 700px) {
   #category > .menu > .main > .list > .item {
@@ -823,10 +679,11 @@ ol, ul {
 #category > .menu > .main > .list > .menu-item-wrapper > .item {
   font-size: 1.2rem;
   color: #7A7A7A;
-  font-weight: 600;
+  font-weight: 500;
   position: relative;
   padding: 0 1rem 0.5rem 1rem;
   cursor: pointer;
+  font-family: "GMarketSans";
 }
 @media (max-width: 700px) {
   #category > .menu > .main > .list > .menu-item-wrapper > .item {
@@ -836,7 +693,6 @@ ol, ul {
 }
 #category > .menu > .main > .list > .menu-item-wrapper > .item {
   /*            &::after {
->>>>>>> origin/ms
                 content: "";
                 position: absolute;
                 left: 0;
@@ -913,8 +769,9 @@ ol, ul {
 #category > .menu > .main > .list > .menu-item-wrapper > .submenu > .list > .item {
   font-size: 1rem;
   color: #7A7A7A;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
+  font-family: "GMarketSans";
   margin: 0 1rem;
   position: relative;
 }

@@ -975,6 +975,16 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    document.getElementById('friendTab')?.addEventListener('click', () => {
+        clearActiveList();
+        switchView('list');
+    });
+
+    document.getElementById('storeTab')?.addEventListener('click', () => {
+        clearActiveList();
+        switchView('list');
+    });
+
 // ----- 예약 모달 관련 수정 코드 -----
     const modal = document.getElementById('reserveModal');
     if (modal) {
