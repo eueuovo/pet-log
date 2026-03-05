@@ -14,7 +14,7 @@ body:has(> .checkMessage.visible) > .cover {
   width: 100%;
   height: 100%;
   background-color: rgba(33, 33, 33, 0.6274509804);
-  z-index: 29;
+  z-index: 91;
   opacity: 0;
   pointer-events: none;
 }
