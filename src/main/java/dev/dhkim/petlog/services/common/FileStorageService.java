@@ -42,11 +42,13 @@ public class FileStorageService {
             // 최종 저장 경로
             File destination = new File(folderPath, fileName);
 
+            log.info("파일 저장 위치: {}", destination.getAbsolutePath());
+
             // 파일 저장
             file.transferTo(destination);
 
             // 브라우저 접근용 URL 반환
-            return "uploads/" + subFolder + "/" + fileName;
+            return "/uploads/" + subFolder + "/" + fileName;
 
         } catch (IOException e) {
             log.error("파일 저장 실패", e);

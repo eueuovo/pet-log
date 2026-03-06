@@ -34,8 +34,10 @@ import java.util.Map;
 public class UserController {
     @Value("${custom.property.kakao-redirect-uri}")
     private String kakaoRedirectUri;
+
     @Value("${custom.property.naver-redirect-uri}")
     private String naverRedirectUri;
+
     @Value("${google.redirect.uri}")
     private String googleRedirectUri;
 
