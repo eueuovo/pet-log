@@ -14,10 +14,10 @@
     <script defer src="/assets/scripts/shop-fragment.js"></script>
 </head>
 <body>
-<th:block th:replace="~{/fragments/common.html :: topNavigator}"></th:block>
+<th:block th:replace="~{fragments/common.html :: topNavigator}"></th:block>
 <div id="product" th:data-user-id="${session.sessionUser?.userId}">
     <div class="container">
-        <th:block th:replace="~{/fragments/shop.html :: category}"></th:block>
+        <th:block th:replace="~{fragments/shop.html :: category}"></th:block>
         <div class="overview">
             <div class="preview">
                 <div class="img-container"

@@ -37,7 +37,7 @@ public class PaymentController {
             ModelAndView modelAndView) {
 
         if (sessionUser == null) {
-            modelAndView.setViewName("/user/login");
+            modelAndView.setViewName("user/login");
             return modelAndView;
         }
 
@@ -110,7 +110,7 @@ public class PaymentController {
             ModelAndView modelAndView) {
 
         if (sessionUser == null) {
-            modelAndView.setViewName("/user/login");
+            modelAndView.setViewName("user/login");
             return modelAndView;
         }
 
@@ -180,7 +180,7 @@ public class PaymentController {
             ModelAndView mav) {
 
         if (sessionUser == null) {
-            mav.setViewName("/user/login");
+            mav.setViewName("user/login");
             return mav;
         }
 

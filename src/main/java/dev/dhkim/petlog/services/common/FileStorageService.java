@@ -46,7 +46,7 @@ public class FileStorageService {
             file.transferTo(destination);
 
             // 브라우저 접근용 URL 반환
-            return "/uploads/" + subFolder + "/" + fileName;
+            return "uploads/" + subFolder + "/" + fileName;
 
         } catch (IOException e) {
             log.error("파일 저장 실패", e);

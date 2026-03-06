@@ -1,7 +1,6 @@
 package dev.dhkim.petlog.entities.cs;
 
 import dev.dhkim.petlog.enums.cs.InquiryStatus;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;

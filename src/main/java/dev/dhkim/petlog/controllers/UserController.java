@@ -14,6 +14,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping(value="/user")
 public class UserController {
+    @Value("${custom.property.kakao-redirect-uri}")
+    private String kakaoRedirectUri;
+    @Value("${custom.property.naver-redirect-uri}")
+    private String naverRedirectUri;
+    @Value("${google.redirect.uri}")
+    private String googleRedirectUri;
+
     private final UserService userService;
     private final UserMapper userMapper;
 
@@ -231,7 +239,7 @@ public class UserController {
     public String getKakaoLogin() {
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
                 "?client_id=" + System.getenv("KAKAO_REST_KEY") +
-                "&redirect_uri=http://localhost:8080/user/login/kakao/callback" +
+                "&redirect_uri="+kakaoRedirectUri+"/callback" +
                 "&response_type=code";
         return "redirect:" + kakaoAuthUrl;
     }
@@ -265,7 +273,7 @@ public class UserController {
         String naverAuthUrl = "https://nid.naver.com/oauth2.0/authorize" +
                 "?client_id=" + System.getenv("NAVER_CLIENT_ID") +
                 "&response_type=code" +
-                "&redirect_uri=http://localhost:8080/user/login/naver/callback";
+                "&redirect_uri="+naverRedirectUri+"/callback";
         return "redirect:" + naverAuthUrl;
     }
 
@@ -300,7 +308,7 @@ public class UserController {
     @RequestMapping(value="/login/google", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getGoogleLogin() throws UnsupportedEncodingException {
         String clientId = System.getenv("GOOGLE_CLIENT_ID");
-        String redirectUri = URLEncoder.encode("http://localhost:8080/user/login/google/callback", StandardCharsets.UTF_8);
+        String redirectUri = URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8);
 
         System.out.println(">>> GOOGLE_CLIENT_ID = " + clientId);
         System.out.println(">>> redirect_uri = " + redirectUri);

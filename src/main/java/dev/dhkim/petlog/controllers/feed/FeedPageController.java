@@ -32,7 +32,7 @@ public class FeedPageController {
             ProfileDto profile = feedProfileService.getProfile(userId);
             model.addAttribute("profile", profile); // 프로필 표시해주기
         }
-        return "/feed/explore";
+        return "feed/explore";
     }
 
     // 상세 피드 (우측 페이지)
@@ -48,7 +48,7 @@ public class FeedPageController {
         }
         model.addAttribute("feed", feed);
         model.addAttribute("loginUserId", userId);
-        return "/feed/detail";
+        return "feed/detail";
     }
 
     // 개인 프로필 피드
@@ -63,7 +63,7 @@ public class FeedPageController {
             return "redirect:/feed/explore";
         }
         model.addAttribute("profile", profile);
-        return "/feed/profile";
+        return "feed/profile";
     }
 
     // 피드 작성하기 페이지
@@ -74,7 +74,7 @@ public class FeedPageController {
             return "redirect:/user/login";
         }
         model.addAttribute("mode", "create");
-        return "/feed/create";
+        return "feed/create";
     }
 
     // 피드 수정하기 페이지
@@ -96,6 +96,6 @@ public class FeedPageController {
         model.addAttribute("feed", feed);
         model.addAttribute("mediaList", feed.getFeedMediaDtos());
 
-        return "/feed/create"; //create 페이지 재사용
+        return "feed/create"; //create 페이지 재사용
     }
 }
