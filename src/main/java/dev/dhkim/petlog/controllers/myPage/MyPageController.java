@@ -40,7 +40,7 @@ public class        MyPageController {
                                   @RequestParam(defaultValue = "1month") String period,
                                   @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
         if (sessionUser == null) {
-            modelAndView.setViewName("/user/login");
+            modelAndView.setViewName("user/login");
             return modelAndView;
         }
         modelAndView.setViewName("myPage/my");

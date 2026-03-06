@@ -11,7 +11,7 @@
     <script defer src="/assets/scripts/common.js"></script>
 </head>
 <body>
-<th:block th:replace="~{/fragments/common.html :: topNavigator}"></th:block>
+<th:block th:replace="~{fragments/common.html :: topNavigator}"></th:block>
 
 <main class="support">
     <th:block th:if="${session.sessionUser?.userType == 'ADMIN'}">

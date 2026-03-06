@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($edit) {
         $edit.addEventListener('click', () => {
             // 수정 페이지로
-            window.location.href = "http://localhost:8080/my?menu=0";
+            window.location.href = "/my?menu=0";
         });
     }
 

@@ -182,10 +182,10 @@ public class MyPageService {
                     : ".jpg";
             String savedFilename = UUID.randomUUID() + ext;
             Files.copy(file.getInputStream(), dirPath.resolve(savedFilename));
-            return "/uploads/pets/" + savedFilename;
+            return "uploads/pets/" + savedFilename;
         } catch (IOException e) {
             e.printStackTrace();
-            return "/user/assets/images/defaultPetImage.png";
+            return "user/assets/images/defaultPetImage.png";
         }
     }
 

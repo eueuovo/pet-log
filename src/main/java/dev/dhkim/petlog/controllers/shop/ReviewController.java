@@ -68,7 +68,7 @@ public class ReviewController {
         }
 
         try {
-            reviewService.submitReview(userId, id, orderItemId, rating, content, imageUrls);  // ✅ 추가
+            reviewService.submitReview(userId, id, orderItemId, rating, content, imageUrls);
             return Map.of("success", true);
         } catch (IllegalStateException e) {
             return Map.of("success", false, "message", e.getMessage());
