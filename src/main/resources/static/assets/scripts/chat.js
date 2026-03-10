@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const $header = $roomModal.querySelector(".chat-header");
     const chatInput = document.getElementById("chatInput");
     const chatSendBtn = document.getElementById("chatSendBtn");
+    const modalCloseBtns = $listModal.querySelectorAll(".modal-close");
 
     let isDragging = false;
     let offsetX = 0;
@@ -33,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 드래그 기능
     $header.addEventListener("mousedown", (e) => {
+        if (isMobileChat()) return;
+
         isDragging = true;
 
         const rect = $roomModal.getBoundingClientRect();
@@ -74,8 +77,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // 리스트 모달 닫기
+    modalCloseBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            $listModal.classList.add("hidden");
+        });
+    });
+
     // 바깥 클릭 시 리스트 모달 닫기
     document.addEventListener("click", (e) => {
+        if (isMobileChat()) return;
+
         if (
             !$listModal.contains(e.target) &&
             !$launcher.contains(e.target) &&
@@ -216,6 +228,14 @@ document.addEventListener("DOMContentLoaded", () => {
         chatInput.focus();
     });
 
+    chatInput.addEventListener("focus", (e) => {
+        const $messages = $roomModal.querySelector(".chat-messages");
+
+        setTimeout(() => {
+            $messages.scrollTop = $messages.scrollHeight;
+        }, 300);
+    })
+
     // 전송 엔터키 이벤트
     chatInput.addEventListener("keydown", (e) => {
         // 엔터 키 눌렀을 때
@@ -251,6 +271,10 @@ function markRoomAsReadBeacon(roomId) {
 
 // 채팅방 열기
 async function openChatRoom(roomId, nickname, imageUrl) {
+    if (isMobileChat()) {
+        document.getElementById("chatBtn").style.display = "none";
+    }
+
     if (currentRoomId && String(currentRoomId) !== String(roomId)) {
         markRoomAsReadBeacon(currentRoomId);
     }
@@ -282,11 +306,13 @@ async function openChatRoom(roomId, nickname, imageUrl) {
 
     // 헤더 동적 세팅 (아이폰 메시지 스타일)
     header.innerHTML = `
+        <button class="chat-close">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
+        </button>
         <div class="chat-user-info">
             <img src="${imageUrl}" class="chat-user-image">
-            <span class="chat-user-name">${nickname}</span>
+            <a class="chat-user-name" href="/feed/profile/${nickname}">${nickname}</a>
         </div>
-        <button class="chat-close">&times;</button>
     `;
 
     // 닫기 버튼 이벤트 연결
@@ -306,23 +332,36 @@ async function openChatRoom(roomId, nickname, imageUrl) {
         method: "POST"
     });
 }
+// 모바일 체크
+function isMobileChat() {
+    return window.innerWidth <= 768;
+}
 
 // 채팅방 닫기
 function closeChatRoom() {
     const $roomModal = document.getElementById("chatRoomModal");
     const $listModal = document.getElementById("chatListModal");
 
+    if (isMobileChat()) {
+        document.getElementById("chatBtn").style.display = "block";
+    }
+
     const roomId = $roomModal.dataset.roomId || currentRoomId;
     markRoomAsReadBeacon(roomId);
+
+    const roomItem = document.querySelector(
+        `.chat-list li[data-room-id="${roomId}"]`
+    );
+    if (roomItem) { // 뱃지 없애기
+        const badge = roomItem.querySelector(".unread-badge");
+        if (badge) badge.remove();
+    }
 
     if (currentSub) { // 1. 구독 해제
         currentSub.unsubscribe();
         currentSub = null;
     }
-    if (stompClient) { // 2. WebSocket 연결 종료
-        stompClient.disconnect();
-        stompClient = null;
-    }
+
     currentRoomId = null; // 3. 방 정보 초기화
 
     // 기억해뒀던 정보 지우기
@@ -342,6 +381,11 @@ function closeChatRoom() {
 
 // 친구 리스트 불러오기
 async function loadFriends() {
+
+    if (friendCache.length > 0) {
+        renderChatFriend(friendCache);
+        return;
+    }
 
     try {
         const res = await fetch("/api/chat/friends?sort=abc");
@@ -393,6 +437,11 @@ function renderChatFriend(list) {
 // 채팅방 리스트 가져오기, 렌더링
 async function loadChatRooms() {
 
+    if (roomsCache.length > 0) {
+        renderChatRooms({ rooms: roomsCache });
+        return;
+    }
+
     try {
         const res = await fetch("/api/chat/rooms");
         const data = await res.json();
@@ -400,6 +449,8 @@ async function loadChatRooms() {
         if (data.result !== "SUCCESS") {
             return;
         }
+
+        roomsCache = data.rooms
         renderChatRooms(data);
 
     } catch (e) {
@@ -534,7 +585,7 @@ function updateRoomPreview(msg) {
             badge = document.createElement("span");
             badge.className = "unread-badge";
             badge.innerText = "1";
-            roomItem.appendChild(badge);
+            roomItem.insertBefore(badge, roomItem.querySelector(".date"));
         } else {
             badge.innerText = Number(badge.innerText) + 1;
         }
@@ -595,13 +646,9 @@ function connectOnce() {
     stompClient.connect({}, () => {
 
         // 유저 토픽 상시 유지
-        userSub = stompClient.subscribe(`/topic/chat.user.${userId}`, async (frame) => {
-            const payload = JSON.parse(frame.body); // ChatNotifyDto 받기
-
-            await loadChatRooms(); // 이벤트 발생하면 다시 로드하기
-
-            // (선택) 리스트가 열려 있지 않아도 캐시는 갱신되니 OK
-            // 나중에 UX 더 올리고 싶으면 payload.roomId만 뱃지 +1 하는 최적화도 가능
+        userSub = stompClient.subscribe(`/topic/chat.user.${userId}`, async () => {
+            roomsCache = [];   // 캐시 초기화
+            await loadChatRooms();
         });
 
     }, (err) => {

@@ -273,7 +273,7 @@ public class UserController {
     @RequestMapping(value="/login/naver", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getNaverLogin() {
         String naverAuthUrl = "https://nid.naver.com/oauth2.0/authorize" +
-                "?client_id=" + System.getenv("NAVER_CLIENT_ID") +
+                "?client_id=" + System.getProperty("NAVER_CLIENT_ID") +
                 "&response_type=code" +
                 "&redirect_uri="+naverRedirectUri+"/callback";
         return "redirect:" + naverAuthUrl;
@@ -285,8 +285,8 @@ public class UserController {
                                    HttpSession session) throws Exception {
 
 
-        System.out.println("NAVER_CLIENT_ID = " + System.getenv("NAVER_CLIENT_ID"));
-        System.out.println("NAVER_CLIENT_SECRET = " + System.getenv("NAVER_CLIENT_SECRET"));
+        System.out.println("NAVER_CLIENT_ID = " + System.getProperty("NAVER_CLIENT_ID"));
+        System.out.println("NAVER_CLIENT_SECRET = " + System.getProperty("NAVER_CLIENT_SECRET"));
         // 1. 서비스 호출 → UserEntity 반환
         UserEntity user = userService.loginOrRegisterByNaver(code, state);
         System.out.println("네이버 로그인 user = " + user);

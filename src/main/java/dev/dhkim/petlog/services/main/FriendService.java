@@ -58,7 +58,6 @@ public class FriendService {
         if (result == null || result.isEmpty()) {
 
         } else {
-            result.forEach(f -> System.out.println("   - 이름: " + f.getNickname() + ", 거리: " + f.getDistance() + "km"));
             result.forEach(f -> {
                boolean isFollowing = followMapper.existsFollow(userId, f.getUserId()) > 0;
                f.setFollowing(isFollowing);

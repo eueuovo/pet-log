@@ -106,20 +106,14 @@ async function loadFeeds(reset = false) {
         const res = await fetch(url);
         const data = await res.json();
 
-        renderFeeds(data.feedDtos);
+        renderFeeds(data.feedDtos || []);
 
         $hasNext = data.hasNext;
         $lastFeedId = data.lastFeedId;
         $lastLikeCount = data.lastLikeCount;
         $lastCreatedAt = data.lastCreatedAt;
 
-        const hasFeedCards = $feedContainer.querySelector('.feed-card') !== null;
-
-        if (!hasFeedCards) {
-            $reloadWrapper.classList.add('hidden');
-        } else {
-            $reloadWrapper.classList.toggle('hidden', $hasNext);
-        }
+        $reloadWrapper.classList.toggle('hidden', $hasNext);
 
     } catch (e) {
         console.error("피드 로딩 실패", e);
@@ -133,14 +127,11 @@ async function loadFeeds(reset = false) {
 function renderFeeds(feeds) {
 
     if (!feeds || feeds.length === 0) {
-        const hasFeedCards = $feedContainer.querySelector('.feed-card') !== null;
+        $feedContainer.classList.add("empty");
 
-        if (!hasFeedCards) {
-            $feedContainer.classList.add("empty");
+        $feedContainer.innerHTML =
+            `<p style="text-align:center;padding:3rem 0;">게시물이 없습니다.</p>`;
 
-            $feedContainer.innerHTML =
-                `<p style="text-align:center;padding:3rem 0;">게시물이 없습니다.</p>`;
-        }
         return;
     }
 

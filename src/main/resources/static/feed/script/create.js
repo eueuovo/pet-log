@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedMedia.push(mediaObj);
 
             addPreviewItem(mediaObj); // 미리보기에 추가하기
-            if (setMainMedia.length === 1) { // 첫번째 사진을 대표사진으로
+            if (selectedMedia.length === 1) { // 첫번째 사진을 대표사진으로
                 setMainMedia(mediaObj);
             }
         });

@@ -1,6 +1,7 @@
 package dev.dhkim.petlog.controllers.shop;
 
 import dev.dhkim.petlog.dto.user.SessionUser;
+import dev.dhkim.petlog.services.common.FileStorageService;
 import dev.dhkim.petlog.services.shop.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RequestMapping("/shop/products")
 public class ReviewController {
     private final ReviewService reviewService;
+    private final FileStorageService fileStorageService;
 
     @GetMapping("/{id}/reviews")
     public Map<String, Object> getReviews(
@@ -30,12 +32,6 @@ public class ReviewController {
         Integer userId = (Integer) session.getAttribute("userId");
         return reviewService.getReviewsByProductId(id, userId, sort);
     }
-
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
-    @Value("${file.base-url}")
-    private String baseUrl;
 
     @PostMapping("/{id}/reviews")
     public Map<String, Object> submitReview(
@@ -56,11 +52,13 @@ public class ReviewController {
         if (images != null) {
             for (MultipartFile image : images) {
                 try {
-                    String filename = UUID.randomUUID() + "_" + image.getOriginalFilename();
-                    Path path = Paths.get(uploadDir, filename);
-                    Files.createDirectories(path.getParent());
-                    Files.write(path, image.getBytes());
-                    imageUrls.add(baseUrl + "/" + uploadDir + "/" + filename);
+                    String imageUrl = fileStorageService.save(image, "review");
+                    imageUrls.add(imageUrl);
+//                    String filename = UUID.randomUUID() + "_" + image.getOriginalFilename();
+//                    Path path = Paths.get(uploadDir, filename);
+//                    Files.createDirectories(path.getParent());
+//                    Files.write(path, image.getBytes());
+//                    imageUrls.add(baseUrl + "/" + uploadDir + "/" + filename);
                 } catch (Exception e) {
                     return Map.of("success", false, "message", "이미지 업로드 실패");
                 }
@@ -101,12 +99,14 @@ public class ReviewController {
         if (images != null) {
             for (MultipartFile image : images) {
                 try {
-                    String filename = UUID.randomUUID() + "_" + image.getOriginalFilename();
-                    Path path = Paths.get(uploadDir, filename);
-                    Files.createDirectories(path.getParent());
-                    Files.write(path, image.getBytes());
-                    String imageUrl = baseUrl + "/" + uploadDir + "/" + filename;
-                    reviewService.addReviewImage(reviewId, imageUrl);  // 추가
+                    String imageUrl = fileStorageService.save(image, "review");
+                    reviewService.addReviewImage(reviewId, imageUrl);
+//                    String filename = UUID.randomUUID() + "_" + image.getOriginalFilename();
+//                    Path path = Paths.get(uploadDir, filename);
+//                    Files.createDirectories(path.getParent());
+//                    Files.write(path, image.getBytes());
+//                    String imageUrl = baseUrl + "/" + uploadDir + "/" + filename;
+//                    reviewService.addReviewImage(reviewId, imageUrl);  // 추가
                 } catch (Exception e) {
                     return Map.of("success", false, "message", "이미지 업로드 실패");
                 }

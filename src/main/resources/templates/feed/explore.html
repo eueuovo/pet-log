@@ -43,27 +43,30 @@
 
         <div class="-flex-stretch"></div>
 
-        <div th:if="${profile != null}">
-            <a th:href="@{/feed/profile/{id}(id=${profile.nickname})}"
-               class="my-profile">
-                <img th:src="${profile.profileImageUrl != null
-                      ? profile.profileImageUrl
-                      : '/feed/images/explore/user.png'}"
-                     alt="개인 프로필">
-                <span th:text="${profile.nickname}">sehun_pet</span>
-            </a>
+        <div class="sort-block">
+            <div th:if="${profile != null}">
+                <a th:href="@{/feed/profile/{id}(id=${profile.nickname})}"
+                   class="my-profile">
+                    <img th:src="${profile.profileImageUrl != null
+                          ? profile.profileImageUrl
+                          : '/feed/images/explore/user.png'}"
+                         alt="개인 프로필">
+                    <span th:text="${profile.nickname}">sehun_pet</span>
+                </a>
+            </div>
+
+            <div class="sort-dropdown" data-open="false">
+                <button type="button" data-object="button" data-color="concept">
+                    <span class="value">최신순</span>
+                    <img src="/feed/images/explore/down.png" alt="열기">
+                </button>
+                <ul class="sort-options">
+                    <li data-sort="latest" class="select">최신순</li>
+                    <li data-sort="like">인기순</li>
+                </ul>
+            </div>
         </div>
 
-        <div class="sort-dropdown" data-open="false">
-            <button type="button" data-object="button" data-color="concept">
-                <span class="value">최신순</span>
-                <img src="/feed/images/explore/down.png" alt="열기">
-            </button>
-            <ul class="sort-options">
-                <li data-sort="latest" class="select">최신순</li>
-                <li data-sort="like">인기순</li>
-            </ul>
-        </div>
     </div>
 
     <section id="feed-container">

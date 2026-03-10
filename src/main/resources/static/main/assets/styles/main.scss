@@ -1,6 +1,5 @@
 @import "../../../assets/styles/def";
 
-
 #main {
   margin-top: 5rem;
   padding: 2.5rem 4rem;
@@ -16,8 +15,6 @@
       width: 70%;
       height: 100%;
       background-color: #fff;
-      padding: 1rem 2rem;
-      overflow: hidden;
       position: relative;
 
       #map {
@@ -30,8 +27,13 @@
       /*지도안의 요소들*/
       > .top-wrapper {
         @include flex(row, stretch, center, 2rem);
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100%;
         max-width: 97.5%;
+        z-index: 10;
 
         > .search-box {
           max-width: 100%;
@@ -50,11 +52,10 @@
             height: 2.5rem;
             padding: 0 0.8rem;
             font-size: 0.9rem;
-
           }
 
           > .search-btn {
-            @include flex(column, stretch, center);
+            @include flex(column, center, center);
 
             > .search-icon {
               width: 1.6rem; // 아이콘 크기
@@ -65,83 +66,62 @@
         }
 
         .category-filter {
-          align-items: center;
-          display: flex;
+          @include flex(row, stretch, center);
           gap: 0.3rem;
           z-index: 10;
-        }
 
-        .more-wrapper {
-          position: relative;
-        }
+          .front,
+          .back {
+            height: 2.25rem;
+            width: 2.25rem;
+            border-radius: 999rem;
+            background-color: #FFFFFF;
+            box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.2);
+            cursor: pointer;
 
-        .more-category {
-          position: absolute;
-          top: 110%;
-          left: -10%;
-          display: none;
-          flex-direction: column;
-          gap: 0.3rem;
-          padding: 0.5rem;
-          border-radius: 0.5rem;
-          z-index: 10;
-        }
-
-        .more-category.open {
-          display: flex;
-        }
-
-        .front,
-        .back{
-          height: 2.25rem;
-          width: 2.25rem;
-          border-radius: 999rem;
-          background-color: #FFFFFF;
-          box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.2);
-          cursor: pointer;
-
-          &:hover{
-            background-color: $global-gray-background-color;
-          }
-        }
-
-        /* 버튼 기본 */
-        .category-btn {
-          @include flex(row, center, center, 0.4rem);
-          width: 5.5rem;
-          height: 2.25rem;
-          padding: 0.4rem 0.8rem;
-          border-radius: 2rem;
-          border: none;
-          background: #ffffff;
-          box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.2);
-          cursor: pointer;
-          color: #000000;
-          font-size: 0.95rem;
-          font-weight: 600;
-          transition: all 0.2s ease;
-
-          > span {
-            margin-top: 0.15rem;
+            &:hover {
+              background-color: $global-gray-background-color;
+            }
           }
 
-          img {
-            width: 1.3rem;
-            height: 1.3rem;
-            transition: 0.2s ease;
-          }
+          /* 버튼 기본 */
+          .category-btn {
+            @include flex(row, center, center, 0.4rem);
+            width: 5.5rem;
+            height: 2.25rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            border: none;
+            background: #ffffff;
+            box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            color: #000000;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
 
-          &:hover {
-            color: #2b7fff;
-          }
-
-          /* 활성화 상태 */
-          &.active {
-            background: #ff7a00;
-            color: #fff;
+            > span {
+              margin-top: 0.15rem;
+            }
 
             img {
-              filter: brightness(0) invert(1);
+              width: 1.3rem;
+              height: 1.3rem;
+              transition: 0.2s ease;
+            }
+
+            &:hover {
+              color: #2b7fff;
+            }
+
+            /* 활성화 상태 */
+            &.active {
+              background: #ff7a00;
+              color: #fff;
+
+              img {
+                filter: brightness(0) invert(1);
+              }
             }
           }
         }
@@ -149,9 +129,9 @@
 
       > .button {
         position: absolute;
-        bottom: 1rem;
-        right: 1rem;
-        width: 5rem;
+        bottom: 1.5rem;
+        left: 0.8rem;
+        width: 2.5rem;
         height: 2.5rem;
         border-radius: 999rem;
         border: 0.0625rem solid $global-border-color;
@@ -167,7 +147,15 @@
 
         &:hover {
           background-color: #4285f4;
-          color: #ffffff;
+          > .location-icon {
+            fill: #FFFFFF;
+          }
+        }
+
+        > .location-icon {
+          width: 1.5rem;
+          height: 1.5rem;
+          fill: black;
         }
       }
     }
@@ -187,128 +175,128 @@
       #descriptionContainer{
 
 
-      .friend.description {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: auto;
-        background: linear-gradient(160deg, #ffffff 0%, #f0f7f2 100%);
-        box-shadow: 0 -0.75rem 2rem rgba(0, 0, 0, 0.12);
-        z-index: 10;
-        overflow-y: auto;
-        border-radius: 1.2rem 1.2rem 0 0;
-        padding: 0;
-
-        // --- 스크롤바 커스텀 시작 ---
-        &::-webkit-scrollbar {
-          width: 0.5rem; // 8px: 적당히 슬림한 두께
-        }
-
-        &::-webkit-scrollbar-track {
-          background: transparent; // 트랙을 투명하게 해서 리스트 배경색(#f9fafb)이 보이게 함
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: rgba($global-border-green-color, 0.3); // 보더 컬러를 30% 투명하게
-          border-radius: 1rem;
-          background-clip: padding-box;
-          border: 0.125rem solid transparent; // 2px 투명 보더로 막대를 더 얇게 연출
-
-          &:hover {
-            background-color: $global-border-green-color; // 마우스 올리면 선명한 초록색
-          }
-        }
-
-        .close-btn {
+        .friend.description {
           position: absolute;
-          top: 0.9rem;
-          right: 1rem;
-          border: none;
-          border-radius: 50%;
-          width: 1.8rem;
-          height: 1.8rem;
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: #555;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.2s ease;
-          z-index: 10;
-
-          &:hover {
-            background: #e0e0e0;
-            color: #222;
-          }
-        }
-
-        .text-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0;
-          padding: 0;
-        }
-
-        .detail-image {
+          left: 0;
+          top: 5%;
           width: 100%;
-          height: 3rem;
-          overflow: visible;
-          position: relative;
-          display: flex;
-          justify-content: center;
-          padding-top: 1rem;
-          margin-bottom: 2.5rem;
+          height: auto;
+          background: linear-gradient(160deg, #ffffff 0%, #f0f7f2 100%);
+          box-shadow: 0 -0.75rem 2rem rgba(0, 0, 0, 0.12);
+          z-index: 10;
+          overflow-y: auto;
+          border-radius: 1.2rem 1.2rem 0 0;
+          padding: 0;
 
-          a {
-            @include flex(row, center, center);
+          // --- 스크롤바 커스텀 시작 ---
+          &::-webkit-scrollbar {
+            width: 0.5rem; // 8px: 적당히 슬림한 두께
+          }
 
-            img {
-              width: 4.5rem;
-              height: 4.5rem;
-              border-radius: 50%;
-              object-fit: cover;
-              border: 3px solid #fff;
-              box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
-              position: absolute;
-              bottom: -2.2rem;
-              background-color: #ffffff;
-              padding: 0.2rem;
+          &::-webkit-scrollbar-track {
+            background: transparent; // 트랙을 투명하게 해서 리스트 배경색(#f9fafb)이 보이게 함
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background-color: rgba($global-border-green-color, 0.3); // 보더 컬러를 30% 투명하게
+            border-radius: 1rem;
+            background-clip: padding-box;
+            border: 0.125rem solid transparent; // 2px 투명 보더로 막대를 더 얇게 연출
+
+            &:hover {
+              background-color: $global-border-green-color; // 마우스 올리면 선명한 초록색
             }
           }
-        }
 
-        .caption-wrapper {
-          width: 100%;
-          padding: 0.5rem 1.2rem 1.2rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.45rem;
-
-          > div {
+          .close-btn {
+            position: absolute;
+            top: 0.9rem;
+            right: 1rem;
+            border: none;
+            border-radius: 50%;
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #555;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: #444;
-            padding: 0.45rem 0.7rem;
-            background: #fff;
-            border-radius: 0.5rem;
-            border-left: 3px solid #a8d5b5;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            justify-content: center;
+            transition: background 0.2s ease;
+            z-index: 10;
 
-            strong {
-              font-size: 0.75rem;
-              font-weight: 700;
-              color: #4a9068;
-              min-width: 5rem;
-              letter-spacing: 0.02em;
+            &:hover {
+              background: #e0e0e0;
+              color: #222;
+            }
+          }
+
+          .text-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 0;
+          }
+
+          .detail-image {
+            width: 100%;
+            height: 3rem;
+            overflow: visible;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            padding-top: 1rem;
+            margin-bottom: 2.5rem;
+
+            a {
+              @include flex(row, center, center);
+
+              img {
+                width: 4.5rem;
+                height: 4.5rem;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid #fff;
+                box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+                position: absolute;
+                bottom: -2.2rem;
+                background-color: #ffffff;
+                padding: 0.2rem;
+              }
+            }
+          }
+
+          .caption-wrapper {
+            width: 100%;
+            padding: 0.5rem 1.2rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+
+            > div {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              font-size: 0.85rem;
+              color: #444;
+              padding: 0.45rem 0.7rem;
+              background: #fff;
+              border-radius: 0.5rem;
+              border-left: 3px solid #a8d5b5;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+              strong {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #4a9068;
+                min-width: 5rem;
+                letter-spacing: 0.02em;
+              }
             }
           }
         }
-      }
 
         .place.description {
           position: absolute;
@@ -321,6 +309,7 @@
           z-index: 10;
           overflow-y: auto;
           border-radius: 1.2rem 1.2rem 0 0;
+          padding: 0 0 1rem 0;
 
           .close-btn {
             position: absolute;
@@ -396,9 +385,7 @@
 
 
       .tabs {
-        display: flex;
-        gap: 0.07rem;
-
+        @include flex(row, center, center, 0.07rem);
       }
 
       .tab {
@@ -407,11 +394,11 @@
         padding: 0.5rem 0;
         font-size: 1rem;
         cursor: pointer;
-        white-space: nowrap;
+        //white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         background-color: $global-background-color;
-        border: 0.0625rem solid $global-border-green-color;
+        border: none;
         color: $global-gray-text-color;
       }
 
@@ -419,40 +406,26 @@
         border-top-left-radius: 1rem;
         font-size: 1.15rem;
         font-weight: 500;
-        border-right: none;
       }
 
       .tab.store-tab {
         border-top-right-radius: 1rem;
         font-size: 1.15rem;
         font-weight: 500;
-        border-left: none;
       }
 
       .tab.active {
-        background-color: $global-green-background-color;
+        background-color: $global-green-text-color;
         color: $global-white-text-color;
-
-        &::after {
-          content: '';
-          position: absolute;
-          left: 20%;
-          bottom: 0;
-          width: 60%;
-          height: 0.25rem;
-          background-color: $global-white-text-color; // 🔹 기존 컬러 활용
-          border-radius: 1rem;
-        }
       }
 
       > .list {
         background-color: #f9fafb;
         padding: 0.75rem 0;
         border: $global-border-green-color solid 0.0625rem;
-        border-radius: 0.3rem;
-        height: 45rem;
-        flex: 1; // 남은 공간 다 차지
-        overflow-y: scroll; // 스크롤 가능
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto; // 스크롤 가능
         position: relative; // 기준점 추가
 
         // --- 스크롤바 커스텀 시작 ---
@@ -603,16 +576,13 @@
           height: 100%;
 
           .empty {
+            @include flex(column, center, center);
             padding: 3rem 1rem;
             text-align: center;
             font-size: 1.1rem;
             color: #999;
             font-weight: 500;
             height: 100%;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
 
             &::before {
               content: "🐾";
@@ -710,12 +680,12 @@
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           height: 100%; // 부모 리스트 영역 전체 차지
           color: $global-gray-text-color;
           font-size: 1rem;
           text-align: center;
-          padding: 1rem;
+          padding-top: 5rem;
 
           a {
             display: inline-block;
@@ -1035,7 +1005,7 @@
 }
 
 .message-overlay.visible .message-box {
-display: flex;
+  display: flex;
   transform: scale(1);
 }
 
@@ -1076,7 +1046,25 @@ display: flex;
 .message-box .button:active {
   background-color: #287A39;
 }
+
+.my-location-marker {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #4285f4;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.3);
+  cursor: pointer;
+  animation: pulse 2s infinite;
+}
+
 /* 애니메이션 */
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+}
+
 @keyframes fadeIn {
   from {
     transform: translateY(10px);
@@ -1100,86 +1088,114 @@ display: flex;
 
 
 @media (max-width: 1200px) {
-
   #main {
-    padding: 1rem; // 모바일은 여백 줄이기
+    margin-top: 5rem;
+    padding: 0; // 모바일은 여백 줄이기
   }
 
   #main > .content-wrapper {
-    @include flex(column, stretch, flex-start, 1rem);
-    height: 87vh;
     position: relative;
-
+    height: calc(100vh - 5rem - 5rem); // 100 - 헤더 높이 - 리시트 높이
   }
 
   /* 지도 영역 */
   #main > .content-wrapper .map {
     width: 100%;
-    position: relative;
-    padding: 0;
+    height: 100%;
     border-radius: 0;
-    flex-shrink: 0;
-    overflow: hidden;
-    height: calc(87vh - 20rem);  // ✅ 이거 추가 (리스트 높이만큼 뺌)
+    border: none;
+    transition: height 0.35s ease;
   }
-  // ✅ 카카오맵이 생성하는 내부 div도 높이 맞춤
+
   #main > .content-wrapper .map #map {
     width: 100% !important;
     height: 100% !important;
-    position: relative;
+  }
+
+  #main > .content-wrapper:has(> .tab-list-container.open) > .map {
+    height: calc(100vh - 5rem - 45vh);
   }
 
   /* 리스트 숨김 */
   #main > .content-wrapper .tab-list-container {
     @include flex(column, stretch, flex-start);
+    position: fixed;
+    left: 0;
+    bottom: 0;
     width: 100%;
-    max-height: 20rem;
-    position: absolute;
-    bottom:0;
-    z-index: 85;
+    height: 45vh;
+    background-color: $global-background-color;
+    border-radius: 1.2rem 1.2rem 0 0;
+    transform: translateY(calc(100% - 5rem));
+    transition: transform 0.35s ease;
+    z-index: 89;
 
-    .tab.friend-tab {
-      border-top-left-radius: 0;
+    &.open {
+      transform: translateY(0);
     }
+  }
 
-    .tab.store-tab {
-      border-top-right-radius: 0;
-    }
-    .list{
-      overflow-y: scroll;
+  .sheet-handle {
+    width: 2.5rem;
+    height: 0.3rem;
+    background-color: $global-green-text-color;
+    border-radius: 1rem;
+    margin: 0.6rem auto 0.4rem auto;
+  }
+
+  .tabs {
+    position: relative;
+    background-color: $global-background-color;
+
+    > .tab {
+      margin: 0.2rem;
+      padding: 0.3rem 0;
+      border: none;
+      border-radius: 1rem;
     }
   }
 
   /* 검색창 */
-  #main .search-box {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  #main > .content-wrapper .map > .top-wrapper{
+  #main > .content-wrapper .map > .top-wrapper {
     @include flex(column, flex-start, flex-start, 0.5rem);
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    right: 1rem;
-    z-index: 10;
     max-width: 93.5%;
+
+    > .search-box {
+      width: 100%;
+      max-width: 100%;
+
+      > .search-input {
+        height: 1.5rem;
+      }
+
+      > .search-btn > .search-icon {
+        width: 1.2rem;
+        height: 1.2rem;
+      }
+    }
+
+    > .category-filter {
+
+      > .front,
+      > .back {
+        height: 1.75rem;
+        width: 1.75rem;
+      }
+
+      > .category-btn {
+        width: 4.5rem;
+        height: 1.75rem;
+      }
+    }
+  }
+
+  #footer {
+    display: none;
   }
 }
 
-.my-location-marker {
-  width: 1.5rem;
-  height: 1.5rem;
-  background-color: #4285f4;
-  border: 3px solid #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.3);
-  cursor: pointer;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
-  70%  { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+@media (max-width: 500px) {
+  .modal {
+    width: 20rem;
+  }
 }
