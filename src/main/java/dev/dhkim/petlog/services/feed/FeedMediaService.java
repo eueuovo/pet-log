@@ -5,6 +5,7 @@ import dev.dhkim.petlog.dto.feed.FeedMediaDto;
 import dev.dhkim.petlog.entities.feed.FeedMediaEntity;
 import dev.dhkim.petlog.mappers.feed.FeedMediaMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -20,8 +21,9 @@ import java.util.stream.Collectors;
 public class FeedMediaService {
 
     private final FeedMediaMapper feedMediaMapper;
-    private static final String BASE_PATH =
-            System.getProperty("user.dir") + File.separator + "uploads";
+
+    @Value("${file.upload.base-path}")  // ← 추가
+    private String basePath;
 
     // ID에 따른 미디어 넣는 함수
     public void addMediaToFeed (List<FeedDto> feeds) {
@@ -53,11 +55,10 @@ public class FeedMediaService {
     }
 
     // 비디오 썸네일 만들기
-    public String generateThumbnail(String savedPath, List<String> createdPaths) {
+    public String generateThumbnail(String savedUrl, List<String> createdPaths) {
 
         try {
-            String relativePath = savedPath.replace("/uploads/", "");
-            String videoPath = BASE_PATH + File.separator + relativePath;
+            String videoPath = basePath +  savedUrl.replace("/uploads", "");;
 
             File videoFile = new File(videoPath);
             if (!videoFile.exists()) throw new RuntimeException("영상 파일이 존재하지 않습니다.");
@@ -91,8 +92,9 @@ public class FeedMediaService {
                 throw new RuntimeException("썸네일 생성 실패 (exitCode=" + exitCode + ")");
             }
 
-            String thumbnailUrl = savedPath.replace(videoFile.getName(), thumbnailName);
-            createdPaths.add(thumbnailUrl); // ✅ 삭제 대상에 포함
+            // DB에 저장할 URL 생성
+            String thumbnailUrl = savedUrl.replace(videoFile.getName(), thumbnailName);
+            createdPaths.add(thumbnailUrl);
 
             return thumbnailUrl;
 
@@ -105,11 +107,13 @@ public class FeedMediaService {
     // 저장된 사진 및 비디오 URL → 실제 파일 경로로 바꿔서 삭제
     public void deleteCreatedFilesQuietly(List<String> createdPaths) {
         for (String urlPath : createdPaths) {
+
             if (urlPath == null) continue;
 
             try {
-                String relativePath = urlPath.replace("/uploads/", "");
-                String absolutePath = BASE_PATH + File.separator + relativePath;
+                String absolutePath =
+                        basePath + urlPath.replace("/uploads", "");
+
                 File f = new File(absolutePath);
 
                 if (f.exists()) {

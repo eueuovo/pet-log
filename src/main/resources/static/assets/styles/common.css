@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Chewy&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 [data-object=button] {
@@ -322,6 +323,9 @@ body {
   line-height: 1;
   margin: initial;
   user-select: none;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  position: relative;
 }
 
 button, input, select, textarea {
@@ -346,6 +350,8 @@ h1, h2, h3, h4, h5, h6 {
 
 html {
   height: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 img {
@@ -412,7 +418,7 @@ ol, ul {
   font-size: 2rem;
   font-weight: 600;
   cursor: pointer;
-  font-family: "AvieSehyun";
+  font-family: "AvieSehyun", serif;
   color: #FFFFFF;
 }
 #topNavigator > .nav-wrapper > .logo:hover {
@@ -445,7 +451,7 @@ ol, ul {
   padding: 0.5rem;
   position: relative;
   text-decoration: none;
-  font-family: "GMarketSans";
+  font-family: "GMarketSans", serif;
   font-weight: 500;
 }
 #topNavigator > .nav-wrapper > .nav-category > .item:hover,
@@ -531,7 +537,7 @@ ol, ul {
   width: 100%;
   padding-top: 1.5rem;
   color: white;
-  font-family: "AvieSehyun";
+  font-family: "AvieSehyun", serif;
   font-size: 1.1rem;
   font-weight: 400;
   text-align: center;
@@ -571,7 +577,7 @@ ol, ul {
   color: white;
   font-size: 1.25rem;
   text-decoration: none;
-  font-family: "GMarketSans";
+  font-family: "GMarketSans", serif;
   font-weight: 500;
 }
 
@@ -635,25 +641,13 @@ ol, ul {
   position: relative;
   padding: 0 1rem;
   cursor: pointer;
-  font-family: "GMarketSans";
+  font-family: "GMarketSans", serif;
 }
 @media (max-width: 700px) {
   #category > .menu > .main > .list > .item {
     font-size: 1rem;
     padding: 0 0.5rem;
   }
-}
-#category > .menu > .main > .list > .item {
-  /*          &::after {
-              content: "";
-              position: absolute;
-              left: 0;
-              bottom: 0;
-              width: 0;
-              height: 0.15rem;
-              background-color: darken($global-color-concept, 15%);
-              transition: none;
-            }*/
 }
 #category > .menu > .main > .list > .item > input[type=radio] {
   display: none;
@@ -684,25 +678,13 @@ ol, ul {
   position: relative;
   padding: 0 1rem 0.5rem 1rem;
   cursor: pointer;
-  font-family: "GMarketSans";
+  font-family: "GMarketSans", serif;
 }
 @media (max-width: 700px) {
   #category > .menu > .main > .list > .menu-item-wrapper > .item {
     font-size: 1rem;
     padding: 0 0.5rem 1rem 0.5rem;
   }
-}
-#category > .menu > .main > .list > .menu-item-wrapper > .item {
-  /*            &::after {
-                content: "";
-                position: absolute;
-                left: 0;
-                bottom: 0;
-                width: 0;
-                height: 0.15rem;
-                background-color: darken($global-color-concept, 15%);
-                transition: none;
-              }*/
 }
 #category > .menu > .main > .list > .menu-item-wrapper > .item > input[type=radio] {
   display: none;
@@ -772,7 +754,7 @@ ol, ul {
   color: #7A7A7A;
   font-weight: 500;
   cursor: pointer;
-  font-family: "GMarketSans";
+  font-family: "GMarketSans", serif;
   margin: 0 1rem;
   position: relative;
 }
@@ -941,7 +923,9 @@ ol, ul {
   z-index: 100;
   opacity: 0;
   pointer-events: none;
-  min-width: 25rem;
+  width: 100%;
+  max-width: 25rem;
+  text-align: center;
 }
 .message.visible {
   opacity: 1;
@@ -1327,6 +1311,47 @@ body:has(.message.visible) .cover {
   }
   .footer .compony-wrapper .info .sub-item {
     line-height: 1.2;
+  }
+}
+@media (max-width: 480px) {
+  .footer {
+    width: 100%;
+  }
+  .footer .media-wrapper {
+    gap: 2rem;
+  }
+  .footer .media-wrapper .cs-wrapper .cs-method {
+    flex-direction: column;
+  }
+  .footer .media-wrapper .cs-wrapper .cs-method .method-divider {
+    display: none;
+  }
+  .footer .media-wrapper .cs-wrapper .info-list {
+    position: relative;
+  }
+  .footer .media-wrapper .cs-wrapper .info-list .item {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    justify-content: center;
+  }
+  .footer .media-wrapper .cs-wrapper .info-list .item > * {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .footer .media-wrapper .cs-wrapper .info-list .item > .-flex-stretch {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  .footer .media-wrapper .cs-wrapper .info-list .item::before {
+    content: "•";
+    font-size: 1.5rem;
+    position: absolute;
+    left: 0;
+  }
+  .footer .media-wrapper .terms-wrapper .terms {
+    gap: 0.8rem;
   }
 }
 

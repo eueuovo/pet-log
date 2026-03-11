@@ -122,7 +122,7 @@ public class FeedApiController {
     }
 
     // 피드 삭제
-    @RequestMapping(value=("/{feedId}"), method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/{feedId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> deleteFeed(@PathVariable int feedId,
                                           @SessionAttribute(value = "sessionUser", required = false) SessionUser sessionUser) {
         if (sessionUser == null) {

@@ -4,6 +4,7 @@
 @import "objects/label";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Chewy&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 @font-face {
   font-family: 'GMarketSans';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
@@ -48,6 +49,9 @@ body {
   line-height: 1;
   margin: initial;
   user-select: none;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  position: relative;
 }
 
 button, input, select, textarea {
@@ -72,6 +76,8 @@ h1, h2, h3, h4, h5, h6 {
 
 html {
   height: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 img {
@@ -110,7 +116,7 @@ ol, ul {
       font-size: 2rem;
       font-weight: 600;
       cursor: pointer;
-      font-family: 'AvieSehyun';
+      font-family: 'AvieSehyun', serif;
       color: $global-white-text-color;
 
       &:hover {
@@ -130,7 +136,7 @@ ol, ul {
         padding: 0.5rem;
         position: relative;
         text-decoration: none;
-        font-family: "GMarketSans";
+        font-family: "GMarketSans", serif;
         font-weight: 500;
 
         &:hover {
@@ -196,7 +202,7 @@ ol, ul {
       width: 100%;
       padding-top: 1.5rem;
       color: white;
-      font-family: 'AvieSehyun';
+      font-family: 'AvieSehyun', serif;
       font-size: 1.1rem;
       font-weight: 400;
       text-align: center;
@@ -222,7 +228,7 @@ ol, ul {
         color: white;
         font-size: 1.25rem;
         text-decoration: none;
-        font-family: "GMarketSans";
+        font-family: "GMarketSans", serif;
         font-weight: 500;
       }
     }
@@ -276,23 +282,12 @@ ol, ul {
           position: relative;
           padding: 0 1rem;
           cursor: pointer;
-          font-family: 'GMarketSans';
+          font-family: 'GMarketSans', serif;
 
           @media (max-width: 700px) {
             font-size: 1rem;
             padding: 0 0.5rem;
           }
-
-          /*          &::after {
-                      content: "";
-                      position: absolute;
-                      left: 0;
-                      bottom: 0;
-                      width: 0;
-                      height: 0.15rem;
-                      background-color: darken($global-color-concept, 15%);
-                      transition: none;
-                    }*/
 
           > input[type="radio"]{
             display: none;
@@ -329,23 +324,12 @@ ol, ul {
             position: relative;
             padding: 0 1rem 0.5rem 1rem;
             cursor: pointer;
-            font-family: 'GMarketSans';
+            font-family: 'GMarketSans', serif;
 
             @media (max-width: 700px) {
               font-size: 1rem;
               padding: 0 0.5rem 1rem 0.5rem;
             }
-
-            /*            &::after {
-                          content: "";
-                          position: absolute;
-                          left: 0;
-                          bottom: 0;
-                          width: 0;
-                          height: 0.15rem;
-                          background-color: darken($global-color-concept, 15%);
-                          transition: none;
-                        }*/
 
             > input[type="radio"]{
               display: none;
@@ -393,7 +377,7 @@ ol, ul {
                 color: $global-gray-right-text-color;
                 font-weight: 500;
                 cursor: pointer;
-                font-family: 'GMarketSans';
+                font-family: 'GMarketSans', serif;
                 margin: 0 1rem;
                 position: relative;
 
@@ -524,7 +508,9 @@ ol, ul {
   z-index: 100;
   opacity: 0;
   pointer-events: none;
-  min-width: 25rem;
+  width: 100%;
+  max-width: 25rem;
+  text-align: center;
 
   &.visible {
     opacity: 1;
@@ -776,4 +762,43 @@ body:has(.message.visible) .cover {
       }
     }
   }
+
+  @media (max-width: 480px) {
+    width: 100%;
+
+    .media-wrapper {
+      gap: 2rem;
+
+      .cs-wrapper {
+        .cs-method {
+          flex-direction: column;
+
+          .method-divider {
+            display: none;
+          }
+        }
+
+        .info-list {
+          position: relative;
+          .item {
+            @include flex(column, flex-start, center, 0.1rem);
+
+            &::before {
+              content: "•";
+              font-size: 1.5rem;
+              position: absolute;
+              left: 0;
+            }
+          }
+        }
+      }
+
+      .terms-wrapper {
+        .terms {
+          gap: 0.8rem;
+        }
+      }
+    }
+  }
+
 }

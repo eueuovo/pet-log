@@ -1,6 +1,7 @@
 package dev.dhkim.petlog.services.common;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,16 +13,18 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
-    // 프로젝트 루트 기준 uploads 폴더
-    private static final String BASE_PATH =
-            System.getProperty("user.dir") + File.separator + "uploads";
+    @Value("${file.upload.base-path}")  // 실제 파일 저장 위치 (맨 처음부터 시작/ 서버properties에서는 다르게 설정 해야함)
+    private String basePath;
+
+    @Value("${file.base-url}") // DB에 저장될 파일 (/uploads 부터 시작)
+    private String baseUrl;
 
     public String save(MultipartFile file, String subFolder) {
 
         try {
 
             // 저장 폴더 경로 생성
-            String folderPath = BASE_PATH + File.separator + subFolder;
+            String folderPath = basePath + File.separator + subFolder;
             File dir = new File(folderPath);
 
             if (!dir.exists()) {
@@ -46,7 +49,7 @@ public class FileStorageService {
             file.transferTo(destination);
 
             // 브라우저 접근용 URL 반환
-            return "/uploads/" + subFolder + "/" + fileName;
+            return baseUrl + "/" + subFolder + "/" + fileName;
 
         } catch (IOException e) {
             log.error("파일 저장 실패", e);

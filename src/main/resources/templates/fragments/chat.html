@@ -21,6 +21,11 @@
                     <div class="-flex-stretch"></div>
                     <button class="sort abc active" type="button">가나다 순</button>
                     <button class="sort time" type="button">팔로우 순</button>
+                    <button class="modal-close" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="close-icon">
+                            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                        </svg>
+                    </button>
                 </div>
                 <ul class="chat-friend-list">
 <!--                    <li class="item">-->
@@ -33,9 +38,11 @@
                 <div class="chat-option">
                     <span>채팅</span>
                     <div class="-flex-stretch"></div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="search">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                    </svg>
+                    <button class="modal-close" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="close-icon">
+                            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                        </svg>
+                    </button>
                 </div>
                 <ul class="chat-list">
 <!--                    <li class="item">-->
@@ -60,8 +67,10 @@
         <div class="chat-container">
 
             <div class="chat-header">
+                <button class="chat-close">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
+                </button>
                 <span class="chat-title">채팅</span>
-                <button class="chat-close">&times;</button>
             </div>
 
             <div class="chat-messages"></div>

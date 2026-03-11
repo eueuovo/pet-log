@@ -11,6 +11,8 @@ import dev.dhkim.petlog.enums.user.EmailVerificationType;
 import dev.dhkim.petlog.mappers.user.EmailVerificationMapper;
 import dev.dhkim.petlog.mappers.user.UserMapper;
 import dev.dhkim.petlog.results.*;
+import dev.dhkim.petlog.services.common.FileStorageService;
+import dev.dhkim.petlog.services.main.KakaoGeoCodingService;
 import dev.dhkim.petlog.services.main.StoreService;
 import dev.dhkim.petlog.validators.UserValidator;
 import jakarta.mail.MessagingException;
@@ -63,7 +65,9 @@ UserService {
     private final EmailVerificationMapper emailVerificationMapper;
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final FileStorageService fileStorageService;
     private final StoreService storeService;
+    private final KakaoGeoCodingService kakaoGeoCodingService;
 
 
     @Transactional
@@ -134,10 +138,10 @@ UserService {
                     PetDto pet = dto.getPets().get(i);
 
                     // 이미지 저장 처리
-                    String imageUrl = "/user/assets/images/defaultPetImage.png"; // 기본값
+                    String imageUrl = "/user/assets/images/defaultPetImage.png"; // 기본값String imageUrl = "/user/assets/images/defaultPetImage.png";
                     if (petImages != null && i < petImages.size() && petImages.get(i) != null
                             && !petImages.get(i).isEmpty()) {
-                        imageUrl = savePetImage(petImages.get(i));
+                        imageUrl = fileStorageService.save(petImages.get(i), "pets"); // << 저장 로직 주석 처리하고 fileStorageService로 합침
                     }
                     pet.setImageUrl(imageUrl);
 
@@ -156,7 +160,7 @@ UserService {
             //주석 하고 밑에 코드 넣은 이유 매퍼 말고 서비스 호출 이유 서비스 안에
             //위도 경도, 가공 하는 코드를 이용해서 값을 넣기 위해 직접 db 에 바로 넣는것 보다 로직 이용을 위한것
             if (dto.getStore() != null) {
-               int dbStoreInsert = userMapper.insertStore(userId, dto.getStore());
+                int dbStoreInsert = userMapper.insertStore(userId, dto.getStore());
                 if (dbStoreInsert < 1) {
                     return RegisterResult.FAILURE;
                 }
@@ -189,32 +193,32 @@ UserService {
         return RegisterResult.SUCCESS;
     }
 
-    // 이미지 저장 메서드 추가
-    private String savePetImage(MultipartFile file) {
-        try {
-            // 저장 디렉토리 (프로젝트 외부 경로 권장)
-            String uploadDir = System.getProperty("user.dir") + "/uploads/pets/";
-            Path dirPath = Paths.get(uploadDir);
-            if (!Files.exists(dirPath)) {
-                Files.createDirectories(dirPath);
-            }
-
-            // 파일명: uuid + 원본 확장자
-            String originalFilename = file.getOriginalFilename();
-            String ext = originalFilename != null && originalFilename.contains(".")
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : ".jpg";
-            String savedFilename = UUID.randomUUID() + ext;
-
-            Path savePath = dirPath.resolve(savedFilename);
-            Files.copy(file.getInputStream(), savePath);
-
-            return "/uploads/pets/" + savedFilename;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "/user/assets/images/defaultPetImage.png"; // 실패 시 기본이미지
-        }
-    }
+//    // 이미지 저장 메서드 추가
+//    private String savePetImage(MultipartFile file) {
+//        try {
+//            // 저장 디렉토리 (프로젝트 외부 경로 권장)
+//            String uploadDir = basePath + "/pets/";
+//            Path dirPath = Paths.get(uploadDir);
+//            if (!Files.exists(dirPath)) {
+//                Files.createDirectories(dirPath);
+//            }
+//
+//            // 파일명: uuid + 원본 확장자
+//            String originalFilename = file.getOriginalFilename();
+//            String ext = originalFilename != null && originalFilename.contains(".")
+//                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+//                    : ".jpg";
+//            String savedFilename = UUID.randomUUID() + ext;
+//
+//            Path savePath = dirPath.resolve(savedFilename);
+//            Files.copy(file.getInputStream(), savePath);
+//
+//            return "/uploads/pets/" + savedFilename;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return "/user/assets/images/defaultPetImage.png"; // 실패 시 기본이미지
+//        }
+//    }
 
 
     public EmailVerificationResult sendEmail(String email, EmailVerificationType type) throws MessagingException {
@@ -513,7 +517,7 @@ UserService {
             params.add("grant_type", "authorization_code");
             params.add("client_id", System.getenv("KAKAO_REST_KEY"));
             params.add("client_secret", System.getenv("KAKAO_CLIENT_SECRET"));
-            params.add("redirect_uri", kakaoRedirectUrl+"/callback");
+            params.add("redirect_uri", kakaoRedirectUrl +"/callback");
             params.add("code", code);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -589,8 +593,8 @@ UserService {
             // 1️⃣ access token 요청
             String tokenUrl = "https://nid.naver.com/oauth2.0/token" +
                     "?grant_type=authorization_code" +
-                    "&client_id=" + System.getenv("NAVER_CLIENT_ID") +
-                    "&client_secret=" + System.getenv("NAVER_CLIENT_SECRET") +
+                    "&client_id=" + System.getProperty("NAVER_CLIENT_ID") +
+                    "&client_secret=" + System.getProperty("NAVER_CLIENT_SECRET") +
                     "&code=" + code +
                     "&state=" + state;
 
@@ -647,7 +651,7 @@ UserService {
 
 
 
-// 구글 로그인
+    // 구글 로그인
     @Transactional
     public UserEntity loginOrRegisterByGoogle(String code) {
         try {

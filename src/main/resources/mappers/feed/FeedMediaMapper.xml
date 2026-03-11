@@ -18,17 +18,14 @@
     </insert>
     <update id="updateSortOrders">
         UPDATE `petlog`.`feed_media`
-        SET `sort_order` = CASE `id`
+        SET `sort_order` =
+        CASE `id`
         <foreach collection="list" item="m">
             WHEN #{m.id} THEN #{m.sortOrder}
         </foreach>
         END
         WHERE `id` IN
-        <foreach collection="list"
-                 item="m"
-                 open="("
-                 separator=","
-                 close=")">
+        <foreach collection="list" item="m" open="(" separator="," close=")">
             #{m.id}
         </foreach>
     </update>

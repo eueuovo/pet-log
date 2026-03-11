@@ -86,7 +86,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const category = btn.dataset.category;
         if (!category) return; // ← 이거 추가
 
-
         btn.addEventListener('click', () => {
             handleCategoryClick(btn.dataset.category);
         });

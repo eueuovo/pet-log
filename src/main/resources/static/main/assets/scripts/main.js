@@ -5,14 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const friendContent = document.querySelector('.friend-tab-content');
     const storePanel = document.querySelector('.store-panel');
     const container = document.getElementById('descriptionContainer');
+    const $map = document.getElementById("map");
+    const $sheet = document.querySelector(".tab-list-container");
+    const $handle = document.querySelector(".sheet-handle");
+    const categoryFilter = document.getElementById('categoryFilter');
+    const prevBtn = categoryFilter?.querySelector('.front');
+    const nextBtn = categoryFilter?.querySelector('.back');
+    const categoryBtns = categoryFilter?.querySelectorAll('.category-btn');
 
     // 서버에서 로그인 여부를 JS로 전달
     const sessionUser = /*[[${sessionUser != null}]]*/ false;
 
     // ==================== 탭 전환 ====================
     if (friendTab && storeTab) {
-
         friendTab.addEventListener('click', () => {
+            $sheet.classList.add('open');
             friendTab.classList.add('active');
             storeTab.classList.remove('active');
             friendContent?.classList.remove('hidden');
@@ -21,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         storeTab.addEventListener('click', () => {
+            $sheet.classList.add('open');
             storeTab.classList.add('active');
             friendTab.classList.remove('active');
             friendContent?.classList.add('hidden');
@@ -29,12 +37,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if ($handle) {
+        $handle.addEventListener('click', () => {
+            $sheet.classList.toggle('open');
+        });
+    }
+    if ($map) {
+        $map.addEventListener('click', (e) => {
+            if (e.target.closest('.category-filter')) return;
+            $sheet.classList.remove('open');
+        });
+    }
+    categoryFilter?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.category-btn');
+        if (!btn) return;
+        $sheet.classList.add('open');
+    });
     // ==================== 카테고리 필터 슬라이드 ====================
-    const categoryFilter = document.getElementById('categoryFilter');
-    const prevBtn = categoryFilter?.querySelector('.front');
-    const nextBtn = categoryFilter?.querySelector('.back');
-    const categoryBtns = categoryFilter?.querySelectorAll('.category-btn');
-
     const VISIBLE_COUNT = 3; // 한 번에 보이는 개수
     let currentIndex = 0;
 

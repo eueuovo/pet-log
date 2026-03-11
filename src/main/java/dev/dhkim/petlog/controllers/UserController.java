@@ -33,11 +33,14 @@ import java.util.Map;
 @RequestMapping(value="/user")
 public class UserController {
     @Value("${custom.property.kakao-redirect-uri}")
-    private String kakaoRedirectUrl;
+    private String kakaoRedirectUri;
+
     @Value("${custom.property.naver-redirect-uri}")
-    private String naverRedirectUrl;
+    private String naverRedirectUri;
+
     @Value("${google.redirect.uri}")
-    private String googleRedirectUrl;
+    private String googleRedirectUri;
+
     private final UserService userService;
     private final UserMapper userMapper;
 
@@ -238,7 +241,7 @@ public class UserController {
     public String getKakaoLogin() {
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
                 "?client_id=" + System.getenv("KAKAO_REST_KEY") +
-                "&redirect_uri="+kakaoRedirectUrl+"/callback" +
+                "&redirect_uri="+kakaoRedirectUri+"/callback" +
                 "&response_type=code";
         return "redirect:" + kakaoAuthUrl;
     }
@@ -270,9 +273,9 @@ public class UserController {
     @RequestMapping(value="/login/naver", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getNaverLogin() {
         String naverAuthUrl = "https://nid.naver.com/oauth2.0/authorize" +
-                "?client_id=" + System.getenv("NAVER_CLIENT_ID") +
+                "?client_id=" + System.getProperty("NAVER_CLIENT_ID") +
                 "&response_type=code" +
-                "&redirect_uri="+naverRedirectUrl+"/callback";
+                "&redirect_uri="+naverRedirectUri+"/callback";
         return "redirect:" + naverAuthUrl;
     }
 
@@ -282,8 +285,8 @@ public class UserController {
                                    HttpSession session) throws Exception {
 
 
-        System.out.println("NAVER_CLIENT_ID = " + System.getenv("NAVER_CLIENT_ID"));
-        System.out.println("NAVER_CLIENT_SECRET = " + System.getenv("NAVER_CLIENT_SECRET"));
+        System.out.println("NAVER_CLIENT_ID = " + System.getProperty("NAVER_CLIENT_ID"));
+        System.out.println("NAVER_CLIENT_SECRET = " + System.getProperty("NAVER_CLIENT_SECRET"));
         // 1. 서비스 호출 → UserEntity 반환
         UserEntity user = userService.loginOrRegisterByNaver(code, state);
         System.out.println("네이버 로그인 user = " + user);
@@ -307,7 +310,7 @@ public class UserController {
     @RequestMapping(value="/login/google", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getGoogleLogin() throws UnsupportedEncodingException {
         String clientId = System.getenv("GOOGLE_CLIENT_ID");
-        String redirectUri = URLEncoder.encode(googleRedirectUrl, StandardCharsets.UTF_8);
+        String redirectUri = URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8);
 
         System.out.println(">>> GOOGLE_CLIENT_ID = " + clientId);
         System.out.println(">>> redirect_uri = " + redirectUri);

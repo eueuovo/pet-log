@@ -10,12 +10,14 @@ import dev.dhkim.petlog.mappers.myPage.MyPageMapper;
 import dev.dhkim.petlog.mappers.shop.PointMapper;
 import dev.dhkim.petlog.mappers.user.UserMapper;
 import dev.dhkim.petlog.results.MyPageResult;
+import dev.dhkim.petlog.services.common.FileStorageService;
 import dev.dhkim.petlog.services.main.KakaoGeoCodingService;
 import dev.dhkim.petlog.utils.PhoneUtil;
 import dev.dhkim.petlog.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,6 +42,7 @@ public class MyPageService {
     private final PointMapper pointMapper;
     private final KakaoGeoCodingService kakaoGeoCodingService;
     private final AddressMapper addressMapper;
+    private final FileStorageService fileStorageService;
 
     public boolean verifyPassword(int userId, String password) {
         if (userId < 1 ||
@@ -155,8 +158,9 @@ public class MyPageService {
 
         // 이미지 저장
         String imageUrl = "/user/assets/images/defaultPetImage.png";
+
         if (petImage != null && !petImage.isEmpty()) {
-            imageUrl = savePetImage(petImage);
+            imageUrl = fileStorageService.save(petImage, "pets");
         }
         pet.setImageUrl(imageUrl);
 
@@ -169,25 +173,25 @@ public class MyPageService {
                 : Pair.of(MyPageResult.FAILURE, null);
     }
 
-    private String savePetImage(MultipartFile file) {
-        try {
-            String uploadDir = System.getProperty("user.dir") + "/uploads/pets/";
-            Path dirPath = Paths.get(uploadDir);
-            if (!Files.exists(dirPath)) {
-                Files.createDirectories(dirPath);
-            }
-            String originalFilename = file.getOriginalFilename();
-            String ext = originalFilename != null && originalFilename.contains(".")
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : ".jpg";
-            String savedFilename = UUID.randomUUID() + ext;
-            Files.copy(file.getInputStream(), dirPath.resolve(savedFilename));
-            return "/uploads/pets/" + savedFilename;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "/user/assets/images/defaultPetImage.png";
-        }
-    }
+//    private String savePetImage(MultipartFile file) {
+//        try {
+//            String uploadDir = basePath + "/pets/";
+//            Path dirPath = Paths.get(uploadDir);
+//            if (!Files.exists(dirPath)) {
+//                Files.createDirectories(dirPath);
+//            }
+//            String originalFilename = file.getOriginalFilename();
+//            String ext = originalFilename != null && originalFilename.contains(".")
+//                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+//                    : ".jpg";
+//            String savedFilename = UUID.randomUUID() + ext;
+//            Files.copy(file.getInputStream(), dirPath.resolve(savedFilename));
+//            return "/uploads/pets/" + savedFilename;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return "/user/assets/images/defaultPetImage.png";
+//        }
+//    }
 
 
     public Pair<MyPageResult, PetEntity> getPet(int petId, int userId) {
@@ -205,7 +209,7 @@ public class MyPageService {
 
         // 새 이미지가 있으면 저장, 없으면 기존 URL 유지
         if (petImage != null && !petImage.isEmpty()) {
-            String imageUrl = savePetImage(petImage);
+            String imageUrl = fileStorageService.save(petImage, "pets");
             pet.setImageUrl(imageUrl);
         } else {
             // 기존 이미지 URL 그대로 세팅

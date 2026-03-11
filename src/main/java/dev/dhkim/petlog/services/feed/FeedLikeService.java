@@ -24,12 +24,15 @@ public class FeedLikeService {
 
         if (feedId <= 0) {
             result.put("result", CommonResult.FAILURE);
+            return result;
         }
         if (userId <= 0) {
             result.put("result", CommonResult.FAILURE);
+            return result;
         }
         if (feedMapper.selectFeedById(feedId) == null) {
             result.put("result", CommonResult.FAILURE);
+            return result;
         }
 
         boolean liked;
