@@ -17,6 +17,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -52,6 +53,12 @@ import static dev.dhkim.petlog.enums.user.UserType.PERSONAL;
 @RequiredArgsConstructor
 public class
 UserService {
+    @Value("${custom.property.kakao-redirect-uri}")
+    private String kakaoRedirectUrl;
+    @Value("${custom.property.naver-redirect-uri}")
+    private String naverRedirectUrl;
+    @Value("${google.redirect.uri}")
+    private String googleRedirectUrl;
     private final UserMapper userMapper;
     private final EmailVerificationMapper emailVerificationMapper;
     private final JavaMailSender mailSender;
@@ -506,7 +513,7 @@ UserService {
             params.add("grant_type", "authorization_code");
             params.add("client_id", System.getenv("KAKAO_REST_KEY"));
             params.add("client_secret", System.getenv("KAKAO_CLIENT_SECRET"));
-            params.add("redirect_uri", "http://localhost:8080/user/login/kakao/callback");
+            params.add("redirect_uri", kakaoRedirectUrl+"/callback");
             params.add("code", code);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -655,7 +662,7 @@ UserService {
             params.add("code", code);
             params.add("client_id", System.getenv("GOOGLE_CLIENT_ID"));
             params.add("client_secret", System.getenv("GOOGLE_CLIENT_SECRET"));
-            params.add("redirect_uri", "http://localhost:8080/user/login/google/callback");
+            params.add("redirect_uri", googleRedirectUrl);
             params.add("grant_type", "authorization_code");
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
